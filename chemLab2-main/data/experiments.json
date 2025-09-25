@@ -1,0 +1,550 @@
+[
+  {
+    "title": "Equilibrium Shift: [Co(H₂O)₆]²⁺ vs Cl⁻ Ions",
+    "description": "Interactive virtual lab to study equilibrium shifts between cobalt complexes. Observe dramatic color changes from pink to blue as you add HCl or water, demonstrating Le Chatelier's principle in real-time.",
+    "category": "Chemical Equilibrium",
+    "difficulty": "Intermediate",
+    "duration": 25,
+    "steps": 7,
+    "rating": 4.9,
+    "imageUrl": "https://cdn.builder.io/api/v1/image/assets%2Fc52292a04d4c4255a87bdaa80a28beb9%2F31a30c6182634888a42babb619393e25?format=webp&width=800",
+    "equipment": [
+      "Test Tube",
+      "Reagent Bottles",
+      "Graduated Droppers",
+      "Stirring Rod",
+      "Thermometer",
+      "Color Chart"
+    ],
+    "stepDetails": [
+      {
+        "id": 1,
+        "title": "Setup and Observe",
+        "description": "Set up the apparatus. You will observe the solution state after adding the cobalt(II) solution in the next step.",
+        "duration": "2 minutes",
+        "temperature": "Room temperature",
+        "completed": false
+      },
+      {
+        "id": 2,
+        "title": "Add Cobalt(II) Solution",
+        "description": "From the equipment section, drag the cobalt(II) solution to the test tube to prepare the initial pink [Co(H₂O)₆]²⁺ solution.",
+        "duration": "2 minutes",
+        "completed": false
+      },
+      {
+        "id": 3,
+        "title": "Add Concentrated HCl",
+        "description": "Click the HCl reagent bottle twice. First click: observe pink to purple transition. Second click: complete the shift from purple to blue as Cl⁻ ions fully shift equilibrium right.",
+        "duration": "4 minutes",
+        "safety": "HCl is corrosive - handle with care",
+        "completed": false
+      },
+      {
+        "id": 4,
+        "title": "Observe Blue Complex",
+        "description": "Study the blue [CoCl₄]²⁻ complex that forms. Read the dynamic explanation panel to understand the equilibrium shift.",
+        "duration": "3 minutes",
+        "completed": false
+      },
+      {
+        "id": 5,
+        "title": "Add Distilled Water",
+        "description": "Click the water bottle twice. First click: observe blue to purple transition. Second click: complete the reverse shift from purple to pink as dilution shifts equilibrium left.",
+        "duration": "4 minutes",
+        "completed": false
+      },
+      {
+        "id": 6,
+        "title": "Repeat and Experiment",
+        "description": "Alternate between adding HCl (2 clicks: pink→purple→blue) and water (2 clicks: blue→purple→pink) to observe multiple equilibrium shifts.",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 7,
+        "title": "Step-by-Step Mode",
+        "description": "Use guided mode for structured learning with detailed instructions at each step. Perfect for understanding the underlying chemistry.",
+        "duration": "4 minutes",
+        "completed": false
+      }
+    ],
+    "safetyInfo": "This is a virtual simulation. In real lab conditions: Concentrated HCl is highly corrosive and produces toxic vapors. Cobalt compounds are toxic and potentially carcinogenic. Always use proper ventilation, safety goggles, and gloves. Handle all chemicals in a fume hood."
+  },
+  {
+    "title": "Preparation of Standard Solution of Oxalic Acid",
+    "description": "Learn to prepare a standard solution of oxalic acid dihydrate with accurate concentration. Master fundamental quantitative analysis techniques including weighing, dissolution, and volumetric preparation.",
+    "category": "Quantitative Analysis",
+    "difficulty": "Beginner",
+    "duration": 35,
+    "steps": 7,
+    "rating": 4.5,
+    "imageUrl": "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+    "equipment": [
+      "Analytical Balance",
+      "Volumetric Flask (250 mL)",
+      "Beaker (100 mL)",
+      "Glass Rod",
+      "Funnel",
+      "Wash Bottle",
+      "Weighing Bottle",
+      "Dropper"
+    ],
+    "stepDetails": [
+      {
+        "id": 1,
+        "title": "Calculate Required Mass",
+        "description": "Calculate the mass of oxalic acid dihydrate (H₂C₂O₄·2H₂O) needed to prepare 250 mL of 0.1 M solution. Use molecular weight 126.07 g/mol.",
+        "duration": "5 minutes",
+        "temperature": "Room temperature",
+        "completed": false
+      },
+      {
+        "id": 2,
+        "title": "Weigh Oxalic Acid",
+        "description": "Using an analytical balance, accurately weigh the calculated amount of oxalic acid dihydrate in a weighing bottle. Record the exact mass.",
+        "duration": "8 minutes",
+        "safety": "Handle with care, avoid skin contact",
+        "completed": false
+      },
+      {
+        "id": 3,
+        "title": "Initial Dissolution",
+        "description": "Transfer the weighed oxalic acid to a 100 mL beaker. Add about 50 mL of distilled water and stir with a glass rod until completely dissolved.",
+        "duration": "5 minutes",
+        "completed": false
+      },
+      {
+        "id": 4,
+        "title": "Transfer to Volumetric Flask",
+        "description": "Using a funnel, carefully transfer the dissolved solution from the beaker to a 250 mL volumetric flask. Rinse the beaker and funnel with distilled water.",
+        "duration": "7 minutes",
+        "completed": false
+      },
+      {
+        "id": 5,
+        "title": "Add Water to Near Mark",
+        "description": "Add distilled water to the volumetric flask until the level is about 2-3 cm below the graduation mark. Swirl gently to mix.",
+        "duration": "3 minutes",
+        "completed": false
+      },
+      {
+        "id": 6,
+        "title": "Make to Mark",
+        "description": "Using a dropper, carefully add distilled water drop by drop until the bottom of the meniscus aligns with the 250 mL graduation mark.",
+        "duration": "5 minutes",
+        "completed": false
+      },
+      {
+        "id": 7,
+        "title": "Final Mixing and Calculation",
+        "description": "Cap the flask and invert it 20-25 times to ensure complete mixing. Calculate the exact molarity using the actual mass weighed.",
+        "duration": "5 minutes",
+        "completed": false
+      }
+    ],
+    "safetyInfo": "Oxalic acid is toxic and corrosive. Avoid skin contact and inhalation. Wear safety goggles and gloves. Work in a well-ventilated area. Wash hands thoroughly after handling."
+  },
+  {
+
+    "title": "Chemical Equilibrium",
+    "description": "Investigate Le Chatelier's principle by observing how changes in concentration, temperature, and pressure affect chemical equilibrium. Study the cobalt(II) chloride equilibrium system.",
+    "category": "Equilibrium",
+    "difficulty": "Intermediate",
+    "duration": 40,
+    "steps": 6,
+    "rating": 4.7,
+    "imageUrl": "https://images.unsplash.com/photo-1576086213369-97a306d36557?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+    "equipment": [
+      "Test Tubes",
+      "Test Tube Rack",
+      "Dropper Pipettes",
+      "Hot Water Bath",
+      "Ice Bath",
+      "Graduated Cylinders",
+      "Stirring Rods",
+      "Thermometer"
+    ],
+    "stepDetails": [
+      {
+        "id": 1,
+        "title": "Prepare Solutions",
+        "description": "1. Take a test tube and add a small amount of cobalt chloride crystals. 2. Add distilled water slowly and stir until it dissolves. 3. You will see a pink solution because of the hydrated [Co(H₂O)₆]²⁺ complex.",
+        "duration": "5 minutes",
+        "temperature": "Room temperature",
+        "completed": false
+      },
+      {
+        "id": 2,
+        "title": "Add Concentrated HCl",
+        "description": "Slowly add drops of concentrated HCl to the cobalt solution. Observe the color change from pink to blue as the equilibrium shifts.",
+        "duration": "8 minutes",
+        "safety": "Caution: Concentrated HCl is corrosive",
+        "completed": false
+      },
+      {
+        "id": 3,
+        "title": "Dilute with Water",
+        "description": "Add distilled water to the blue solution. Observe the color change back to pink as the equilibrium shifts in the reverse direction.",
+        "duration": "5 minutes",
+        "completed": false
+      },
+      {
+        "id": 4,
+        "title": "Temperature Effect - Heating",
+        "description": "Heat the pink solution in a water bath. Observe how increased temperature affects the equilibrium position and color.",
+        "duration": "10 minutes",
+        "temperature": "60°C",
+        "completed": false
+      },
+      {
+        "id": 5,
+        "title": "Temperature Effect - Cooling",
+        "description": "Cool the heated solution in an ice bath. Observe how decreased temperature shifts the equilibrium back.",
+        "duration": "8 minutes",
+        "temperature": "0°C",
+        "completed": false
+      },
+      {
+        "id": 6,
+        "title": "Record Observations",
+        "description": "Document all color changes and relate them to Le Chatelier's principle. Calculate equilibrium constants where applicable.",
+        "duration": "7 minutes",
+        "completed": false
+      }
+    ],
+    "safetyInfo": "Concentrated HCl is highly corrosive. Cobalt compounds are toxic if ingested. Always wear safety goggles, gloves, and work in a well-ventilated area. Handle hot and cold solutions with appropriate equipment."
+  },
+  {
+    "title": "Study of Equilibrium Shift between Ferric Ions and Thiocyanate Ions",
+    "description": "Comprehensive virtual lab to study the shift of chemical equilibrium in the Fe³⁺ + SCN⁻ ⇌ [FeSCN]²⁺ reaction. Observe formation of blood-red complex and measure color intensity changes using Le Chatelier's principle.",
+    "category": "Chemical Equilibrium",
+    "difficulty": "Intermediate",
+    "duration": 65,
+    "steps": 8,
+    "rating": 4.8,
+    "imageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+    "equipment": [
+      "Test Tubes (12 pieces)",
+      "Test Tube Racks (2 pieces)",
+      "Graduated Pipettes",
+      "Burettes",
+      "Volumetric Flasks",
+      "Beakers",
+      "Colorimeter (optional)",
+      "White Background"
+    ],
+    "stepDetails": [
+      {
+        "id": 1,
+        "title": "Setup Solutions",
+        "description": "Prepare 0.002 M Fe³⁺ solution in 0.1 M HNO₃, 0.002 M KSCN solution, and 0.1 M HNO₃ filler. The HNO₃ prevents Fe³⁺ hydrolysis.",
+        "duration": "5 minutes",
+        "completed": false
+      },
+      {
+        "id": 2,
+        "title": "Part A - Setup Test Tubes T1-T6",
+        "description": "Add exactly 5.00 mL of 0.002 M Fe³⁺ solution to each of the six test tubes labeled T1-T6.",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 3,
+        "title": "Part A - Add Variable SCN⁻ Volumes",
+        "description": "Add varying volumes of SCN⁻ solution: T1(0mL), T2(0.5mL), T3(1mL), T4(2mL), T5(3mL), T6(4mL). Observe blood-red color formation.",
+        "duration": "10 minutes",
+        "completed": false
+      },
+      {
+        "id": 4,
+        "title": "Part A - Fill with HNO₃",
+        "description": "Fill each tube to exactly 10.00 mL total volume using 0.1 M HNO₃. Mix well and observe color intensity differences.",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 5,
+        "title": "Part B - Setup Test Tubes T7-T12",
+        "description": "Add exactly 1.00 mL of 0.002 M SCN⁻ solution to each of the six test tubes labeled T7-T12.",
+        "duration": "6 minutes",
+        "completed": false
+      },
+      {
+        "id": 6,
+        "title": "Part B - Add Variable Fe³⁺ Volumes",
+        "description": "Add varying volumes of Fe³⁺ solution: T7(0.5mL), T8(1mL), T9(2mL), T10(3mL), T11(4mL), T12(5mL). Notice increasing red intensity.",
+        "duration": "10 minutes",
+        "completed": false
+      },
+      {
+        "id": 7,
+        "title": "Part B - Fill with HNO₃",
+        "description": "Fill each tube to exactly 10.00 mL total volume using 0.1 M HNO₃. Mix thoroughly and compare color intensities.",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 8,
+        "title": "Analysis & Observations",
+        "description": "Document color intensity patterns, relate to Le Chatelier's principle, and optionally measure absorbance using colorimeter.",
+        "duration": "10 minutes",
+        "completed": false
+      }
+    ],
+    "safetyInfo": "Virtual simulation - safe for all users. In real laboratory: Iron(III) compounds are corrosive and can stain. Potassium thiocyanate is toxic if ingested. Nitric acid is corrosive. Always wear safety goggles, gloves, and work in well-ventilated area. Handle all chemicals with appropriate care."
+  },
+  {
+    "title": "Chemical Equilibrium 2",
+    "description": "To study the shift in equilibrium between [Co(H₂O)₆]²⁺ and Cl⁻ by changing the concentration of either ions. Observe dramatic color changes between pink hydrated and blue chloride complexes.",
+    "category": "Equilibrium",
+    "difficulty": "Intermediate",
+    "duration": 40,
+    "steps": 7,
+    "rating": 4.6,
+    "imageUrl": "https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=800&h=400",
+    "equipment": [
+      "Test Tubes",
+      "Test Tube Rack",
+      "Dropper Pipettes",
+      "Hot Water Bath",
+      "Ice Bath",
+      "Graduated Cylinders",
+      "Stirring Rods",
+      "Thermometer",
+      "Beakers"
+    ],
+    "stepDetails": [
+      {
+        "id": 1,
+        "title": "Prepare Cobalt Solution",
+        "description": "Dissolve a small amount of cobalt(II) chloride hexahydrate (CoCl₂·6H₂O) in distilled water. Observe the pink color of the hydrated [Co(H₂O)₆]²⁺ complex.",
+        "duration": "5 minutes",
+        "completed": false
+      },
+      {
+        "id": 2,
+        "title": "Establish Equilibrium System",
+        "description": "The equilibrium system is: [Co(H₂O)₆]²⁺ + 4Cl⁻ ⇌ [CoCl��]²⁻ + 6H₂O. The pink form represents the hydrated complex, while blue represents the chloride complex.",
+        "duration": "3 minutes",
+        "completed": false
+      },
+      {
+        "id": 3,
+        "title": "Add Concentrated HCl",
+        "description": "Slowly add concentrated HCl (source of Cl⁻ ions) to the pink solution. Observe the color change to blue as equilibrium shifts toward [CoCl₄]²⁻ formation.",
+        "duration": "6 minutes",
+        "completed": false
+      },
+      {
+        "id": 4,
+        "title": "Dilute with Water",
+        "description": "Add distilled water to the blue solution to increase H₂O concentration. Observe the shift back to pink as equilibrium favors [Co(H₂O)₆]²⁺ formation.",
+        "duration": "5 minutes",
+        "completed": false
+      },
+      {
+        "id": 5,
+        "title": "Temperature Effect - Heating",
+        "description": "Heat the equilibrium mixture in a water bath to 60°C. The forward reaction is endothermic, so heating favors blue [CoCl���]²⁻ formation.",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 6,
+        "title": "Temperature Effect - Cooling",
+        "description": "Cool the heated solution in an ice bath to 0°C. Cooling favors the exothermic reverse reaction, shifting equilibrium toward pink [Co(H₂O)₆]²⁺.",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 7,
+        "title": "Analyze and Document",
+        "description": "Record all observations and color changes. Explain each shift using Le Chatelier's principle. Relate concentration and temperature effects to equilibrium position.",
+        "duration": "5 minutes",
+        "completed": false
+      }
+    ],
+    "safetyInfo": "Concentrated HCl is highly corrosive and produces toxic vapors. Cobalt compounds are suspected carcinogens and toxic if ingested. Always use in a fume hood or well-ventilated area. Wear safety goggles, gloves, and appropriate protective clothing."
+  },
+  {
+    "title": "Titration 1",
+    "description": "Determine the strength of a given solution of sodium hydroxide by titrating it against a standard solution of oxalic acid, having the strength 0.1N. Learn precise volumetric analysis techniques and endpoint detection.",
+    "category": "Quantitative Analysis",
+    "difficulty": "Beginner",
+    "duration": 45,
+    "steps": 8,
+    "rating": 4.5,
+    "imageUrl": "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+    "equipment": [
+      "Burette (50 mL)",
+      "Pipette (25 mL)",
+      "Conical Flask (250 mL)",
+      "Burette Stand",
+      "White Tile",
+      "Funnel",
+      "Wash Bottle",
+      "Phenolphthalein Indicator"
+    ],
+    "stepDetails": [
+      {
+        "id": 1,
+        "title": "Prepare the Setup",
+        "description": "Set up the burette in the stand and rinse it with distilled water, then with the NaOH solution. Fill the burette with NaOH solution and adjust to zero mark.",
+        "duration": "8 minutes",
+        "temperature": "Room temperature",
+        "completed": false
+      },
+      {
+        "id": 2,
+        "title": "Prepare Oxalic Acid Solution",
+        "description": "Using a pipette, transfer exactly 25.0 mL of 0.1N oxalic acid solution into a clean conical flask. Place the flask on a white tile for better endpoint visibility.",
+        "duration": "5 minutes",
+        "completed": false
+      },
+      {
+        "id": 3,
+        "title": "Add Indicator",
+        "description": "Add 2-3 drops of phenolphthalein indicator to the oxalic acid solution in the conical flask. The solution should remain colorless initially.",
+        "duration": "2 minutes",
+        "completed": false
+      },
+      {
+        "id": 4,
+        "title": "Initial Titration",
+        "description": "Begin titrating by adding NaOH solution dropwise while swirling the flask continuously. The reaction is: H₂C₂O₄ + 2NaOH → Na₂C₂O₄ + 2H₂O",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 5,
+        "title": "Observe Color Change",
+        "description": "Continue adding NaOH until a permanent light pink color appears that persists for 30 seconds. This indicates the endpoint. Record the burette reading.",
+        "duration": "6 minutes",
+        "completed": false
+      },
+      {
+        "id": 6,
+        "title": "Repeat Titrations",
+        "description": "Perform at least 2 more concordant titrations to ensure accuracy. The volumes should agree within 0.1 mL for precise results.",
+        "duration": "12 minutes",
+        "completed": false
+      },
+      {
+        "id": 7,
+        "title": "Calculate Results",
+        "description": "Calculate the average titre volume and determine the normality of NaOH solution using the formula: N₁V₁ = N₂V₂, where N₁V₁ (oxalic acid) = N₂V₂ (NaOH).",
+        "duration": "8 minutes",
+        "completed": false
+      },
+      {
+        "id": 8,
+        "title": "Record and Analyze",
+        "description": "Record all observations, calculate the strength of NaOH solution in g/L, and analyze the accuracy of your results. Discuss sources of error.",
+        "duration": "6 minutes",
+        "completed": false
+      }
+    ],
+    "safetyInfo": "Sodium hydroxide is highly corrosive and can cause severe burns. Oxalic acid is toxic if ingested and can cause irritation. Always wear safety goggles and gloves. Handle all chemicals with care and wash hands thoroughly after the experiment. Work in a well-ventilated area."
+  },
+  {
+    "title": "Detection of Nitrogen, Sulphur, Chlorine, Bromine, and Iodine (Lassaigne's Test)",
+    "description": "Perform Lassaigne's test to detect heteroatoms in organic compounds by preparing sodium fusion extract and carrying out confirmatory tests for nitrogen, sulphur, and halogens.",
+    "category": "Qualitative Analysis",
+    "difficulty": "Intermediate",
+    "duration": 50,
+    "steps": 9,
+    "rating": 4.7,
+    "imageUrl": "https://cdn.builder.io/api/v1/image/assets%2Fc52292a04d4c4255a87bdaa80a28beb9%2F1121feb13d994effb4bba6d984630d3e?format=webp&width=800",
+    "equipment": [
+      "Sodium Metal",
+      "Ignition Tube",
+      "Tongs",
+      "Beaker",
+      "Filter Paper",
+      "Test Tubes",
+      "Dropper Pipettes",
+      "Water Bath",
+      "FeSO₄ Solution",
+      "FeCl₃ Solution",
+      "Dilute HCl",
+      "Lead Acetate Solution",
+      "Sodium Nitroprusside",
+      "Dilute Acetic Acid",
+      "Dilute HNO₃",
+      "AgNO₃ Solution",
+      "Ammonia Solution"
+    ],
+    "stepDetails": [
+      { "id": 1, "title": "Safety and Setup", "description": "Wear goggles and gloves. Cut a small piece of dry sodium under kerosene. Set up ignition tube, tongs, and water beaker for quenching.", "duration": "4 minutes", "safety": "Sodium reacts violently with water; handle under kerosene and use tongs.", "completed": false },
+      { "id": 2, "title": "Heat Organic Compound with Sodium", "description": "Add a small piece of sodium to the ignition tube. Add the organic compound. Heat strongly until the tube becomes red hot.", "duration": "6 minutes", "completed": false },
+      { "id": 3, "title": "Quench and Prepare Extract", "description": "Plunge the hot tube into a beaker of distilled water wrapped in cloth. Boil and crush, then filter to obtain clear sodium fusion extract (Lassaigne's extract).", "duration": "6 minutes", "completed": false },
+      { "id": 4, "title": "Test for Nitrogen (Prussian Blue)", "description": "To 2 mL extract add freshly prepared FeSO₄, boil, cool, acidify with dilute HCl, then add a few drops of FeCl₃. Formation of Prussian blue confirms nitrogen.", "duration": "8 minutes", "completed": false },
+      { "id": 5, "title": "Alternate Nitrogen Confirmation", "description": "Cyanide test: To the extract add FeSO₄ and FeCl₃, then acidify with H₂SO₄/HCl; deep blue color indicates [Fe₄[Fe(CN)₆]₃] formation.", "duration": "4 minutes", "completed": false },
+      { "id": 6, "title": "Test for Sulphur (Lead Acetate)", "description": "Acidify a portion of extract with acetic acid and add lead acetate solution. Black precipitate of PbS confirms sulphur.", "duration": "6 minutes", "completed": false },
+      { "id": 7, "title": "Alternate Sulphur Test (Nitroprusside)", "description": "Add sodium nitroprusside to alkaline extract; purple/violet color indicates sulphide ions.", "duration": "4 minutes", "completed": false },
+      { "id": 8, "title": "Remove Interference and Test for Halogens", "description": "Boil a fresh portion of extract with dilute HNO₃ to decompose CN⁻/S²⁻. Cool and add AgNO₃: white (Cl⁻), cream (Br⁻), or yellow (I⁻) precipitate.", "duration": "6 minutes", "completed": false },
+      { "id": 9, "title": "Confirm Halogen by Ammonia Solubility", "description": "Treat the silver halide precipitate with NH₃: AgCl dissolves in dilute NH₃; AgBr dissolves in concentrated NH₃; AgI is insoluble.", "duration": "6 minutes", "completed": false }
+    ],
+    "safetyInfo": "Perform sodium fusion with great care. Dry sodium under kerosene; never touch with wet hands. Use safety shield when heating. Handle acids, AgNO3, and ammonia with gloves and goggles. Dispose of silver waste properly."
+  },
+  {
+    "title": "To determine and compare pH of 0.01 M HCl and 0.01 M CH3COOH solution using universal indicator",
+    "description": "Determine and compare the pH of 0.01 M HCl (strong acid) and 0.01 M CH3COOH (weak acid) using a universal indicator and color chart. Understand differences in acid strength and degree of ionization.",
+    "category": "Acid-Base Chemistry",
+    "difficulty": "Beginner",
+    "duration": 20,
+    "steps": 6,
+    "rating": 4.6,
+    "imageUrl": "https://cdn.builder.io/api/v1/image/assets%2Fc52292a04d4c4255a87bdaa80a28beb9%2F2d06948c03f44ede9b0cf41469b55662?format=webp&width=800",
+    "equipment": [
+      "Test Tubes (2)",
+      "Beakers",
+      "Droppers/Pasteur Pipettes",
+      "Universal Indicator Solution",
+      "pH Color Chart",
+      "Distilled Water",
+      "0.01 M HCl",
+      "0.01 M CH3COOH"
+    ],
+    "stepDetails": [
+      { "id": 1, "title": "Label and Prepare Test Tubes", "description": "Label two clean test tubes as HCl and CH3COOH. Add about 5 mL of each 0.01 M solution to the respective tubes.", "duration": "3 minutes", "completed": false },
+      { "id": 2, "title": "Add Universal Indicator", "description": "Add 2–3 drops of universal indicator solution to each test tube. Swirl gently to mix.", "duration": "2 minutes", "safety": "Avoid contact with skin and eyes; indicator contains dyes/solvents.", "completed": false },
+      { "id": 3, "title": "Observe and Match Colors", "description": "Observe the color developed in each tube and compare with the standard pH color chart to estimate pH.", "duration": "5 minutes", "completed": false },
+      { "id": 4, "title": "Record Estimated pH", "description": "Record the approximate pH for 0.01 M HCl and 0.01 M CH3COOH. Note that strong acids give lower pH than weak acids at the same molarity.", "duration": "4 minutes", "completed": false },
+      { "id": 5, "title": "Compare with Expected Values", "description": "Compare observations with theoretical expectations: HCl (~pH 2) vs CH3COOH (typically higher pH, ~2.4–3.0 due to partial ionization).", "duration": "4 minutes", "completed": false },
+      { "id": 6, "title": "Cleanup", "description": "Dispose of solutions as per guidelines and rinse glassware with plenty of water.", "duration": "2 minutes", "completed": false }
+    ],
+    "safetyInfo": "Both acids are irritants; avoid contact with skin and eyes. Wear safety goggles and gloves. Do not ingest chemicals. Handle glassware carefully."
+  },
+  {
+    "title": "Preparation of Oxalic Acid",
+    "description": "To prepare a standard solution of oxalic acid (preparation of 250 mL 0.1N oxalic acid solution).",
+    "category": "Quantitative Analysis",
+    "difficulty": "Beginner",
+    "duration": 30,
+    "steps": 7,
+    "rating": 4.6,
+    "imageUrl": "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+    "equipment": [
+      "Analytical Balance",
+      "Volumetric Flask (250 mL)",
+      "Beaker (100 mL)",
+      "Glass Rod",
+      "Funnel",
+      "Wash Bottle",
+      "Weighing Bottle",
+      "Dropper"
+    ],
+    "stepDetails": [
+      { "id": 1, "title": "Calculate Required Mass", "description": "Calculate the mass of oxalic acid dihydrate (H₂C₂O₄·2H₂O) needed to prepare 250 mL of 0.1N solution. Use equivalent weight 63.03 g/eq.", "duration": "5 minutes", "temperature": "Room temperature", "completed": false },
+      { "id": 2, "title": "Weigh Oxalic Acid", "description": "Accurately weigh the calculated amount of oxalic acid dihydrate in a weighing bottle using an analytical balance.", "duration": "8 minutes", "safety": "Handle with care, avoid skin contact", "completed": false },
+      { "id": 3, "title": "Initial Dissolution", "description": "Transfer the weighed oxalic acid to a 100 mL beaker. Add ~50 mL distilled water and stir with a glass rod until fully dissolved.", "duration": "5 minutes", "completed": false },
+      { "id": 4, "title": "Transfer to Volumetric Flask", "description": "Using a funnel, transfer the solution to a 250 mL volumetric flask. Rinse the beaker and funnel into the flask.", "duration": "7 minutes", "completed": false },
+      { "id": 5, "title": "Add Water to Near Mark", "description": "Add distilled water until the meniscus is 2–3 cm below the mark. Swirl to mix.", "duration": "3 minutes", "completed": false },
+      { "id": 6, "title": "Make to Mark", "description": "Use a dropper to bring the bottom of the meniscus exactly to the 250 mL mark.", "duration": "5 minutes", "completed": false },
+      { "id": 7, "title": "Final Mixing and Labeling", "description": "Cap and invert 20–25 times for complete mixing. Label as 0.1N oxalic acid with date.", "duration": "5 minutes", "completed": false }
+    ],
+    "safetyInfo": "Oxalic acid is toxic and corrosive. Avoid skin contact and inhalation. Wear safety goggles and gloves. Work in a well-ventilated area. Wash hands thoroughly after handling."
+  }
+]
