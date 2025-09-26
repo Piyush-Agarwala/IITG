@@ -400,7 +400,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           {/* Workbench Surface (styled like Titration1) */}
           <div
             data-workbench="true"
-            className={`relative w-full min-h-[500px] rounded-lg overflow-hidden transition-all duration-300 border-2 border-dashed ${
+            className={`flex-1 relative w-full min-h-[500px] rounded-lg overflow-hidden transition-all duration-300 border-2 border-dashed ${
               isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
             } transform -translate-y-8`}
             style={{
