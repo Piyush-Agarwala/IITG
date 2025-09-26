@@ -58,12 +58,12 @@ export class MemStorage implements IStorage {
           "https://cdn.builder.io/api/v1/image/assets%2Fc52292a04d4c4255a87bdaa80a28beb9%2Fd9024b9081e64d6c94e0588d642ffd0d?format=webp&width=800",
         equipment: [
           "Test Tubes (2–3)",
+          "0.1 M Ethanoic (Acetic) Acid",
+          "0.1 M Sodium Ethanoate (Sodium Acetate)",
           "pH Meter or pH Paper",
           "Measuring Cylinder",
           "Glass Stirring Rod",
           "Distilled Water",
-          "0.1 M Ethanoic (Acetic) Acid",
-          "0.1 M Sodium Ethanoate (Sodium Acetate)",
         ],
         stepDetails: [
           {
