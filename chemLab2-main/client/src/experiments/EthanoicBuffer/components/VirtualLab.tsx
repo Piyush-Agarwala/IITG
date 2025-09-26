@@ -46,6 +46,9 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     const idx = items.findIndex(i => i.id === id);
     const baseX = 220; // center column
     const baseY = 160;
+    if (id === 'test-tube') {
+      return { x: baseX, y: baseY + 140 };
+    }
     return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
   };
 
