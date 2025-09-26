@@ -53,8 +53,18 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       const clientY = e.clientY;
 
       // Use the drop point as the center coordinates for placement to match the component's centering transform
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
+      let x = clientX - rect.left;
+      let y = clientY - rect.top;
+
+      // Anchor specific reagents to the right side of the bench regardless of drop point
+      const idLower = (parsed.id || '').toLowerCase();
+      if (idLower.includes('ethanoic') || idLower.includes('acetic')) {
+        x = rect.width - 120; // right column
+        y = 80; // top slot
+      } else if ((idLower.includes('sodium') && idLower.includes('ethanoate')) || idLower.includes('sodium-acetate')) {
+        x = rect.width - 120; // right column
+        y = 220; // below the acid
+      }
 
       const action = parsed.type === 'move' ? 'move' : 'new';
       onDrop(parsed.id, x, y, action);
