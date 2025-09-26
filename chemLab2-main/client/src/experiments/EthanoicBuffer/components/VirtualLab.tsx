@@ -52,11 +52,21 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
   };
 
-  const handleDrop = (id: string, _x: number, _y: number) => {
+  const handleDrop = (id: string, x: number, y: number, action: 'new' | 'move' = 'new') => {
     const item = items.find(i => i.id === id);
     if (!item) return;
+
+    if (action === 'move') {
+      // update existing equipment position
+      setEquipmentOnBench(prev => prev.map(e => e.id === id ? { ...e, position: { x, y } } : e));
+      return;
+    }
+
+    // add new equipment at the exact drop coordinates
     if (!equipmentOnBench.find(e => e.id === id)) {
-      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: getPosition(id) }]);
+      const isFixed = /ethanoic|acetic|sodium-ethanoate|sodium_ethanoate|sodium ethanoate|sodium acetate/i.test(item.name);
+      const positionObj = isFixed ? { x, y, fixed: true } : { x, y };
+      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: positionObj }]);
       if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
   };

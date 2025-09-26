@@ -8,7 +8,7 @@ interface EquipmentProps {
   name: string;
   icon: React.ReactNode;
   onDrag?: (id: string, x: number, y: number) => void;
-  position?: { x: number; y: number } | null;
+  position?: { x: number; y: number; fixed?: boolean } | null;
   onRemove?: (id: string) => void;
   disabled?: boolean;
   color?: string;
@@ -32,9 +32,34 @@ export const Equipment: React.FC<EquipmentProps> = ({
   onInteract,
   isActive = false,
 }) => {
+  const isFixed = Boolean(position && (position as any).fixed);
+
   const handleDragStart = (e: React.DragEvent) => {
-    if (disabled || position) return;
-    e.dataTransfer.setData("equipment", id);
+    if (disabled || isFixed) return;
+
+    // compute offset between mouse and element top-left to preserve cursor position on drop
+    const el = e.currentTarget as HTMLElement;
+    const rect = el.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+    const type = position ? 'move' : 'new';
+
+    const payload = { id, type, offsetX, offsetY };
+    try {
+      e.dataTransfer.setData('application/json', JSON.stringify(payload));
+    } catch (err) {
+      e.dataTransfer.setData('equipment', id);
+    }
+
+    // set a custom drag image (use a small transparent canvas to avoid default ghosting)
+    try {
+      const crt = document.createElement('canvas');
+      crt.width = 1;
+      crt.height = 1;
+      e.dataTransfer.setDragImage(crt, 0, 0);
+    } catch (err) {
+      // ignore
+    }
   };
 
   const handleClick = () => {
@@ -65,8 +90,25 @@ export const Equipment: React.FC<EquipmentProps> = ({
   }
 
   // Placed item
+  const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') || name.toLowerCase().includes('sodium ethanoate') || name.toLowerCase().includes('sodium acetate');
+  const bottleBgColor = name.toLowerCase().includes('sodium') ? '#e6f0ff' : '#fffacc';
+  const dropletColorClass = name.toLowerCase().includes('sodium') ? 'text-blue-600' : 'text-yellow-700';
+
+  const renderNameParts = (n: string) => {
+    const m = /^(.*?)\s*\((.*)\)\s*$/.exec(n);
+    if (m) {
+      return (
+        <>
+          <span className="text-sm font-medium block text-center">{m[1].trim()}</span>
+          <span className="text-xs text-gray-600 block text-center">({m[2].trim()})</span>
+        </>
+      );
+    }
+    return <span className="text-xs font-medium text-center">{n}</span>;
+  };
+
   return (
-    <div style={{ position: 'absolute', left: position.x, top: position.y, transform: 'translate(-50%, -50%)' }} className="relative group">
+    <div style={{ position: 'absolute', left: position.x, top: position.y, transform: 'translate(-50%, -50%)' }} className="relative group" draggable={!disabled && !isFixed} onDragStart={handleDragStart}>
       <div className={`relative ${id === 'test-tube' ? 'min-w-[240px] min-h-[360px]' : 'bg-white rounded-xl shadow-lg border-2 p-4 min-w-[90px] min-h-[120px]'} ${isActive && id !== 'test-tube' ? 'border-blue-400 shadow-xl' : 'border-gray-200'}`} onClick={handleClick}>
         {onRemove && (
           <Button onClick={(e) => { e.stopPropagation(); onRemove(id); }} size="sm" variant="outline" className={`absolute w-6 h-6 p-0 bg-red-500 text-white border-red-500 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity ${id === 'test-tube' ? 'top-0 right-0' : '-top-2 -right-2'}`}>
@@ -105,12 +147,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
               </div>
               <span className="text-xs font-medium text-center">0.01 M HCl</span>
             </div>
-          ) : id === 'acetic-0-01m' ? (
+          ) : isAceticOrSodium ? (
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacc' }}>
-                <Droplets className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-yellow-700 opacity-70" />
+              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: bottleBgColor }}>
+                <Droplets className={`w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 ${dropletColorClass} opacity-70`} />
               </div>
-              <span className="text-xs font-medium text-center">0.1 M Ethanoic (Acetic) Acid</span>
+              {renderNameParts(name)}
             </div>
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">
@@ -122,7 +164,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
           ) : (
             <div className="flex flex-col items-center">
               <div className="text-2xl mb-2 text-blue-600">{icon}</div>
-              <span className="text-xs font-medium text-center">{name}</span>
+              {renderNameParts(name)}
             </div>
           )}
         </div>
