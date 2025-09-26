@@ -127,7 +127,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: bottleBgColor }}>
                 <Droplets className={`w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 ${dropletColorClass} opacity-70`} />
               </div>
-              <span className="text-xs font-medium text-center">{name}</span>
+              {renderNameParts(name)}
             </div>
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">
@@ -139,7 +139,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
           ) : (
             <div className="flex flex-col items-center">
               <div className="text-2xl mb-2 text-blue-600">{icon}</div>
-              <span className="text-xs font-medium text-center">{name}</span>
+              {renderNameParts(name)}
             </div>
           )}
         </div>
