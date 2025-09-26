@@ -1,4 +1,3 @@
-import React from "react";
 import { Scale, FlaskConical, Beaker, Pipette } from "lucide-react";
 import type { Chemical, Equipment } from "./types";
 
@@ -20,6 +19,16 @@ export const OXALIC_ACID_CHEMICALS: Chemical[] = [
     color: "#87CEEB",
     concentration: "Pure",
     volume: 300,
+  },
+  // Added: 0.1 M Ethanoic (Acetic) Acid bottle for drag-and-drop
+  {
+    id: "ethanoic_acid_0_1m",
+    name: "0.1 M Ethanoic (Acetic) Acid",
+    formula: "CH₃COOH",
+    color: "#FDE68A",
+    concentration: "0.1 M",
+    volume: 250,
+    molecularWeight: 60.05,
   },
 ];
 
