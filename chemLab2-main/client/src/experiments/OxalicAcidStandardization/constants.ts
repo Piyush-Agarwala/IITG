@@ -51,43 +51,6 @@ export const OXALIC_ACID_EQUIPMENT: Equipment[] = [
     icon: React.createElement(Beaker, { size: 36 }),
   },
   {
-    id: "glass_rod",
-    name: "Glass Stirring Rod",
-    icon: React.createElement(
-      "svg",
-      {
-        width: "36",
-        height: "36",
-        viewBox: "0 0 36 36",
-        fill: "none",
-        className: "text-gray-600",
-      },
-      [
-        React.createElement("path", {
-          key: "rod",
-          d: "M6 6l24 24",
-          stroke: "currentColor",
-          strokeWidth: "3",
-          strokeLinecap: "round",
-        }),
-        React.createElement("circle", {
-          key: "circle1",
-          cx: "8",
-          cy: "8",
-          r: "2",
-          fill: "currentColor",
-        }),
-        React.createElement("circle", {
-          key: "circle2",
-          cx: "28",
-          cy: "28",
-          r: "2",
-          fill: "currentColor",
-        }),
-      ],
-    ),
-  },
-  {
     id: "funnel",
     name: "Funnel",
     icon: React.createElement(
