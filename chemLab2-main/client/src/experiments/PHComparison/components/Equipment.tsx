@@ -33,8 +33,31 @@ export const Equipment: React.FC<EquipmentProps> = ({
   isActive = false,
 }) => {
   const handleDragStart = (e: React.DragEvent) => {
-    if (disabled || position) return;
-    e.dataTransfer.setData("equipment", id);
+    if (disabled) return;
+
+    // compute offset between mouse and element top-left to preserve cursor position on drop
+    const el = e.currentTarget as HTMLElement;
+    const rect = el.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+    const type = position ? 'move' : 'new';
+
+    const payload = { id, type, offsetX, offsetY };
+    try {
+      e.dataTransfer.setData('application/json', JSON.stringify(payload));
+    } catch (err) {
+      e.dataTransfer.setData('equipment', id);
+    }
+
+    // set a custom drag image (use a small transparent canvas to avoid default ghosting)
+    try {
+      const crt = document.createElement('canvas');
+      crt.width = 1;
+      crt.height = 1;
+      e.dataTransfer.setDragImage(crt, 0, 0);
+    } catch (err) {
+      // ignore
+    }
   };
 
   const handleClick = () => {
