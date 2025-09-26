@@ -159,45 +159,78 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
           </CardContent>
         </Card>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Steps Panel */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="text-lg">Experiment Steps</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {experiment.stepDetails.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                    index === currentStep
-                      ? "bg-blue-50 border-blue-200"
-                      : index < currentStep
-                      ? "bg-green-50 border-green-200"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                  onClick={() => handleStepChange(index)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        index < currentStep
-                          ? "bg-green-500 text-white"
-                          : index === currentStep
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-300 text-gray-600"
-                      }`}
-                    >
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{step.title}</p>
-                      <p className="text-xs text-gray-600">{step.duration}</p>
-                    </div>
+        {/* Experiment Steps - moved below heading */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Experiment Steps</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {experiment.stepDetails.map((step, index) => (
+              <div
+                key={step.id}
+                className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                  index === currentStep
+                    ? "bg-blue-50 border-blue-200"
+                    : index < currentStep
+                    ? "bg-green-50 border-green-200"
+                    : "bg-gray-50 border-gray-200"
+                }`}
+                onClick={() => handleStepChange(index)}
+              >
+                <div className="flex items-center space-x-2">
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                      index < currentStep
+                        ? "bg-green-500 text-white"
+                        : index === currentStep
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-300 text-gray-600"
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{step.title}</p>
+                    <p className="text-xs text-gray-600">{step.duration}</p>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Main Content - now left column shows Equipment & Chemicals */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <Card className="lg:col-span-1">
+            <CardHeader>
+              <CardTitle className="text-lg">Equipment & Chemicals</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Equipment</h3>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {OXALIC_ACID_EQUIPMENT.map((eq) => (
+                  <Equipment key={eq.id} id={eq.id} name={eq.name} icon={eq.icon} position={null} />
+                ))}
+              </div>
+
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Chemicals</h3>
+              <div className="space-y-3">
+                {OXALIC_ACID_CHEMICALS.map((chemical) => (
+                  <Chemical
+                    key={chemical.id}
+                    id={chemical.id}
+                    name={chemical.name}
+                    formula={chemical.formula}
+                    color={chemical.color}
+                    concentration={chemical.concentration}
+                    volume={chemical.volume}
+                    molecularWeight={chemical.molecularWeight}
+                    onSelect={() => {}}
+                    selected={false}
+                    disabled={false}
+                  />
+                ))}
+              </div>
             </CardContent>
           </Card>
 
