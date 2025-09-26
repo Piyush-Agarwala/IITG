@@ -192,7 +192,17 @@ const stepsProgress = (
           <div className="lg:col-span-6">
             <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} totalSteps={totalSteps}>
               {equipmentOnBench.map(e => (
-                <PHEquipment key={e.id} id={e.id} name={e.name} icon={items.find(i => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />} position={e.position} onRemove={handleRemove} onInteract={handleInteract} />
+                <PHEquipment
+                  key={e.id}
+                  id={e.id}
+                  name={e.name}
+                  icon={items.find(i => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />}
+                  position={e.position}
+                  onRemove={handleRemove}
+                  onInteract={handleInteract}
+                  // show test tube volume/color when available
+                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : {})}
+                />
               ))}
             </WorkBench>
           </div>
