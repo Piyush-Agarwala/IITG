@@ -409,21 +409,54 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             {/* Equipment on workbench */}
             {equipmentPositions.map((position) => {
               const equipmentData = equipment.find(eq => position.id.startsWith(eq.id));
-              return equipmentData ? (
-                <Equipment
-                  key={position.id}
-                  id={position.id}
-                  name={equipmentData.name}
-                  icon={equipmentData.icon}
-                  onDrag={handleEquipmentDrag}
-                  position={{ x: position.x, y: position.y }}
-                  chemicals={position.chemicals}
-                  onChemicalDrop={handleChemicalDrop}
-                  onRemove={handleEquipmentRemove}
-                  preparationState={preparationState}
-                  onAction={handleEquipmentAction}
-                />
-              ) : null;
+
+              // If this position corresponds to a known equipment, render normally
+              if (equipmentData) {
+                return (
+                  <Equipment
+                    key={position.id}
+                    id={position.id}
+                    name={equipmentData.name}
+                    icon={equipmentData.icon}
+                    onDrag={handleEquipmentDrag}
+                    position={{ x: position.x, y: position.y }}
+                    chemicals={position.chemicals}
+                    onChemicalDrop={handleChemicalDrop}
+                    onRemove={handleEquipmentRemove}
+                    preparationState={preparationState}
+                    onAction={handleEquipmentAction}
+                  />
+                );
+              }
+
+              // If no equipment data found but chemicals exist, render a bottle-like equipment
+              if (position.chemicals && position.chemicals.length > 0) {
+                const chem = position.chemicals[0];
+                const bottleIcon = (
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-600">
+                    <path d="M8 2h8v2h1v2l-1 2v6a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8L7 6V4h1V2z" stroke="currentColor" strokeWidth="1.2" fill="rgba(135,206,235,0.15)" />
+                    <path d="M9 4h6" stroke="currentColor" strokeWidth="1" />
+                  </svg>
+                );
+
+                return (
+                  <Equipment
+                    key={position.id}
+                    id={position.id}
+                    name={`${chem.name} Bottle`}
+                    icon={bottleIcon}
+                    onDrag={handleEquipmentDrag}
+                    position={{ x: position.x, y: position.y }}
+                    chemicals={position.chemicals}
+                    onChemicalDrop={handleChemicalDrop}
+                    onRemove={handleEquipmentRemove}
+                    preparationState={preparationState}
+                    onAction={handleEquipmentAction}
+                  />
+                );
+              }
+
+              return null;
             })}
 
             {/* Drop Zone Indicator */}
