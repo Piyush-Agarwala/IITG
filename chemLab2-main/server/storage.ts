@@ -52,22 +52,30 @@ export class MemStorage implements IStorage {
         category: "Acid-Base Chemistry",
         difficulty: "Beginner",
         duration: 30,
-        steps: 6,
+        steps: 7,
         rating: 4.6,
         imageUrl:
           "https://cdn.builder.io/api/v1/image/assets%2Fc52292a04d4c4255a87bdaa80a28beb9%2Fd9024b9081e64d6c94e0588d642ffd0d?format=webp&width=800",
         equipment: [
           "Test Tubes (2–3)",
+          "0.1 M Ethanoic (Acetic) Acid",
+          "0.1 M Sodium Ethanoate (Sodium Acetate)",
           "pH Meter or pH Paper",
           "Measuring Cylinder",
           "Glass Stirring Rod",
           "Distilled Water",
-          "0.1 M Ethanoic (Acetic) Acid",
-          "0.1 M Sodium Ethanoate (Sodium Acetate)",
         ],
         stepDetails: [
           {
             id: 1,
+            title: "Drag and drop the test tube in the workbench",
+            description:
+              "Drag and drop the test tube in the workbench.",
+            duration: "1 minute",
+            completed: false,
+          },
+          {
+            id: 2,
             title: "Prepare Acid Solution",
             description:
               "Add 10 mL of 0.1 M ethanoic acid to a clean beaker/test tube. This acts as the weak acid (HA).",
@@ -75,7 +83,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 2,
+            id: 3,
             title: "Measure Initial pH",
             description:
               "Measure and record the initial pH using a calibrated pH meter or pH paper.",
@@ -83,7 +91,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 3,
+            id: 4,
             title: "Add Sodium Ethanoate",
             description:
               "Add 5 mL of 0.1 M sodium ethanoate solution (the conjugate base A–). Mix gently and allow to equilibrate.",
@@ -91,7 +99,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 4,
+            id: 5,
             title: "Observe pH Change",
             description:
               "Measure the pH again. Note the increase in pH due to buffer formation (CH3COOH/CH3COO– pair).",
@@ -99,7 +107,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 5,
+            id: 6,
             title: "Explore Different Ratios",
             description:
               "Repeat by varying the volume of sodium ethanoate (e.g., 2 mL, 10 mL). Record pH for each ratio of A– to HA.",
@@ -107,7 +115,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 6,
+            id: 7,
             title: "Relate to Henderson–Hasselbalch",
             description:
               "Compare observations with pH = pKa + log([A–]/[HA]) for ethanoic acid (pKa ≈ 4.76). Discuss buffering and limitations.",

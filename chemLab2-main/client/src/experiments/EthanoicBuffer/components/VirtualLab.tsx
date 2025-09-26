@@ -23,6 +23,11 @@ interface VirtualLabProps {
 export default function VirtualLab({ experiment, experimentStarted, onStartExperiment, isRunning, setIsRunning, currentStep, onStepComplete, onStepUndo, onReset, completedSteps }: VirtualLabProps) {
   const totalSteps = experiment.stepDetails.length;
   const [equipmentOnBench, setEquipmentOnBench] = useState<Array<{ id: string; name: string; position: { x: number; y: number } }>>([]);
+
+  // Test tube visual state
+  const [testTubeVolume, setTestTubeVolume] = useState(0);
+  const [testTubeColor, setTestTubeColor] = useState<string | undefined>(undefined);
+
 const [showAceticDialog, setShowAceticDialog] = useState(false);
 const [aceticVolume, setAceticVolume] = useState("5.0");
 const [aceticError, setAceticError] = useState<string | null>(null);
@@ -41,12 +46,25 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
       return <Beaker className="w-8 h-8" />;
     };
     const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    return experiment.equipment.map((name) => {
+
+    // Build in server-provided order first
+    const raw = experiment.equipment.map((name) => {
       const key = name.toLowerCase();
       const baseId = slug(name);
       const id = key.includes('test tube') ? 'test-tube' : baseId;
       return { id, name, icon: iconFor(name) };
     });
+
+    // Reorder so that Test Tube is first, then Ethanoic Acid and Sodium Ethanoate
+    const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
+    const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+
+    const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
+    const ethanoic = raw.find(i => isEthanoic(i.name));
+    const sodium = raw.find(i => isSodiumEthanoate(i.name));
+    const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium);
+
+    return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
@@ -101,6 +119,11 @@ const confirmAddAcetic = () => {
     setAceticError('Please enter a value between 5.0 and 10.0 mL');
     return;
   }
+  // Update visual: transparent/clear liquid in the test tube
+  setTestTubeVolume(prev => Math.max(0, Math.min(20, prev + v)));
+  // semi-transparent clear color
+  setTestTubeColor('rgba(255,255,255,0.2)');
+
   setShowAceticDialog(false);
   setAceticError(null);
 };
@@ -169,7 +192,17 @@ const stepsProgress = (
           <div className="lg:col-span-6">
             <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} totalSteps={totalSteps}>
               {equipmentOnBench.map(e => (
-                <PHEquipment key={e.id} id={e.id} name={e.name} icon={items.find(i => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />} position={e.position} onRemove={handleRemove} onInteract={handleInteract} />
+                <PHEquipment
+                  key={e.id}
+                  id={e.id}
+                  name={e.name}
+                  icon={items.find(i => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />}
+                  position={e.position}
+                  onRemove={handleRemove}
+                  onInteract={handleInteract}
+                  // show test tube volume/color when available
+                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : {})}
+                />
               ))}
             </WorkBench>
           </div>
