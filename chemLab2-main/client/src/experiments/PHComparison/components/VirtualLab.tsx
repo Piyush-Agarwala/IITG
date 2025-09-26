@@ -615,7 +615,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <div className="rounded-lg border border-amber-200 p-4 bg-amber-50/40">
                   <div className="flex items-center mb-3">
                     <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.ACETIC_PH3 }} />
-                    <h4 className="font-semibold text-gray-800">0.01 M CH3COOH + Indicator (≈ pH 3–4)</h4>
+                    <h4 className="font-semibold text-gray-800">0.1 M CH3COOH + Indicator (≈ pH 3–4)</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -693,7 +693,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           <DialogHeader>
             <DialogTitle>Enter Volume</DialogTitle>
             <DialogDescription>
-              Enter the volume of 0.01 M CH3COOH to add to the test tube.
+              Enter the volume of 0.1 M CH3COOH to add to the test tube.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
