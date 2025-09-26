@@ -157,6 +157,9 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
           </CardContent>
         </Card>
 
+        {/* Workspace Setup (like Titration1) */}
+        <WorkspaceEquipment />
+
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Steps Panel */}
