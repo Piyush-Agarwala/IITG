@@ -23,6 +23,11 @@ interface VirtualLabProps {
 export default function VirtualLab({ experiment, experimentStarted, onStartExperiment, isRunning, setIsRunning, currentStep, onStepComplete, onStepUndo, onReset, completedSteps }: VirtualLabProps) {
   const totalSteps = experiment.stepDetails.length;
   const [equipmentOnBench, setEquipmentOnBench] = useState<Array<{ id: string; name: string; position: { x: number; y: number } }>>([]);
+
+  // Test tube visual state
+  const [testTubeVolume, setTestTubeVolume] = useState(0);
+  const [testTubeColor, setTestTubeColor] = useState<string | undefined>(undefined);
+
 const [showAceticDialog, setShowAceticDialog] = useState(false);
 const [aceticVolume, setAceticVolume] = useState("5.0");
 const [aceticError, setAceticError] = useState<string | null>(null);
