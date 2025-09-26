@@ -64,7 +64,9 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
     // add new equipment at the exact drop coordinates
     if (!equipmentOnBench.find(e => e.id === id)) {
-      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: { x, y } }]);
+      const isFixed = /ethanoic|acetic|sodium-ethanoate|sodium_ethanoate|sodium ethanoate|sodium acetate/i.test(item.name);
+      const positionObj = isFixed ? { x, y, fixed: true } : { x, y };
+      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: positionObj }]);
       if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
   };
