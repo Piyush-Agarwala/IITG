@@ -360,6 +360,44 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             )}
           </div>
 
+          {/* Measurements & Actions (moved from left panel) */}
+          <div className="bg-white border-t border-gray-200 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">Measurements</h4>
+                <div className="text-xs space-y-1">
+                  <div className="flex justify-between"><span>Target Mass:</span><span className="font-mono">{measurements.targetMass.toFixed(4)} g</span></div>
+                  <div className="flex justify-between"><span>Weighed Mass:</span><span className="font-mono">{measurements.massWeighed.toFixed(4)} g</span></div>
+                  <div className="flex justify-between"><span>Target Molarity:</span><span className="font-mono">{measurements.targetMolarity.toFixed(3)} M</span></div>
+                  <div className="flex justify-between"><span>Actual Molarity:</span><span className="font-mono">{measurements.actualMolarity.toFixed(6)} M</span></div>
+                  <div className="flex justify-between"><span>Temperature:</span><span className="font-mono">{temperature}°C</span></div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">Chemical Equation</h4>
+                <div className="text-xs font-mono bg-gray-50 rounded-lg p-3 border text-center leading-relaxed">
+                  <div>H₂C₂O₄·2H₂O (s) → H₂C₂O₄ (aq) + 2H₂O</div>
+                  <div className="mt-1">H₂C₂O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between">
+                {canProceed && (
+                  <Button onClick={onStepAction} className="w-full mb-2" variant="default">
+                    <FlaskConical className="w-4 h-4 mr-2" /> Complete Step {stepNumber}
+                  </Button>
+                )}
+                <div className="space-y-2">
+                  <Button onClick={onUndoStep} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100" disabled={stepNumber <= 1}>
+                    Undo Step {currentStepIndex}
+                  </Button>
+                  <Button onClick={onResetExperiment} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Results Panel */}
           <div className="h-32 bg-white border-t border-gray-200 p-4 overflow-y-auto">
             <h3 className="text-sm font-semibold text-gray-900 mb-2">
