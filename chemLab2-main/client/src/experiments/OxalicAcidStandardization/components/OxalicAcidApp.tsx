@@ -8,7 +8,6 @@ import OxalicAcidVirtualLab from "./VirtualLab";
 import OxalicAcidData from "../data";
 import type { ExperimentStep } from "../types";
 import { useUpdateProgress } from "@/hooks/use-experiments";
-import WorkspaceEquipment from "./WorkspaceEquipment";
 
 interface OxalicAcidAppProps {
   onBack?: () => void;
@@ -156,9 +155,6 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
             </div>
           </CardContent>
         </Card>
-
-        {/* Workspace Setup (like Titration1) */}
-        <WorkspaceEquipment />
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
