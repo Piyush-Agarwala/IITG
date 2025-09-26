@@ -60,10 +60,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       const idLower = (parsed.id || '').toLowerCase();
       if (idLower.includes('ethanoic') || idLower.includes('acetic')) {
         x = rect.width - 120; // right column
-        y = 160; // lowered top slot
+        y = 260; // lowered further down
       } else if ((idLower.includes('sodium') && idLower.includes('ethanoate')) || idLower.includes('sodium-acetate')) {
         x = rect.width - 120; // right column
-        y = 320; // lowered below the acid
+        y = 420; // lowered further below the acid
       }
 
       const action = parsed.type === 'move' ? 'move' : 'new';
