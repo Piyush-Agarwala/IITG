@@ -107,7 +107,21 @@ export const Equipment: React.FC<EquipmentProps> = ({
       e.preventDefault();
       return;
     }
-    e.dataTransfer.setData("equipment", id);
+    // Provide both a custom type and a text/plain fallback so drops work across browsers
+    try {
+      e.dataTransfer.setData("equipment", id);
+      e.dataTransfer.setData("text/plain", id);
+      // Also include a small JSON payload for richer consumers
+      e.dataTransfer.setData("application/json", JSON.stringify({ id, name }));
+    } catch (err) {
+      // Some environments may throw when setting multiple types; ignore silently
+      try {
+        e.dataTransfer.setData("text/plain", id);
+      } catch (e) {
+        // ignore
+      }
+    }
+
     e.dataTransfer.effectAllowed = "move";
     setIsDragging(true);
     setDragStartTime(Date.now());

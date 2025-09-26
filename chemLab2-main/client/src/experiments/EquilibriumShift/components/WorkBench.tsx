@@ -36,7 +36,22 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     e.stopPropagation();
     setIsDragOver(false);
 
-    const equipmentData = e.dataTransfer.getData("equipment");
+    // Support multiple drag data types for robustness across browsers and components
+    let equipmentData = e.dataTransfer.getData("equipment");
+    if (!equipmentData) equipmentData = e.dataTransfer.getData("text/plain");
+    if (!equipmentData) {
+      const json = e.dataTransfer.getData("application/json");
+      if (json) {
+        try {
+          const parsed = JSON.parse(json);
+          equipmentData = parsed?.id || (typeof parsed === 'string' ? parsed : '');
+        } catch (err) {
+          // fallback to raw json string
+          equipmentData = json;
+        }
+      }
+    }
+
     if (equipmentData) {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
