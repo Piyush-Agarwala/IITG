@@ -16,6 +16,8 @@ interface EquipmentProps {
   displayVolume?: number; // explicit volume to show in badge
   onInteract?: (id: string) => void;
   isActive?: boolean;
+  // specific animations/flags used by certain experiments (optional)
+  isCobaltAnimation?: boolean;
 }
 
 export const Equipment: React.FC<EquipmentProps> = ({
