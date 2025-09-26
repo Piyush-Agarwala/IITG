@@ -8,6 +8,9 @@ import OxalicAcidVirtualLab from "./VirtualLab";
 import OxalicAcidData from "../data";
 import type { ExperimentStep } from "../types";
 import { useUpdateProgress } from "@/hooks/use-experiments";
+import { Equipment } from "./Equipment";
+import { Chemical } from "./Chemical";
+import { OXALIC_ACID_CHEMICALS, OXALIC_ACID_EQUIPMENT } from "../constants";
 
 interface OxalicAcidAppProps {
   onBack?: () => void;
