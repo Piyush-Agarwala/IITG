@@ -41,12 +41,25 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
       return <Beaker className="w-8 h-8" />;
     };
     const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    return experiment.equipment.map((name) => {
+
+    // Build in server-provided order first
+    const raw = experiment.equipment.map((name) => {
       const key = name.toLowerCase();
       const baseId = slug(name);
       const id = key.includes('test tube') ? 'test-tube' : baseId;
       return { id, name, icon: iconFor(name) };
     });
+
+    // Reorder so that Test Tube is first, then Ethanoic Acid and Sodium Ethanoate
+    const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
+    const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+
+    const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
+    const ethanoic = raw.find(i => isEthanoic(i.name));
+    const sodium = raw.find(i => isSodiumEthanoate(i.name));
+    const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium);
+
+    return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
