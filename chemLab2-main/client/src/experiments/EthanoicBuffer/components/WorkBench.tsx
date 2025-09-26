@@ -56,9 +56,17 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       let x = clientX - rect.left;
       let y = clientY - rect.top;
 
-      // Anchor specific reagents to the right side of the bench regardless of drop point
+      // Normalize id for checks
       const idLower = (parsed.id || '').toLowerCase();
-      if (idLower.includes('ethanoic') || idLower.includes('acetic')) {
+
+      // If the user drops the test tube, always place it at the designated bench location
+      if (idLower === 'test-tube' || idLower.includes('test')) {
+        x = Math.round(rect.width * 0.35);
+        y = Math.round(rect.height * 0.25);
+      }
+
+      // Anchor specific reagents to the right side of the bench regardless of drop point
+      else if (idLower.includes('ethanoic') || idLower.includes('acetic')) {
         x = rect.width - 80; // right column (moved slightly right)
         y = 200; // moved up to create space
       } else if ((idLower.includes('sodium') && idLower.includes('ethanoate')) || idLower.includes('sodium-acetate')) {
