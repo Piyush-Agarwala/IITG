@@ -20,17 +20,7 @@ export const OXALIC_ACID_CHEMICALS: Chemical[] = [
     color: "#87CEEB",
     concentration: "Pure",
     volume: 300,
-  },
-  // Added: 0.1 M Ethanoic (Acetic) Acid bottle for drag-and-drop
-  {
-    id: "ethanoic_acid_0_1m",
-    name: "0.1 M Ethanoic (Acetic) Acid",
-    formula: "CH₃COOH",
-    color: "#FDE68A",
-    concentration: "0.1 M",
-    volume: 250,
-    molecularWeight: 60.05,
-  },
+  }
 ];
 
 // Equipment specific to Oxalic Acid Standardization experiment
@@ -156,6 +146,14 @@ export const OXALIC_ACID_EQUIPMENT: Equipment[] = [
       ],
     ),
   },
+];
+
+export const OXALIC_SAFETY_GUIDELINES = [
+  "Wear safety goggles and lab coat",
+  "Handle oxalic acid with gloves; avoid ingestion and inhalation",
+  "Use the analytical balance on a vibration-free, clean surface",
+  "Add water near the mark slowly and read the meniscus at eye level",
+  "Keep workspace tidy; clean spills immediately"
 ];
 
 // Calculations and formulas for Oxalic Acid Standardization
