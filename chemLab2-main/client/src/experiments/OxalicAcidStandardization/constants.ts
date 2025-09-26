@@ -175,7 +175,7 @@ export const OXALIC_ACID_FORMULAS = [
 // Default measurements for Oxalic Acid Standardization
 export const DEFAULT_MEASUREMENTS = {
   massWeighed: 0,
-  targetMass: 3.1518, // For 0.1 M in 250 mL
+  targetMass: 0,
   volume: 250,
   actualMolarity: 0,
   targetMolarity: 0.1,
