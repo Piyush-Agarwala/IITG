@@ -34,7 +34,12 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       return <Beaker className="w-8 h-8" />;
     };
     const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    return experiment.equipment.map((name) => ({ id: slug(name), name, icon: iconFor(name) }));
+    return experiment.equipment.map((name) => {
+      const key = name.toLowerCase();
+      const baseId = slug(name);
+      const id = key.includes('test tube') ? 'test-tube' : baseId;
+      return { id, name, icon: iconFor(name) };
+    });
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
