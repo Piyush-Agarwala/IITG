@@ -43,22 +43,22 @@ export const SOLUTIONS: Solution[] = [
 
 // Part A: Effect of increasing [SCN⁻] at constant [Fe³⁺]
 export const PART_A_TUBES: Omit<TestTubeState, 'colorIntensity' | 'colorHex' | 'isCompleted'>[] = [
-  { id: 't1', label: 'T1', feVolume: 5.00, scnVolume: 0.00, hno3Volume: 5.00, totalVolume: 10.0 },
-  { id: 't2', label: 'T2', feVolume: 5.00, scnVolume: 0.50, hno3Volume: 4.50, totalVolume: 10.0 },
-  { id: 't3', label: 'T3', feVolume: 5.00, scnVolume: 1.00, hno3Volume: 4.00, totalVolume: 10.0 },
-  { id: 't4', label: 'T4', feVolume: 5.00, scnVolume: 2.00, hno3Volume: 3.00, totalVolume: 10.0 },
-  { id: 't5', label: 'T5', feVolume: 5.00, scnVolume: 3.00, hno3Volume: 2.00, totalVolume: 10.0 },
-  { id: 't6', label: 'T6', feVolume: 5.00, scnVolume: 4.00, hno3Volume: 1.00, totalVolume: 10.0 }
+  { id: 't1', label: 'T1', feVolume: 5.00, scnVolume: 0.00, hno3Volume: 5.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't2', label: 'T2', feVolume: 5.00, scnVolume: 0.50, hno3Volume: 4.50, totalVolume: 10.0, volume: 10.0 },
+  { id: 't3', label: 'T3', feVolume: 5.00, scnVolume: 1.00, hno3Volume: 4.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't4', label: 'T4', feVolume: 5.00, scnVolume: 2.00, hno3Volume: 3.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't5', label: 'T5', feVolume: 5.00, scnVolume: 3.00, hno3Volume: 2.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't6', label: 'T6', feVolume: 5.00, scnVolume: 4.00, hno3Volume: 1.00, totalVolume: 10.0, volume: 10.0 }
 ];
 
 // Part B: Effect of increasing [Fe³⁺] at constant [SCN⁻]
 export const PART_B_TUBES: Omit<TestTubeState, 'colorIntensity' | 'colorHex' | 'isCompleted'>[] = [
-  { id: 't7', label: 'T7', feVolume: 0.50, scnVolume: 1.00, hno3Volume: 8.50, totalVolume: 10.0 },
-  { id: 't8', label: 'T8', feVolume: 1.00, scnVolume: 1.00, hno3Volume: 8.00, totalVolume: 10.0 },
-  { id: 't9', label: 'T9', feVolume: 2.00, scnVolume: 1.00, hno3Volume: 7.00, totalVolume: 10.0 },
-  { id: 't10', label: 'T10', feVolume: 3.00, scnVolume: 1.00, hno3Volume: 6.00, totalVolume: 10.0 },
-  { id: 't11', label: 'T11', feVolume: 4.00, scnVolume: 1.00, hno3Volume: 5.00, totalVolume: 10.0 },
-  { id: 't12', label: 'T12', feVolume: 5.00, scnVolume: 1.00, hno3Volume: 4.00, totalVolume: 10.0 }
+  { id: 't7', label: 'T7', feVolume: 0.50, scnVolume: 1.00, hno3Volume: 8.50, totalVolume: 10.0, volume: 10.0 },
+  { id: 't8', label: 'T8', feVolume: 1.00, scnVolume: 1.00, hno3Volume: 8.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't9', label: 'T9', feVolume: 2.00, scnVolume: 1.00, hno3Volume: 7.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't10', label: 'T10', feVolume: 3.00, scnVolume: 1.00, hno3Volume: 6.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't11', label: 'T11', feVolume: 4.00, scnVolume: 1.00, hno3Volume: 5.00, totalVolume: 10.0, volume: 10.0 },
+  { id: 't12', label: 'T12', feVolume: 5.00, scnVolume: 1.00, hno3Volume: 4.00, totalVolume: 10.0, volume: 10.0 }
 ];
 
 // Calculate color intensity based on Fe³⁺ and SCN⁻ concentrations

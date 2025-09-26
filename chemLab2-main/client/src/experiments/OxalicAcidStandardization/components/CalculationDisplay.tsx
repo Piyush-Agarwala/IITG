@@ -78,7 +78,11 @@ export const CalculationDisplay: React.FC<CalculationDisplayProps> = ({
       const timer = setInterval(() => {
         setCurrentStep(prev => {
           const next = prev + 1;
-          setCompletedSteps(current => new Set([...current, prev]));
+          setCompletedSteps(current => {
+            const nextSet = new Set(current);
+            nextSet.add(prev);
+            return nextSet;
+          });
           
           if (next >= calculationSteps.length) {
             clearInterval(timer);

@@ -315,3 +315,12 @@ export const STEP_4_POSITIONS = {
   'burette': { x: 80, y: 100 },
   'conical-flask': { x: 140, y: 360 }
 };
+
+// Backwards-compatible aliases used in UI components
+export const TITRATION_EQUIPMENT = LAB_EQUIPMENT;
+export const TITRATION_CHEMICALS = TITRATION_REAGENTS;
+export const SAFETY_GUIDELINES = [
+  "Wear safety goggles and lab coat",
+  "Handle acids and bases with care",
+  "Keep workspace tidy and clean spills immediately",
+];

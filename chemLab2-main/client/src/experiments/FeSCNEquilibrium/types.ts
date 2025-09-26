@@ -7,6 +7,7 @@ export interface TestTubeState {
   scnVolume: number; // mL of SCN⁻ solution added
   hno3Volume: number; // mL of HNO₃ filler added
   totalVolume: number; // Should always be 10.0 mL
+  volume: number; // aggregate volume in mL
   colorIntensity: number; // 0-100 scale representing [FeSCN]²⁺ concentration
   colorHex: string; // Calculated color based on intensity
   isCompleted: boolean;
@@ -69,8 +70,10 @@ export interface ExperimentLog {
 export interface LabEquipment {
   id: string;
   name: string;
-  type: 'pipette' | 'burette' | 'test-tube' | 'rack' | 'colorimeter';
+  // Make type permissive to accommodate different experiments
+  type: string;
   isActive: boolean;
+  position?: { x: number; y: number };
   currentVolume?: number;
   maxVolume?: number;
 }
