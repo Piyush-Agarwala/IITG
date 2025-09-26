@@ -134,6 +134,6 @@ export const Equipment: React.FC<EquipmentProps> = ({
 export const PH_LAB_EQUIPMENT = [
   { id: 'test-tube', name: '20 mL Test Tube', icon: <TestTube className="w-8 h-8" /> },
   { id: 'hcl-0-01m', name: '0.01 M HCl', icon: <Droplets className="w-8 h-8" /> },
-  { id: 'acetic-0-01m', name: '0.01 M CH3COOH', icon: <Beaker className="w-8 h-8" /> },
+  { id: 'acetic-0-01m', name: '0.1 M Ethanoic (Acetic) Acid', icon: <Droplets className="w-8 h-8" /> },
   { id: 'universal-indicator', name: 'Universal Indicator', icon: <FlaskConical className="w-8 h-8" /> },
 ];
