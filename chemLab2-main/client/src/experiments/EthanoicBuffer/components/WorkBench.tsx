@@ -52,12 +52,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       const clientX = e.clientX;
       const clientY = e.clientY;
 
-      const offsetX = parsed.offsetX ?? 0;
-      const offsetY = parsed.offsetY ?? 0;
-
-      // compute top-left position so the cursor remains at the same relative offset
-      const x = clientX - rect.left - offsetX;
-      const y = clientY - rect.top - offsetY;
+      // Use the drop point as the center coordinates for placement to match the component's centering transform
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
 
       const action = parsed.type === 'move' ? 'move' : 'new';
       onDrop(parsed.id, x, y, action);
