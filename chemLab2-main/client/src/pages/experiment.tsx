@@ -35,6 +35,8 @@ export default function Experiment() {
         return <LassaigneApp onBack={() => window.history.back()} />;
       case 7:
         return <PHComparisonApp onBack={() => window.history.back()} />;
+      case 8:
+        return <OxalicAcidApp onBack={() => window.history.back()} />;
       case 9:
         return <BufferPHApp onBack={() => window.history.back()} />;
       default:
