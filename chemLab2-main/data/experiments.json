@@ -537,13 +537,13 @@
       "Dropper"
     ],
     "stepDetails": [
-      { "id": 1, "title": "Calculate Required Mass", "description": "Calculate the mass of oxalic acid dihydrate (H₂C₂O₄·2H₂O) needed to prepare 250 mL of 0.1N solution. Use equivalent weight 63.03 g/eq.", "duration": "5 minutes", "temperature": "Room temperature", "completed": false },
-      { "id": 2, "title": "Weigh Oxalic Acid", "description": "Accurately weigh the calculated amount of oxalic acid dihydrate in a weighing bottle using an analytical balance.", "duration": "8 minutes", "safety": "Handle with care, avoid skin contact", "completed": false },
-      { "id": 3, "title": "Initial Dissolution", "description": "Transfer the weighed oxalic acid to a 100 mL beaker. Add ~50 mL distilled water and stir with a glass rod until fully dissolved.", "duration": "5 minutes", "completed": false },
-      { "id": 4, "title": "Transfer to Volumetric Flask", "description": "Using a funnel, transfer the solution to a 250 mL volumetric flask. Rinse the beaker and funnel into the flask.", "duration": "7 minutes", "completed": false },
-      { "id": 5, "title": "Add Water to Near Mark", "description": "Add distilled water until the meniscus is 2–3 cm below the mark. Swirl to mix.", "duration": "3 minutes", "completed": false },
-      { "id": 6, "title": "Make to Mark", "description": "Use a dropper to bring the bottom of the meniscus exactly to the 250 mL mark.", "duration": "5 minutes", "completed": false },
-      { "id": 7, "title": "Final Mixing and Labeling", "description": "Cap and invert 20–25 times for complete mixing. Label as 0.1N oxalic acid with date.", "duration": "5 minutes", "completed": false }
+      { "id": 1, "title": "Calculation & record", "description": "Calculate the required mass and record the calculation including molecular weight, target concentration and volume. Verify values before proceeding.", "duration": "5 minutes", "completed": false },
+      { "id": 2, "title": "Weighing the reagent", "description": "Accurately weigh the calculated amount of oxalic acid dihydrate on an analytical balance. Record the exact mass and note any tare adjustments.", "duration": "8 minutes", "safety": "Handle with care; avoid skin contact.", "completed": false },
+      { "id": 3, "title": "Transfer & dissolve", "description": "Transfer the weighed reagent to a beaker and add approximately 50 mL of distilled water. Stir with a glass rod until the solid is completely dissolved.", "duration": "6 minutes", "completed": false },
+      { "id": 4, "title": "Transfer to volumetric flask & washings", "description": "Using a funnel, transfer the solution to a 250 mL volumetric flask. Rinse the beaker and funnel with distilled water and add the washings to the flask to ensure quantitative transfer.", "duration": "7 minutes", "completed": false },
+      { "id": 5, "title": "Cool & make up to mark", "description": "Allow the flask to cool to room temperature if warm. Then add distilled water carefully until the bottom of the meniscus is exactly at the calibration mark.", "duration": "5 minutes", "completed": false },
+      { "id": 6, "title": "Mix & equilibrate", "description": "Cap the volumetric flask and invert it 20–25 times to ensure thorough mixing and equilibration of the solution before use.", "duration": "4 minutes", "completed": false },
+      { "id": 7, "title": "Labeling & documentation", "description": "Label the flask with concentration, reagent name and date. Document all observations and recorded masses in the lab notebook or digital log.", "duration": "5 minutes", "completed": false }
     ],
     "safetyInfo": "Oxalic acid is toxic and corrosive. Avoid skin contact and inhalation. Wear safety goggles and gloves. Work in a well-ventilated area. Wash hands thoroughly after handling."
   }
