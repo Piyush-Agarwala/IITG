@@ -74,6 +74,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
           <div
             draggable={!disabled}
             onDragStart={handleDragStart}
+            onClick={() => { if (onInteract) onInteract(id); }}
             className={`flex flex-col items-center p-4 rounded-lg border-2 ${
               disabled ? 'border-gray-200 bg-gray-50 opacity-50' : 'border-gray-300 bg-white hover:border-blue-400 hover:shadow-lg'
             }`}
