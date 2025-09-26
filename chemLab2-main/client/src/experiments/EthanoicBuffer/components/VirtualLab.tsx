@@ -34,13 +34,21 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       return <Beaker className="w-8 h-8" />;
     };
     const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    return experiment.equipment.map((name) => ({ id: slug(name), name, icon: iconFor(name) }));
+    return experiment.equipment.map((name) => {
+      const key = name.toLowerCase();
+      const baseId = slug(name);
+      const id = key.includes('test tube') ? 'test-tube' : baseId;
+      return { id, name, icon: iconFor(name) };
+    });
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
     const idx = items.findIndex(i => i.id === id);
     const baseX = 220; // center column
     const baseY = 160;
+    if (id === 'test-tube') {
+      return { x: baseX, y: baseY + 140 };
+    }
     return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
   };
 
@@ -48,7 +56,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     const item = items.find(i => i.id === id);
     if (!item) return;
     if (!equipmentOnBench.find(e => e.id === id)) {
-      setEquipmentOnBench(prev => [...prev, { id, name: item.name, position: getPosition(id) }]);
+      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: getPosition(id) }]);
       if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
   };
@@ -94,7 +102,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               </h3>
               <div className="space-y-3">
                 {items.map((eq) => (
-                  <PHEquipment key={eq.id} id={eq.id} name={eq.name} icon={eq.icon} disabled={!experimentStarted} />
+                  <PHEquipment key={eq.id} id={eq.id} name={eq.id === 'test-tube' ? '20 mL Test Tube' : eq.name} icon={eq.icon} disabled={!experimentStarted} />
                 ))}
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
