@@ -52,6 +52,8 @@ export interface EquipmentPosition {
     amount: number;
     concentration: string;
   }>;
+  // Optional flag for items created from chemicals (e.g., bottles)
+  isBottle?: boolean;
 }
 
 export interface SolutionPreparationState {
