@@ -336,7 +336,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               </h3>
               <div className="space-y-3">
                 {PH_LAB_EQUIPMENT.map((eq) => (
-                  <Equipment key={eq.id} id={eq.id} name={eq.name} icon={eq.icon} disabled={!experimentStarted} />
+                  <Equipment key={eq.id} id={eq.id} name={eq.name} icon={eq.icon} disabled={!experimentStarted} onInteract={handleInteract} />
                 ))}
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
