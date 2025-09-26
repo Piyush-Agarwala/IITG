@@ -76,7 +76,7 @@ export const WorkspaceEquipment: React.FC<WorkspaceEquipmentProps> = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {TITRATION_CHEMICALS.map((chemical) => (
+            {TITRATION_CHEMICALS.map((chemical: any) => (
               <div
                 key={chemical.id}
                 className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
