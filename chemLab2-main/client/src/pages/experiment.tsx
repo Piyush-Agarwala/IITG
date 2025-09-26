@@ -8,6 +8,7 @@ import Titration1App from "@/experiments/Titration1/components/Titration1App";
 import LassaigneApp from "@/experiments/LassaigneTest/components/LassaigneApp";
 import PHComparisonApp from "@/experiments/PHComparison/components/PHComparisonApp";
 import BufferPHApp from "@/experiments/EthanoicBuffer/components/BufferPHApp";
+import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -34,6 +35,8 @@ export default function Experiment() {
         return <LassaigneApp onBack={() => window.history.back()} />;
       case 7:
         return <PHComparisonApp onBack={() => window.history.back()} />;
+      case 8:
+        return <OxalicAcidApp onBack={() => window.history.back()} />;
       case 9:
         return <BufferPHApp onBack={() => window.history.back()} />;
       default:
