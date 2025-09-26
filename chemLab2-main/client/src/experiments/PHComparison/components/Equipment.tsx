@@ -8,7 +8,7 @@ interface EquipmentProps {
   name: string;
   icon: React.ReactNode;
   onDrag?: (id: string, x: number, y: number) => void;
-  position?: { x: number; y: number } | null;
+  position?: { x: number; y: number; fixed?: boolean } | null;
   onRemove?: (id: string) => void;
   disabled?: boolean;
   color?: string;
