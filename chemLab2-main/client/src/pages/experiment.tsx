@@ -8,6 +8,7 @@ import Titration1App from "@/experiments/Titration1/components/Titration1App";
 import LassaigneApp from "@/experiments/LassaigneTest/components/LassaigneApp";
 import PHComparisonApp from "@/experiments/PHComparison/components/PHComparisonApp";
 import BufferPHApp from "@/experiments/EthanoicBuffer/components/BufferPHApp";
+import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
