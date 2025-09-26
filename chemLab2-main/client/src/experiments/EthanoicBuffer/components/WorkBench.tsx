@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 interface WorkBenchProps {
-  onDrop: (id: string, x: number, y: number) => void;
+  // action will be 'new' when dragging from toolbar, 'move' when repositioning an existing item
+  onDrop: (id: string, x: number, y: number, action?: 'new' | 'move') => void;
   children: React.ReactNode;
   isRunning: boolean;
   currentStep: number;
@@ -36,12 +37,30 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     e.stopPropagation();
     setIsDragOver(false);
 
-    const equipmentData = e.dataTransfer.getData("equipment");
-    if (equipmentData) {
+    // read structured data if available
+    const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("equipment");
+    let parsed: { id?: string; type?: string; offsetX?: number; offsetY?: number } | null = null;
+    try {
+      parsed = raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      // if not JSON, treat raw as id
+      parsed = raw ? { id: raw, type: 'new' } : null;
+    }
+
+    if (parsed && parsed.id) {
       const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      onDrop(equipmentData, x, y);
+      const clientX = e.clientX;
+      const clientY = e.clientY;
+
+      const offsetX = parsed.offsetX ?? 0;
+      const offsetY = parsed.offsetY ?? 0;
+
+      // compute top-left position so the cursor remains at the same relative offset
+      const x = clientX - rect.left - offsetX;
+      const y = clientY - rect.top - offsetY;
+
+      const action = parsed.type === 'move' ? 'move' : 'new';
+      onDrop(parsed.id, x, y, action);
     }
   };
 
