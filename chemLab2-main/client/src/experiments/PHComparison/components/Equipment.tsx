@@ -32,8 +32,10 @@ export const Equipment: React.FC<EquipmentProps> = ({
   onInteract,
   isActive = false,
 }) => {
+  const isFixed = Boolean(position && (position as any).fixed);
+
   const handleDragStart = (e: React.DragEvent) => {
-    if (disabled) return;
+    if (disabled || isFixed) return;
 
     // compute offset between mouse and element top-left to preserve cursor position on drop
     const el = e.currentTarget as HTMLElement;
