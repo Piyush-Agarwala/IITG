@@ -26,6 +26,9 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 const [showAceticDialog, setShowAceticDialog] = useState(false);
 const [aceticVolume, setAceticVolume] = useState("5.0");
 const [aceticError, setAceticError] = useState<string | null>(null);
+const [showSodiumDialog, setShowSodiumDialog] = useState(false);
+const [sodiumVolume, setSodiumVolume] = useState("5.0");
+const [sodiumError, setSodiumError] = useState<string | null>(null);
 
   useEffect(() => { setEquipmentOnBench([]); }, [experiment.id]);
 
@@ -84,6 +87,11 @@ const [aceticError, setAceticError] = useState<string | null>(null);
   const idLower = id.toLowerCase();
   if (idLower.includes('ethanoic') || idLower.includes('acetic')) {
     setShowAceticDialog(true);
+    return;
+  }
+  if (idLower.includes('sodium') || idLower.includes('ethanoate') || idLower.includes('acetate')) {
+    setShowSodiumDialog(true);
+    return;
   }
 };
 
@@ -95,6 +103,16 @@ const confirmAddAcetic = () => {
   }
   setShowAceticDialog(false);
   setAceticError(null);
+};
+
+const confirmAddSodium = () => {
+  const v = parseFloat(sodiumVolume);
+  if (Number.isNaN(v) || v < 1.0 || v > 20.0) {
+    setSodiumError('Please enter a value between 1.0 and 20.0 mL');
+    return;
+  }
+  setShowSodiumDialog(false);
+  setSodiumError(null);
 };
 
 const stepsProgress = (
@@ -217,6 +235,45 @@ const stepsProgress = (
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAceticDialog(false)}>Cancel</Button>
             <Button onClick={confirmAddAcetic} disabled={!!aceticError || Number.isNaN(parseFloat(aceticVolume)) || parseFloat(aceticVolume) < 5.0 || parseFloat(aceticVolume) > 10.0}>Add Solution</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Volume dialog for 0.1 M Sodium Ethanoate (Sodium Acetate) */}
+      <Dialog open={showSodiumDialog} onOpenChange={setShowSodiumDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Volume</DialogTitle>
+            <DialogDescription>
+              Enter the volume of 0.1 M Sodium Ethanoate (Sodium Acetate) to add to the test tube.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Volume (mL)</label>
+            <input
+              type="number"
+              step="0.1"
+              min={1.0}
+              max={20.0}
+              value={sodiumVolume}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSodiumVolume(val);
+                const parsed = parseFloat(val);
+                if (Number.isNaN(parsed) || parsed < 1.0 || parsed > 20.0) {
+                  setSodiumError("Please enter a value between 1.0 and 20.0 mL");
+                } else {
+                  setSodiumError(null);
+                }
+              }}
+              className="w-full border rounded-md px-3 py-2"
+              placeholder="Enter volume in mL"
+            />
+            {sodiumError && <p className="text-xs text-red-600">{sodiumError}</p>}
+            <p className="text-xs text-gray-500">Recommended range: 1.0 – 20.0 mL</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSodiumDialog(false)}>Cancel</Button>
+            <Button onClick={confirmAddSodium} disabled={!!sodiumError || Number.isNaN(parseFloat(sodiumVolume)) || parseFloat(sodiumVolume) < 1.0 || parseFloat(sodiumVolume) > 20.0}>Add Solution</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
