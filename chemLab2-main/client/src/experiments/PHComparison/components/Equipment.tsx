@@ -105,12 +105,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
               </div>
               <span className="text-xs font-medium text-center">0.01 M HCl</span>
             </div>
-          ) : id === 'acetic-0-01m' ? (
+          ) : id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') ? (
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacc' }}>
                 <Droplets className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-yellow-700 opacity-70" />
               </div>
-              <span className="text-xs font-medium text-center">0.1 M Ethanoic (Acetic) Acid</span>
+              <span className="text-xs font-medium text-center">{name}</span>
             </div>
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">
