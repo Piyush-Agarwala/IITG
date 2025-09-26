@@ -1,3 +1,4 @@
+import React from "react";
 import { Beaker, FlaskConical, Pipette, Filter, TestTube, Droplets } from "lucide-react";
 import type { ReagentBottle, ConicalFlask, Burette, GuidedStep, LabEquipment } from "./types";
 
