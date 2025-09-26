@@ -107,10 +107,10 @@ export const Equipment: React.FC<EquipmentProps> = ({
             </div>
           ) : id === 'acetic-0-01m' ? (
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm rounded-md bg-white flex items-center justify-center">
-                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fe01a46dd114944f4976950e49d042b9a?format=webp&width=800" alt="Ethanoic acid bottle" className="w-12 h-12 object-contain" />
+              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacc' }}>
+                <Droplets className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-yellow-700 opacity-70" />
               </div>
-              <span className="text-xs font-medium text-center">0.01 M CH3COOH</span>
+              <span className="text-xs font-medium text-center">0.1 M Ethanoic (Acetic) Acid</span>
             </div>
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">
