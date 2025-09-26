@@ -1,3 +1,4 @@
+import { Scale, FlaskConical, Beaker, Pipette } from "lucide-react";
 import React from "react";
 import { Scale, FlaskConical, Beaker, Pipette } from "lucide-react";
 import type { Chemical, Equipment } from "./types";
@@ -20,6 +21,16 @@ export const OXALIC_ACID_CHEMICALS: Chemical[] = [
     color: "#87CEEB",
     concentration: "Pure",
     volume: 300,
+  },
+  // Added: 0.1 M Ethanoic (Acetic) Acid bottle for drag-and-drop
+  {
+    id: "ethanoic_acid_0_1m",
+    name: "0.1 M Ethanoic (Acetic) Acid",
+    formula: "CH₃COOH",
+    color: "#FDE68A",
+    concentration: "0.1 M",
+    volume: 250,
+    molecularWeight: 60.05,
   },
 ];
 
@@ -175,7 +186,7 @@ export const OXALIC_ACID_FORMULAS = [
 // Default measurements for Oxalic Acid Standardization
 export const DEFAULT_MEASUREMENTS = {
   massWeighed: 0,
-  targetMass: 3.1518, // For 0.1 M in 250 mL
+  targetMass: 0,
   volume: 250,
   actualMolarity: 0,
   targetMolarity: 0.1,
