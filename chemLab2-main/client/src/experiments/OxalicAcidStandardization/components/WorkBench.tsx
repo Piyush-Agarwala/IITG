@@ -105,6 +105,29 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
+      // If the dragged item includes concentration or volume, treat it as a chemical and create a bottle
+      if (data.concentration || data.volume) {
+        setEquipmentPositions(prev => [
+          ...prev,
+          {
+            id: `${data.id}_${Date.now()}`,
+            x: x - 30,
+            y: y - 30,
+            isBottle: true,
+            chemicals: [
+              {
+                id: data.id,
+                name: data.name,
+                color: data.color || "#87CEEB",
+                amount: data.amount || (data.volume || 50),
+                concentration: data.concentration || "",
+              }
+            ],
+          }
+        ]);
+        return;
+      }
+
       // Add equipment to workbench
       if (data.id && data.name) {
         setEquipmentPositions(prev => [
