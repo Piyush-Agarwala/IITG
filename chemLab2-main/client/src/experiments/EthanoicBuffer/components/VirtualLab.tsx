@@ -56,7 +56,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     const item = items.find(i => i.id === id);
     if (!item) return;
     if (!equipmentOnBench.find(e => e.id === id)) {
-      setEquipmentOnBench(prev => [...prev, { id, name: item.name, position: getPosition(id) }]);
+      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: getPosition(id) }]);
       if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
   };
@@ -102,7 +102,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               </h3>
               <div className="space-y-3">
                 {items.map((eq) => (
-                  <PHEquipment key={eq.id} id={eq.id} name={eq.name} icon={eq.icon} disabled={!experimentStarted} />
+                  <PHEquipment key={eq.id} id={eq.id} name={eq.id === 'test-tube' ? '20 mL Test Tube' : eq.name} icon={eq.icon} disabled={!experimentStarted} />
                 ))}
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
