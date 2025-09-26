@@ -68,7 +68,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (rect) {
           const newX = e.clientX - rect.left - dragOffset.x;
           const newY = e.clientY - rect.top - dragOffset.y;
-          onDrag(id, newX, newY);
+          onDrag?.(id, newX, newY);
         }
       }
     };
