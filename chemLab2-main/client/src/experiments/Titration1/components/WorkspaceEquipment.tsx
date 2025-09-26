@@ -125,7 +125,7 @@ export const WorkspaceEquipment: React.FC<WorkspaceEquipmentProps> = ({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {SAFETY_GUIDELINES.map((guideline, index) => (
+            {SAFETY_GUIDELINES.map((guideline: any, index: number) => (
               <div key={index} className="flex items-start gap-3">
                 <div className="w-2 h-2 rounded-full bg-amber-500 mt-2 flex-shrink-0"></div>
                 <p className="text-sm leading-relaxed">{guideline}</p>
