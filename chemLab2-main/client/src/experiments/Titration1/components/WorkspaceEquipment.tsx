@@ -29,7 +29,7 @@ export const WorkspaceEquipment: React.FC<WorkspaceEquipmentProps> = ({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {TITRATION_EQUIPMENT.map((equipment) => (
+            {TITRATION_EQUIPMENT.map((equipment: any) => (
               <div
                 key={equipment.id}
                 className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
