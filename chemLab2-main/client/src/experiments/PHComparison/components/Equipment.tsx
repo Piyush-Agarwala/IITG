@@ -68,6 +68,20 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') || name.toLowerCase().includes('sodium ethanoate') || name.toLowerCase().includes('sodium acetate');
   const bottleBgColor = name.toLowerCase().includes('sodium') ? '#e6f0ff' : '#fffacc';
   const dropletColorClass = name.toLowerCase().includes('sodium') ? 'text-blue-600' : 'text-yellow-700';
+
+  const renderNameParts = (n: string) => {
+    const m = /^(.*?)\s*\((.*)\)\s*$/.exec(n);
+    if (m) {
+      return (
+        <>
+          <span className="text-sm font-medium block text-center">{m[1].trim()}</span>
+          <span className="text-xs text-gray-600 block text-center">({m[2].trim()})</span>
+        </>
+      );
+    }
+    return <span className="text-xs font-medium text-center">{n}</span>;
+  };
+
   return (
     <div style={{ position: 'absolute', left: position.x, top: position.y, transform: 'translate(-50%, -50%)' }} className="relative group">
       <div className={`relative ${id === 'test-tube' ? 'min-w-[240px] min-h-[360px]' : 'bg-white rounded-xl shadow-lg border-2 p-4 min-w-[90px] min-h-[120px]'} ${isActive && id !== 'test-tube' ? 'border-blue-400 shadow-xl' : 'border-gray-200'}`} onClick={handleClick}>
