@@ -7,7 +7,7 @@ export interface TestTubeState {
   scnVolume: number; // mL of SCN⁻ solution added
   hno3Volume: number; // mL of HNO₃ filler added
   totalVolume: number; // Should always be 10.0 mL
-  volume?: number; // optional aggregate volume in mL
+  volume: number; // aggregate volume in mL
   colorIntensity: number; // 0-100 scale representing [FeSCN]²⁺ concentration
   colorHex: string; // Calculated color based on intensity
   isCompleted: boolean;
