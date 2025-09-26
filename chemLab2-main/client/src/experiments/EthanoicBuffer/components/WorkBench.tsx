@@ -60,7 +60,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       const idLower = (parsed.id || '').toLowerCase();
       if (idLower.includes('ethanoic') || idLower.includes('acetic')) {
         x = rect.width - 120; // right column
-        y = 260; // lowered further down
+        y = 200; // moved up to create space
       } else if ((idLower.includes('sodium') && idLower.includes('ethanoate')) || idLower.includes('sodium-acetate')) {
         x = rect.width - 120; // right column
         y = 420; // lowered further below the acid
