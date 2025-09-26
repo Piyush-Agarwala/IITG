@@ -267,7 +267,7 @@ function VirtualLabApp({
         {
           id: "ice",
           name: "Ice Bath",
-          formula: "H₂O(s)",
+          formula: "H��O(s)",
           color: "#E0F6FF",
           concentration: "0°C",
           volume: 50,
@@ -401,28 +401,6 @@ function VirtualLabApp({
     } else if (experimentTitle.includes("Equilibrium")) {
       return [
         { id: "test_tubes", name: "Test Tubes", icon: <TestTube size={36} /> },
-        {
-          id: "stirring_rod",
-          name: "Stirring Rod",
-          icon: (
-            <svg
-              width="36"
-              height="36"
-              viewBox="0 0 36 36"
-              fill="none"
-              className="text-gray-600"
-            >
-              <path
-                d="M6 6l24 24"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-              <circle cx="8" cy="8" r="2" fill="currentColor" />
-              <circle cx="28" cy="28" r="2" fill="currentColor" />
-            </svg>
-          ),
-        },
         {
           id: "beaker_hot_water",
           name: "Hot Water Beaker",

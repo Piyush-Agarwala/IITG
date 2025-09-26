@@ -5,6 +5,7 @@ import { WorkBench } from "./WorkBench";
 import { Equipment as PHEquipment } from "@/experiments/PHComparison/components/Equipment";
 import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle } from "lucide-react";
 import type { Experiment, ExperimentStep } from "@shared/schema";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface VirtualLabProps {
   experiment: Experiment;
@@ -22,6 +23,12 @@ interface VirtualLabProps {
 export default function VirtualLab({ experiment, experimentStarted, onStartExperiment, isRunning, setIsRunning, currentStep, onStepComplete, onStepUndo, onReset, completedSteps }: VirtualLabProps) {
   const totalSteps = experiment.stepDetails.length;
   const [equipmentOnBench, setEquipmentOnBench] = useState<Array<{ id: string; name: string; position: { x: number; y: number } }>>([]);
+const [showAceticDialog, setShowAceticDialog] = useState(false);
+const [aceticVolume, setAceticVolume] = useState("5.0");
+const [aceticError, setAceticError] = useState<string | null>(null);
+const [showSodiumDialog, setShowSodiumDialog] = useState(false);
+const [sodiumVolume, setSodiumVolume] = useState("5.0");
+const [sodiumError, setSodiumError] = useState<string | null>(null);
 
   useEffect(() => { setEquipmentOnBench([]); }, [experiment.id]);
 
@@ -76,7 +83,39 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     if (onStepUndo) onStepUndo();
   };
 
-  const stepsProgress = (
+  const handleInteract = (id: string) => {
+  const idLower = id.toLowerCase();
+  if (idLower.includes('ethanoic') || idLower.includes('acetic')) {
+    setShowAceticDialog(true);
+    return;
+  }
+  if (idLower.includes('sodium') || idLower.includes('ethanoate') || idLower.includes('acetate')) {
+    setShowSodiumDialog(true);
+    return;
+  }
+};
+
+const confirmAddAcetic = () => {
+  const v = parseFloat(aceticVolume);
+  if (Number.isNaN(v) || v < 5.0 || v > 10.0) {
+    setAceticError('Please enter a value between 5.0 and 10.0 mL');
+    return;
+  }
+  setShowAceticDialog(false);
+  setAceticError(null);
+};
+
+const confirmAddSodium = () => {
+  const v = parseFloat(sodiumVolume);
+  if (Number.isNaN(v) || v < 1.0 || v > 20.0) {
+    setSodiumError('Please enter a value between 1.0 and 20.0 mL');
+    return;
+  }
+  setShowSodiumDialog(false);
+  setSodiumError(null);
+};
+
+const stepsProgress = (
     <div className="mb-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-blue-200 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Experiment Progress</h3>
@@ -112,7 +151,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               </h3>
               <div className="space-y-3">
                 {items.map((eq) => (
-                  <PHEquipment key={eq.id} id={eq.id} name={eq.id === 'test-tube' ? '20 mL Test Tube' : eq.name} icon={eq.icon} disabled={!experimentStarted} />
+                  <PHEquipment key={eq.id} id={eq.id} name={eq.id === 'test-tube' ? '20 mL Test Tube' : eq.name} icon={eq.icon} disabled={!experimentStarted} onInteract={handleInteract} />
                 ))}
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
@@ -130,7 +169,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
           <div className="lg:col-span-6">
             <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} totalSteps={totalSteps}>
               {equipmentOnBench.map(e => (
-                <PHEquipment key={e.id} id={e.id} name={e.name} icon={items.find(i => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />} position={e.position} onRemove={handleRemove} />
+                <PHEquipment key={e.id} id={e.id} name={e.name} icon={items.find(i => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />} position={e.position} onRemove={handleRemove} onInteract={handleInteract} />
               ))}
             </WorkBench>
           </div>
@@ -160,6 +199,84 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
           </div>
         </div>
       </div>
+    {/* Volume dialog for 0.1 M Ethanoic (Acetic) Acid */}
+      <Dialog open={showAceticDialog} onOpenChange={setShowAceticDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Volume</DialogTitle>
+            <DialogDescription>
+              Enter the volume of 0.1 M CH3COOH to add to the test tube.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Volume (mL)</label>
+            <input
+              type="number"
+              step="0.1"
+              min={5.0}
+              max={10.0}
+              value={aceticVolume}
+              onChange={(e) => {
+                const val = e.target.value;
+                setAceticVolume(val);
+                const parsed = parseFloat(val);
+                if (Number.isNaN(parsed) || parsed < 5.0 || parsed > 10.0) {
+                  setAceticError("Please enter a value between 5.0 and 10.0 mL");
+                } else {
+                  setAceticError(null);
+                }
+              }}
+              className="w-full border rounded-md px-3 py-2"
+              placeholder="Enter volume in mL"
+            />
+            {aceticError && <p className="text-xs text-red-600">{aceticError}</p>}
+            <p className="text-xs text-gray-500">Recommended range: 5.0 – 10.0 mL</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAceticDialog(false)}>Cancel</Button>
+            <Button onClick={confirmAddAcetic} disabled={!!aceticError || Number.isNaN(parseFloat(aceticVolume)) || parseFloat(aceticVolume) < 5.0 || parseFloat(aceticVolume) > 10.0}>Add Solution</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Volume dialog for 0.1 M Sodium Ethanoate (Sodium Acetate) */}
+      <Dialog open={showSodiumDialog} onOpenChange={setShowSodiumDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Volume</DialogTitle>
+            <DialogDescription>
+              Enter the volume of 0.1 M Sodium Ethanoate (Sodium Acetate) to add to the test tube.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Volume (mL)</label>
+            <input
+              type="number"
+              step="0.1"
+              min={1.0}
+              max={20.0}
+              value={sodiumVolume}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSodiumVolume(val);
+                const parsed = parseFloat(val);
+                if (Number.isNaN(parsed) || parsed < 1.0 || parsed > 20.0) {
+                  setSodiumError("Please enter a value between 1.0 and 20.0 mL");
+                } else {
+                  setSodiumError(null);
+                }
+              }}
+              className="w-full border rounded-md px-3 py-2"
+              placeholder="Enter volume in mL"
+            />
+            {sodiumError && <p className="text-xs text-red-600">{sodiumError}</p>}
+            <p className="text-xs text-gray-500">Recommended range: 1.0 – 20.0 mL</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSodiumDialog(false)}>Cancel</Button>
+            <Button onClick={confirmAddSodium} disabled={!!sodiumError || Number.isNaN(parseFloat(sodiumVolume)) || parseFloat(sodiumVolume) < 1.0 || parseFloat(sodiumVolume) > 20.0}>Add Solution</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </TooltipProvider>
   );
 }
