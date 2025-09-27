@@ -376,7 +376,7 @@ const stepsProgress = (
                 <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
                 <div className="flex items-center space-x-2">
                   {(() => {
-                    const display = lastMeasuredPH != null ? '2.4 – 3.5' : '--';
+                    const display = lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '--';
                     return (
                       <>
                         <div className="text-2xl font-bold text-purple-700">{display}</div>
