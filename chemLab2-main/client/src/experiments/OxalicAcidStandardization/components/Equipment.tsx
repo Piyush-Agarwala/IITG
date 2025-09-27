@@ -127,7 +127,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
                 alt={name}
                 className={
                   isAnalytical && position
-                    ? "mx-auto block w-72 h-72 object-contain mix-blend-multiply"
+                    ? "mx-auto block h-[22rem] w-auto object-contain"
                     : "w-20 h-20 mx-auto mb-2 object-contain"
                 }
               />
@@ -307,7 +307,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   }
 
   const containerClass = isAnalytical
-    ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-all ${isDragging ? 'scale-105' : ''}`
+    ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-transform ${isDragging ? 'scale-105' : ''}`
     : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
 
   return (
