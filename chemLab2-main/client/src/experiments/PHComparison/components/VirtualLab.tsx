@@ -383,7 +383,42 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
           {/* Workbench - Center */}
           <div className="lg:col-span-6">
-            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep}>
+            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={() => {
+              // Determine pH based on current test tube contents and indicator
+              if (!testTube || (testTube.volume ?? 0) <= 0) {
+                setShowToast('No solution in test tube');
+                setTimeout(() => setShowToast(''), 1400);
+                return;
+              }
+
+              if (!testTube.contents.includes('IND')) {
+                setShowToast('No indicator present. Add universal indicator or pH paper');
+                setTimeout(() => setShowToast(''), 1800);
+                return;
+              }
+
+              if (testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2) {
+                setShowToast('Measured pH ≈ 2 (strong acid)');
+                setTimeout(() => setShowToast(''), 2000);
+                return;
+              }
+
+              if (testTube.contents.includes('CH3COOH') && testTube.colorHex === COLORS.ACETIC_PH3) {
+                setShowToast('Measured pH ≈ 3–4 (weak acid)');
+                setTimeout(() => setShowToast(''), 2000);
+                return;
+              }
+
+              // Fallback: show neutral or approximate
+              if (testTube.colorHex === COLORS.NEUTRAL) {
+                setShowToast('Measured pH ≈ 7 (neutral)');
+                setTimeout(() => setShowToast(''), 2000);
+                return;
+              }
+
+              setShowToast('pH measurement inconclusive');
+              setTimeout(() => setShowToast(''), 1600);
+            }}>
               {equipmentOnBench.find(e => e.id === 'test-tube') && !compareMode && (
                 <>
                   <Equipment id="test-tube" name="20 mL Test Tube" icon={<TestTube className="w-8 h-8" />} position={getEquipmentPosition('test-tube')} onRemove={handleRemove} onInteract={() => {}} color={testTube.colorHex} volume={testTube.volume} displayVolume={showHclDialog && previewHclVolume != null ? previewHclVolume : showAceticDialog && previewAceticVolume != null ? previewAceticVolume : showIndicatorDialog && previewIndicatorVolume != null ? Math.min(20, testTube.volume + previewIndicatorVolume) : testTube.volume} isActive={true} />
