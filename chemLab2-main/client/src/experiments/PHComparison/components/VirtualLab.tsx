@@ -189,13 +189,23 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       return;
     }
 
+    // If no history, try to clean up any placed equipment (including pH paper) or the test tube
     if (history.length === 0) {
       const hasTube = !!equipmentOnBench.find(e => e.id === 'test-tube');
+      const hasPhItems = equipmentOnBench.some(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
       if (hasTube) {
-        setEquipmentOnBench(prev => prev.filter(e => e.id !== 'test-tube'));
+        setEquipmentOnBench(prev => prev.filter(e => e.id !== 'test-tube' && !(e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))));
         setTestTube(INITIAL_TESTTUBE);
         if (onStepUndo) onStepUndo();
-        setShowToast('Removed test tube');
+        setShowToast('Removed test tube and associated items');
+        setTimeout(() => setShowToast(""), 1200);
+        return;
+      }
+
+      // If no test tube but there are pH items placed, remove them
+      if (hasPhItems) {
+        setEquipmentOnBench(prev => prev.filter(e => !(e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))));
+        setShowToast('Removed indicator / pH paper');
         setTimeout(() => setShowToast(""), 1200);
       }
       return;
@@ -227,6 +237,11 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     const hasEarlier = remaining.some(h => h.type === last.type);
     if (!hasEarlier) {
       setEquipmentOnBench(prev => prev.filter(e => e.id !== idMap[last.type]));
+    }
+
+    // If no more indicator actions remain, also remove any pH paper / indicator visuals from the bench
+    if (!remaining.some(h => h.type === 'IND')) {
+      setEquipmentOnBench(prev => prev.filter(e => !(e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))));
     }
 
     if (onStepUndo) onStepUndo();
@@ -323,6 +338,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   );
 
   const shouldShowRestore = testTube.contents.includes('IND') && testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2;
+  const hasPhPaper = equipmentOnBench.some(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
 
   const handleRestore = () => {
     setHistory([]);
@@ -368,7 +384,42 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
           {/* Workbench - Center */}
           <div className="lg:col-span-6">
-            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep}>
+            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={hasPhPaper ? (() => {
+              // Determine pH based on current test tube contents and indicator
+              if (!testTube || (testTube.volume ?? 0) <= 0) {
+                setShowToast('No solution in test tube');
+                setTimeout(() => setShowToast(''), 1400);
+                return;
+              }
+
+              if (!testTube.contents.includes('IND')) {
+                setShowToast('No indicator present. Add universal indicator or pH paper');
+                setTimeout(() => setShowToast(''), 1800);
+                return;
+              }
+
+              if (testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2) {
+                setShowToast('Measured pH ≈ 2 (strong acid)');
+                setTimeout(() => setShowToast(''), 2000);
+                return;
+              }
+
+              if (testTube.contents.includes('CH3COOH') && testTube.colorHex === COLORS.ACETIC_PH3) {
+                setShowToast('Measured pH ≈ 3–4 (weak acid)');
+                setTimeout(() => setShowToast(''), 2000);
+                return;
+              }
+
+              // Fallback: show neutral or approximate
+              if (testTube.colorHex === COLORS.NEUTRAL) {
+                setShowToast('Measured pH ≈ 7 (neutral)');
+                setTimeout(() => setShowToast(''), 2000);
+                return;
+              }
+
+              setShowToast('pH measurement inconclusive');
+              setTimeout(() => setShowToast(''), 1600);
+            }) : undefined}>
               {equipmentOnBench.find(e => e.id === 'test-tube') && !compareMode && (
                 <>
                   <Equipment id="test-tube" name="20 mL Test Tube" icon={<TestTube className="w-8 h-8" />} position={getEquipmentPosition('test-tube')} onRemove={handleRemove} onInteract={() => {}} color={testTube.colorHex} volume={testTube.volume} displayVolume={showHclDialog && previewHclVolume != null ? previewHclVolume : showAceticDialog && previewAceticVolume != null ? previewAceticVolume : showIndicatorDialog && previewIndicatorVolume != null ? Math.min(20, testTube.volume + previewIndicatorVolume) : testTube.volume} isActive={true} />
