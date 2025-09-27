@@ -368,9 +368,8 @@ const stepsProgress = (
                       size="sm"
                       className="bg-red-500 text-white hover:bg-red-600 shadow-sm"
                       onClick={() => {
-                        // Reset sodium ethanoate state and remove sodium bottle from bench
+                        // Reset sodium ethanoate state but keep the sodium bottle on the bench
                         setSodiumMoles(0);
-                        setEquipmentOnBench(prev => prev.filter(e => !((e.name && e.name.toLowerCase().includes('sodium')) || e.id.toLowerCase().includes('sodium'))));
                         setShowToast('Sodium ethanoate reset');
                         setTimeout(() => setShowToast(null), 1400);
                       }}
