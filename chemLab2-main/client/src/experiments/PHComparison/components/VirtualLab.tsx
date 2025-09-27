@@ -189,13 +189,23 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       return;
     }
 
+    // If no history, try to clean up any placed equipment (including pH paper) or the test tube
     if (history.length === 0) {
       const hasTube = !!equipmentOnBench.find(e => e.id === 'test-tube');
+      const hasPhItems = equipmentOnBench.some(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
       if (hasTube) {
-        setEquipmentOnBench(prev => prev.filter(e => e.id !== 'test-tube'));
+        setEquipmentOnBench(prev => prev.filter(e => e.id !== 'test-tube' && !(e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))));
         setTestTube(INITIAL_TESTTUBE);
         if (onStepUndo) onStepUndo();
-        setShowToast('Removed test tube');
+        setShowToast('Removed test tube and associated items');
+        setTimeout(() => setShowToast(""), 1200);
+        return;
+      }
+
+      // If no test tube but there are pH items placed, remove them
+      if (hasPhItems) {
+        setEquipmentOnBench(prev => prev.filter(e => !(e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))));
+        setShowToast('Removed indicator / pH paper');
         setTimeout(() => setShowToast(""), 1200);
       }
       return;
@@ -227,6 +237,11 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     const hasEarlier = remaining.some(h => h.type === last.type);
     if (!hasEarlier) {
       setEquipmentOnBench(prev => prev.filter(e => e.id !== idMap[last.type]));
+    }
+
+    // If no more indicator actions remain, also remove any pH paper / indicator visuals from the bench
+    if (!remaining.some(h => h.type === 'IND')) {
+      setEquipmentOnBench(prev => prev.filter(e => !(e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))));
     }
 
     if (onStepUndo) onStepUndo();
