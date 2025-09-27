@@ -28,14 +28,20 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [testTubeVolume, setTestTubeVolume] = useState(0);
   const [testTubeColor, setTestTubeColor] = useState<string | undefined>(undefined);
 
-const [showAceticDialog, setShowAceticDialog] = useState(false);
-const [aceticVolume, setAceticVolume] = useState("10.0");
-const [aceticError, setAceticError] = useState<string | null>(null);
-const [showSodiumDialog, setShowSodiumDialog] = useState(false);
-const [sodiumVolume, setSodiumVolume] = useState("5.0");
-const [sodiumError, setSodiumError] = useState<string | null>(null);
+  // Track moles of acid (HA) and conjugate base (A-)
+  const [acidMoles, setAcidMoles] = useState(0);
+  const [sodiumMoles, setSodiumMoles] = useState(0);
+  const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [showToast, setShowToast] = useState<string | null>(null);
 
-  useEffect(() => { setEquipmentOnBench([]); }, [experiment.id]);
+  const [showAceticDialog, setShowAceticDialog] = useState(false);
+  const [aceticVolume, setAceticVolume] = useState("10.0");
+  const [aceticError, setAceticError] = useState<string | null>(null);
+  const [showSodiumDialog, setShowSodiumDialog] = useState(false);
+  const [sodiumVolume, setSodiumVolume] = useState("5.0");
+  const [sodiumError, setSodiumError] = useState<string | null>(null);
+
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setShowToast(null); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
@@ -140,15 +146,22 @@ const confirmAddAcetic = () => {
     setAceticError('Please enter a value between 10.0 and 15.0 mL');
     return;
   }
-  // Update visual: transparent/clear liquid in the test tube
+  // Update visual: add liquid to the test tube and track moles
   setTestTubeVolume(prev => Math.max(0, Math.min(20, prev + v)));
   // semi-transparent light-blue color
   setTestTubeColor('rgba(173,216,230,0.6)');
+
+  // compute moles: 0.1 M * volume(L)
+  const vL = v / 1000;
+  const moles = 0.1 * vL;
+  setAcidMoles(prev => prev + moles);
 
   // mark the step complete when the user confirms adding the acetic volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowAceticDialog(false);
   setAceticError(null);
+  setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
+  setTimeout(() => setShowToast(null), 2000);
 };
 
 const confirmAddSodium = () => {
@@ -157,10 +170,69 @@ const confirmAddSodium = () => {
     setSodiumError('Please enter a value between 1.0 and 20.0 mL');
     return;
   }
+  // update volume and moles for sodium ethanoate
+  setTestTubeVolume(prev => Math.max(0, Math.min(20, prev + v)));
+  const vL = v / 1000;
+  const moles = 0.1 * vL;
+  setSodiumMoles(prev => prev + moles);
+
   // mark the step complete when the user confirms adding the sodium ethanoate volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowSodiumDialog(false);
   setSodiumError(null);
+  setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
+  setTimeout(() => setShowToast(null), 2000);
+};
+
+// Measure pH using Henderson-Hasselbalch when both species exist, fallback to simple rules
+const testPH = () => {
+  const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
+  if (testTubeVolume <= 0) {
+    setShowToast('No solution in test tube');
+    setTimeout(() => setShowToast(null), 1400);
+    return;
+  }
+
+  const pKa = 4.76;
+  let ph: number | null = null;
+
+  const HA = Math.max(0, acidMoles);
+  const A = Math.max(0, sodiumMoles);
+
+  if (HA > 0 && A > 0) {
+    const concHA = HA / totalVolL;
+    const concA = A / totalVolL;
+    ph = pKa + Math.log10(concA / concHA);
+  } else if (HA > 0 && A === 0) {
+    // approximate pH of weak acid (very rough) using pH = 1/2(pKa - log C)
+    const C = HA / totalVolL;
+    ph = 0.5 * (pKa - Math.log10(C));
+  } else if (A > 0 && HA === 0) {
+    // basic solution (conjugate base only)
+    ph = 8.5; // indicate basic (approx)
+  }
+
+  if (ph === null || Number.isNaN(ph) || !isFinite(ph)) {
+    setShowToast('pH measurement inconclusive');
+    setTimeout(() => setShowToast(null), 1400);
+    return;
+  }
+
+  const rounded = Math.max(0, Math.min(14, ph));
+  setLastMeasuredPH(rounded);
+  setShowToast(`Measured pH ≈ ${rounded.toFixed(2)}`);
+  setTimeout(() => setShowToast(null), 2000);
+
+  // Update test tube color based on pH (simple mapping)
+  if (rounded < 4.5) setTestTubeColor('#FFECB3'); // acidic (yellow)
+  else if (rounded < 6.5) setTestTubeColor('#FFF9C4'); // weak acidic (pale)
+  else if (rounded < 8) setTestTubeColor('#C8E6C9'); // near neutral
+  else setTestTubeColor('#BBDEFB'); // basic
+
+  // Auto-complete relevant steps: initial measure (3) and observe pH change (5)
+  if (currentStep === 3 || currentStep === 5) {
+    if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+  }
 };
 
 const stepsProgress = (
@@ -229,6 +301,19 @@ const stepsProgress = (
                   {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : {})}
                 />
               ))}
+
+              {/* Contextual MEASURE action near pH paper when present */}
+              {equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) && (
+                (() => {
+                  const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
+                  return (
+                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 40, transform: 'translate(-50%, 0)' }}>
+                      <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>MEASURE</Button>
+                    </div>
+                  );
+                })()
+              )}
+
             </WorkBench>
           </div>
 
@@ -252,6 +337,16 @@ const stepsProgress = (
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Measured pH */}
+              <div className="mb-4">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
+                <div className="flex items-center space-x-2">
+                  <div className="text-2xl font-bold text-purple-700">{lastMeasuredPH ? lastMeasuredPH.toFixed(2) : '--'}</div>
+                  <div className="text-xs text-gray-500">{lastMeasuredPH ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement yet'}</div>
+                </div>
+                {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
             </div>
           </div>
