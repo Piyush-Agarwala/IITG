@@ -371,10 +371,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               if (equipmentData) {
                 // Show the provided analytical balance image when in step 1 of the Oxalic Acid preparation
                 const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Ffa7b3a8712c145e7aec95c72213b2922?format=webp&width=800";
-                const shouldShowBalanceImage =
-                  equipmentData.id === "analytical_balance" &&
-                  step.id === 1 &&
-                  experimentTitle === "Preparation of Standard Solution of Oxalic Acid";
+                const shouldShowBalanceImage = equipmentData.id === "analytical_balance";
 
                 return (
                   <Equipment
