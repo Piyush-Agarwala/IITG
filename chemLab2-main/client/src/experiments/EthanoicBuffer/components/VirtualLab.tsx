@@ -92,7 +92,8 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
       const isFixed = /ethanoic|acetic|sodium-ethanoate|sodium_ethanoate|sodium ethanoate|sodium acetate/i.test(item.name);
       const positionObj = isFixed ? { x, y, fixed: true } : { x, y };
       setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: positionObj }]);
-      if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+      // Only mark the step complete for interactive actions (not when placing fixed reagent bottles)
+      if (!isFixed && !completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
   };
 
