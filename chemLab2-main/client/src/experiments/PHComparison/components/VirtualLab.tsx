@@ -56,6 +56,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [indicatorVolume, setIndicatorVolume] = useState<string>("0.5");
   const [previewIndicatorVolume, setPreviewIndicatorVolume] = useState<number | null>(0.5);
   const [indicatorError, setIndicatorError] = useState<string | null>(null);
+  // Track whether the MEASURE/Test pH action has been pressed so we can stop blinking
+  const [measurePressed, setMeasurePressed] = useState(false);
 
   // Comparison mode and snapshots
   const [compareMode, setCompareMode] = useState(false);
@@ -75,7 +77,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       'test-tube': { x: 200, y: 250 },
       'hcl-0-01m': { x: 500, y: 200 },
       'acetic-0-01m': { x: 500, y: 360 },
-      'universal-indicator': { x: 500, y: 520 },
+      'universal-indicator': { x: 500, y: 580 },
     };
     return positions[equipmentId] || { x: 300, y: 250 };
   };
@@ -474,12 +476,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <>
                   {/* Existing Test pH button (kept below for continuity) */}
                   <div style={{ position: 'absolute', left: phPaperItem.position.x, top: phPaperItem.position.y + 40, transform: 'translate(-50%, 0)' }}>
-                    <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>Test pH</Button>
+                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'animate-pulse' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>Test pH</Button>
                   </div>
 
                   {/* New MEASURE button placed beside the pH paper */}
                   <div style={{ position: 'absolute', left: phPaperItem.position.x + 90, top: phPaperItem.position.y, transform: 'translate(-50%, -50%)' }}>
-                    <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>MEASURE</Button>
+                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'animate-pulse' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
                   </div>
                 </>
               )}

@@ -112,7 +112,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   return (
     <div style={{ position: 'absolute', left: position.x, top: position.y, transform: 'translate(-50%, -50%)' }} className="relative group" draggable={!disabled && !isFixed} onDragStart={handleDragStart}>
       <div className={`relative ${id === 'test-tube' ? 'min-w-[240px] min-h-[360px]' : isPH ? 'bg-transparent border-0 shadow-none p-0 min-w-0 min-h-0' : 'bg-white rounded-xl shadow-lg border-2 p-4 min-w-[90px] min-h-[120px]'} ${!isPH && id !== 'test-tube' ? (isActive ? 'border-blue-400 shadow-xl' : 'border-gray-200') : ''}`} onClick={handleClick}>
-        {onRemove && (
+        {onRemove && !isPH && (
           <Button onClick={(e) => { e.stopPropagation(); onRemove(id); }} size="sm" variant="outline" className={`absolute w-6 h-6 p-0 bg-red-500 text-white border-red-500 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity ${id === 'test-tube' ? 'top-0 right-0' : '-top-2 -right-2'}`}>
             <X className="w-3 h-3" />
           </Button>
@@ -158,8 +158,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
             </div>
           ) : (name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph')) ? (
             <div className="flex flex-col items-center">
-              <div className="w-24 h-8 relative overflow-visible mb-2">
-                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fa1eea72a49464b2f93611a90f0edd819?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-0 scale-[5] origin-center max-w-none" />
+              <div className="w-24 h-8 relative overflow-visible mb-2" style={{ backgroundColor: color || 'transparent', borderRadius: '6px', padding: '4px', transition: 'background-color 2s ease' }}>
+                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fa1eea72a49464b2f93611a90f0edd819?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-0 scale-[5] origin-center max-w-none" style={{ mixBlendMode: 'multiply', opacity: 0.95 }} />
               </div>
             </div>
           ) : id === 'universal-indicator' ? (

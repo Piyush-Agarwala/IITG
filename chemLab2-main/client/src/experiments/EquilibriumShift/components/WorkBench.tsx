@@ -108,7 +108,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         {onTestPH && (
           <button
             onClick={onTestPH}
-            className="px-3 py-1 bg-amber-100 text-amber-800 rounded-md text-sm font-medium hover:bg-amber-200 transition-colors"
+            className="px-3 py-1 bg-amber-600 text-white rounded-md text-sm font-medium hover:bg-amber-700 transition-colors"
             aria-label="Test pH"
           >
             Test pH

@@ -83,8 +83,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
     // place the pH paper / universal indicator directly below the test tube and make it fixed
     if (id === 'universal-indicator' || id.toLowerCase().includes('ph')) {
-      // align horizontally with the test-tube and position slightly further below it
-      return { x: baseX, y: baseY + 280 };
+      // align horizontally with the test-tube and position slightly further below it (lowered)
+      return { x: baseX, y: baseY + 330 };
     }
 
     return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
@@ -223,11 +223,20 @@ const testPH = () => {
   setShowToast(`Measured pH ≈ ${rounded.toFixed(2)}`);
   setTimeout(() => setShowToast(null), 2000);
 
-  // Update test tube color based on pH (simple mapping)
-  if (rounded < 4.5) setTestTubeColor('#FFECB3'); // acidic (yellow)
-  else if (rounded < 6.5) setTestTubeColor('#FFF9C4'); // weak acidic (pale)
-  else if (rounded < 8) setTestTubeColor('#C8E6C9'); // near neutral
-  else setTestTubeColor('#BBDEFB'); // basic
+  // Update pH paper color based on pH (do NOT change test tube color)
+  let paperColor: string | undefined = undefined;
+  if (rounded < 4.5) paperColor = '#ff6b6b'; // acidic - red
+  else if (rounded < 6.5) paperColor = '#ffb74d'; // weak acidic - orange
+  else if (rounded < 8) paperColor = '#C8E6C9'; // near neutral - green
+  else paperColor = '#64b5f6'; // basic - blue
+
+  // tint pH paper on the bench if present
+  setEquipmentOnBench(prev => prev.map(e => {
+    if (e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) {
+      return { ...e, color: paperColor } as any;
+    }
+    return e;
+  }));
 
   // Auto-complete relevant steps: initial measure (3) and observe pH change (5)
   if (currentStep === 3 || currentStep === 5) {
@@ -297,8 +306,8 @@ const stepsProgress = (
                   position={e.position}
                   onRemove={handleRemove}
                   onInteract={handleInteract}
-                  // show test tube volume/color when available
-                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : {})}
+                  // show test tube volume/color when available, or pass pH paper color if present
+                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : (e.color ? { color: (e as any).color } : {}))}
                 />
               ))}
 
@@ -308,7 +317,7 @@ const stepsProgress = (
                   const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 40, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>MEASURE</Button>
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${lastMeasuredPH === null ? 'animate-pulse' : ''}`} onClick={testPH}>MEASURE</Button>
                     </div>
                   );
                 })()
@@ -343,8 +352,15 @@ const stepsProgress = (
               <div className="mb-4">
                 <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
                 <div className="flex items-center space-x-2">
-                  <div className="text-2xl font-bold text-purple-700">{lastMeasuredPH ? lastMeasuredPH.toFixed(2) : '--'}</div>
-                  <div className="text-xs text-gray-500">{lastMeasuredPH ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement yet'}</div>
+                  {(() => {
+                    const display = lastMeasuredPH != null ? `${lastMeasuredPH.toFixed(2)} to ${lastMeasuredPH.toFixed(1)}` : '--';
+                    return (
+                      <>
+                        <div className="text-2xl font-bold text-purple-700">{display}</div>
+                        <div className="text-xs text-gray-500">{lastMeasuredPH != null ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement yet'}</div>
+                      </>
+                    );
+                  })()}
                 </div>
                 {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
