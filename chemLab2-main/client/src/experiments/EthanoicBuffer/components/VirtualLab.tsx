@@ -352,8 +352,15 @@ const stepsProgress = (
               <div className="mb-4">
                 <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
                 <div className="flex items-center space-x-2">
-                  <div className="text-2xl font-bold text-purple-700">{lastMeasuredPH ? lastMeasuredPH.toFixed(2) : '--'}</div>
-                  <div className="text-xs text-gray-500">{lastMeasuredPH ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement yet'}</div>
+                  {(() => {
+                    const display = lastMeasuredPH != null ? `${lastMeasuredPH.toFixed(2)} to ${lastMeasuredPH.toFixed(1)}` : '--';
+                    return (
+                      <>
+                        <div className="text-2xl font-bold text-purple-700">{display}</div>
+                        <div className="text-xs text-gray-500">{lastMeasuredPH != null ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement yet'}</div>
+                      </>
+                    );
+                  })()}
                 </div>
                 {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
