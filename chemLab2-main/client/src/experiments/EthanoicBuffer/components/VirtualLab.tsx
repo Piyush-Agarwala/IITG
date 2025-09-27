@@ -165,13 +165,6 @@ const confirmAddAcetic = () => {
   setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
   setTimeout(() => setShowToast(null), 2000);
 
-  // Auto-measure if pH paper is present on the bench
-  const phPaperPresent = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
-  if (phPaperPresent) {
-    const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
-    const ph = computePHFrom(newAcidMoles, sodiumMoles, totalVolL);
-    if (ph != null) applyPHResult(ph);
-  }
 };
 
 const confirmAddSodium = () => {
@@ -195,13 +188,6 @@ const confirmAddSodium = () => {
   setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
   setTimeout(() => setShowToast(null), 2000);
 
-  // Auto-measure if pH paper is present on the bench
-  const phPaperPresent = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
-  if (phPaperPresent) {
-    const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
-    const ph = computePHFrom(acidMoles, newSodiumMoles, totalVolL);
-    if (ph != null) applyPHResult(ph);
-  }
 };
 
 // Helper: compute pH given moles of HA (acid), A (conjugate base) and total volume (L)
