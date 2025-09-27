@@ -13,7 +13,7 @@ interface EquipmentProps {
   id: string;
   name: string;
   icon: React.ReactNode;
-  onDrag: (id: string, x: number, y: number) => void;
+  onDrag?: (id: string, x: number, y: number) => void;
   position: { x: number; y: number } | null;
   chemicals?: Array<{
     id: string;
@@ -68,7 +68,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (rect) {
           const newX = e.clientX - rect.left - dragOffset.x;
           const newY = e.clientY - rect.top - dragOffset.y;
-          onDrag(id, newX, newY);
+          onDrag?.(id, newX, newY);
         }
       }
     };

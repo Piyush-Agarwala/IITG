@@ -165,29 +165,15 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
             <CardTitle className="text-lg">Experiment Steps</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {experiment.stepDetails.map((step, index) => (
+            {[experiment.stepDetails[currentStep]].map((step) => (
               <div
                 key={step.id}
-                className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                  index === currentStep
-                    ? "bg-blue-50 border-blue-200"
-                    : index < currentStep
-                    ? "bg-green-50 border-green-200"
-                    : "bg-gray-50 border-gray-200"
-                }`}
-                onClick={() => handleStepChange(index)}
+                className={`p-3 rounded-lg border cursor-pointer transition-colors bg-blue-50 border-blue-200`}
+                onClick={() => handleStepChange(currentStep)}
               >
                 <div className="flex items-center space-x-2">
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      index < currentStep
-                        ? "bg-green-500 text-white"
-                        : index === currentStep
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-300 text-gray-600"
-                    }`}
-                  >
-                    {index + 1}
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-blue-500 text-white">
+                    {currentStep + 1}
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-sm">{step.title}</p>
