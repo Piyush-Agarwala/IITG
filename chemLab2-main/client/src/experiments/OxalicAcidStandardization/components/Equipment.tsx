@@ -13,6 +13,7 @@ interface EquipmentProps {
   id: string;
   name: string;
   icon: React.ReactNode;
+  typeId?: string;
   imageSrc?: string;
   onDrag?: (id: string, x: number, y: number) => void;
   position: { x: number; y: number } | null;
@@ -37,6 +38,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   id,
   name,
   icon,
+  typeId,
   imageSrc,
   onDrag,
   position,
@@ -111,8 +113,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
   const getEquipmentContent = () => {
     const totalVolume = chemicals.reduce((sum, chemical) => sum + chemical.amount, 0);
-    
-    switch (id) {
+    const eqId = typeId ?? id;
+
+    switch (eqId) {
       case "analytical_balance":
         const oxalicAcid = chemicals.find(c => c.id === "oxalic_acid");
         return (
@@ -132,7 +135,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             </div>
           </div>
         );
-        
+
       case "volumetric_flask":
         const isAtMark = preparationState?.finalVolume;
         const isNearMark = preparationState?.nearMark;
@@ -142,7 +145,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             <div className="text-xs space-y-1">
               <div>250 mL</div>
               {chemicals.length > 0 && (
-                <div 
+                <div
                   className="w-6 h-8 mx-auto rounded-b-full border"
                   style={{
                     backgroundColor: chemicals[0]?.color || "#87CEEB",
@@ -214,7 +217,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
   };
 
   const canAcceptChemical = (chemicalId: string) => {
-    switch (id) {
+    const eqId = typeId ?? id;
+    switch (eqId) {
       case "analytical_balance":
         return chemicalId === "oxalic_acid";
       case "beaker":
@@ -227,7 +231,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
   };
 
   const getActionButton = () => {
-    switch (id) {
+    const eqId = typeId ?? id;
+    switch (eqId) {
       case "analytical_balance":
         if (chemicals.some(c => c.id === "oxalic_acid")) {
           return (
