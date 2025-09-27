@@ -88,18 +88,31 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
     if (!item) return;
 
     if (action === 'move') {
-      // update existing equipment position
-      setEquipmentOnBench(prev => prev.map(e => e.id === id ? { ...e, position: { x, y } } : e));
+      // do not allow moving fixed items (e.g., pH paper or fixed reagent bottles)
+      setEquipmentOnBench(prev => prev.map(e => e.id === id ? ((e.position as any)?.fixed ? e : { ...e, position: { x, y } }) : e));
       return;
     }
 
     // add new equipment at the exact drop coordinates
     if (!equipmentOnBench.find(e => e.id === id)) {
-      const isFixed = /ethanoic|acetic|sodium-ethanoate|sodium_ethanoate|sodium ethanoate|sodium acetate/i.test(item.name);
-      const positionObj = isFixed ? { x, y, fixed: true } : { x, y };
+      // treat pH paper / universal indicator as fixed and always place it at the designated position
+      const isFixedReagent = /ethanoic|acetic|sodium-ethanoate|sodium_ethanoate|sodium ethanoate|sodium acetate/i.test(item.name);
+      const isPhPaper = id === 'universal-indicator' || item.name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
+
+      let positionObj: any;
+      if (isPhPaper) {
+        // use the canonical getPosition to compute the exact fixed coordinates
+        const pos = getPosition(id);
+        positionObj = { x: pos.x, y: pos.y, fixed: true };
+      } else if (isFixedReagent) {
+        positionObj = { x, y, fixed: true };
+      } else {
+        positionObj = { x, y };
+      }
+
       setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: positionObj }]);
       // Only mark the step complete for interactive actions (not when placing fixed reagent bottles)
-      if (!isFixed && !completedSteps.includes(currentStep)) onStepComplete(currentStep);
+      if (!positionObj.fixed && !completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
   };
 
