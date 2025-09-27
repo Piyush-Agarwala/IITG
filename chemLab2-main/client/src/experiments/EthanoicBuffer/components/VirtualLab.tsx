@@ -40,6 +40,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [showSodiumDialog, setShowSodiumDialog] = useState(false);
   const [sodiumVolume, setSodiumVolume] = useState("5.0");
   const [sodiumError, setSodiumError] = useState<string | null>(null);
+  // Track cumulative volume (mL) of sodium ethanoate added to the test tube so we can revert it on reset
+  const [sodiumVolumeAdded, setSodiumVolumeAdded] = useState<number>(0);
 
   useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setShowToast(null); }, [experiment.id]);
 
@@ -180,6 +182,8 @@ const confirmAddSodium = () => {
   const moles = 0.1 * vL;
   const newSodiumMoles = sodiumMoles + moles;
   setSodiumMoles(newSodiumMoles);
+  // track cumulative sodium volume added so Reset can revert the volume
+  setSodiumVolumeAdded(prev => Math.max(0, prev + v));
 
   // mark the step complete when the user confirms adding the sodium ethanoate volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
@@ -369,7 +373,13 @@ const stepsProgress = (
                       className="bg-red-500 text-white hover:bg-red-600 shadow-sm"
                       onClick={() => {
                         // Reset sodium ethanoate state but keep the sodium bottle on the bench
+                        // Revert any volume previously added by sodium ethanoate
                         setSodiumMoles(0);
+                        setTestTubeVolume(prev => {
+                          const newVol = Math.max(0, prev - sodiumVolumeAdded);
+                          return Math.min(20, newVol);
+                        });
+                        setSodiumVolumeAdded(0);
                         setShowToast('Sodium ethanoate reset');
                         setTimeout(() => setShowToast(null), 1400);
                       }}
