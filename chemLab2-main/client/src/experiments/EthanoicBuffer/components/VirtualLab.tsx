@@ -29,7 +29,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [testTubeColor, setTestTubeColor] = useState<string | undefined>(undefined);
 
 const [showAceticDialog, setShowAceticDialog] = useState(false);
-const [aceticVolume, setAceticVolume] = useState("5.0");
+const [aceticVolume, setAceticVolume] = useState("10.0");
 const [aceticError, setAceticError] = useState<string | null>(null);
 const [showSodiumDialog, setShowSodiumDialog] = useState(false);
 const [sodiumVolume, setSodiumVolume] = useState("5.0");
