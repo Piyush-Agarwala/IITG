@@ -312,6 +312,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                   <Equipment
                     key={position.id}
                     id={position.id}
+                    typeId={equipmentData.id}
                     name={equipmentData.name}
                     icon={equipmentData.icon}
                     imageSrc={shouldShowBalanceImage ? balanceImageUrl : undefined}
@@ -340,6 +341,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                   <Equipment
                     key={position.id}
                     id={position.id}
+                    typeId={chem.id}
                     name={`${chem.name} Bottle`}
                     icon={bottleIcon}
                     onDrag={handleEquipmentDrag}
