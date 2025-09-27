@@ -166,8 +166,8 @@ const confirmAddAcetic = () => {
 
 const confirmAddSodium = () => {
   const v = parseFloat(sodiumVolume);
-  if (Number.isNaN(v) || v < 1.0 || v > 20.0) {
-    setSodiumError('Please enter a value between 1.0 and 20.0 mL');
+  if (Number.isNaN(v) || v < 5.0 || v > 10.0) {
+    setSodiumError('Please enter a value between 5.0 and 10.0 mL');
     return;
   }
   // update volume and moles for sodium ethanoate
@@ -444,15 +444,15 @@ const stepsProgress = (
             <input
               type="number"
               step="0.1"
-              min={1.0}
-              max={20.0}
+              min={5.0}
+              max={10.0}
               value={sodiumVolume}
               onChange={(e) => {
                 const val = e.target.value;
                 setSodiumVolume(val);
                 const parsed = parseFloat(val);
-                if (Number.isNaN(parsed) || parsed < 1.0 || parsed > 20.0) {
-                  setSodiumError("Please enter a value between 1.0 and 20.0 mL");
+                if (Number.isNaN(parsed) || parsed < 5.0 || parsed > 10.0) {
+                  setSodiumError("Please enter a value between 5.0 and 10.0 mL");
                 } else {
                   setSodiumError(null);
                 }
@@ -461,11 +461,11 @@ const stepsProgress = (
               placeholder="Enter volume in mL"
             />
             {sodiumError && <p className="text-xs text-red-600">{sodiumError}</p>}
-            <p className="text-xs text-gray-500">Recommended range: 1.0 – 20.0 mL</p>
+            <p className="text-xs text-gray-500">Recommended range: 5.0 – 10.0 mL</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowSodiumDialog(false)}>Cancel</Button>
-            <Button onClick={confirmAddSodium} disabled={!!sodiumError || Number.isNaN(parseFloat(sodiumVolume)) || parseFloat(sodiumVolume) < 1.0 || parseFloat(sodiumVolume) > 20.0}>Add Solution</Button>
+            <Button onClick={confirmAddSodium} disabled={!!sodiumError || Number.isNaN(parseFloat(sodiumVolume)) || parseFloat(sodiumVolume) < 5.0 || parseFloat(sodiumVolume) > 10.0}>Add Solution</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
