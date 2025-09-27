@@ -137,6 +137,8 @@ const confirmAddSodium = () => {
     setSodiumError('Please enter a value between 1.0 and 20.0 mL');
     return;
   }
+  // mark the step complete when the user confirms adding the sodium ethanoate volume
+  if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowSodiumDialog(false);
   setSodiumError(null);
 };
