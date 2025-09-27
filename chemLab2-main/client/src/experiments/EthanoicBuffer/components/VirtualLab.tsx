@@ -306,8 +306,8 @@ const stepsProgress = (
                   position={e.position}
                   onRemove={handleRemove}
                   onInteract={handleInteract}
-                  // show test tube volume/color when available
-                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : {})}
+                  // show test tube volume/color when available, or pass pH paper color if present
+                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : (e.color ? { color: (e as any).color } : {}))}
                 />
               ))}
 
