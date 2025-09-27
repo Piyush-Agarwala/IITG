@@ -125,7 +125,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <img
                 src={imageSrc}
                 alt={name}
-                className={isAnalytical && position ? "w-40 h-40 mx-auto mb-2 object-contain" : "w-20 h-20 mx-auto mb-2 object-contain"}
+                className={isAnalytical && position ? "w-56 h-56 mx-auto mb-2 object-contain" : "w-20 h-20 mx-auto mb-2 object-contain"}
+                style={isAnalytical ? { background: 'transparent', display: 'block' as const } : undefined}
               />
             ) : (
               <Scale className={isAnalytical && position ? "w-10 h-10 mx-auto mb-2 text-gray-600" : "w-8 h-8 mx-auto mb-2 text-gray-600"} />
