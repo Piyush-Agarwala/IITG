@@ -1,0 +1,13 @@
+{
+  "name": "chem-lab-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "npm --prefix chemLab2-main install",
+    "dev": "npm --prefix chemLab2-main run dev",
+    "start": "npm --prefix chemLab2-main start",
+    "build": "npm --prefix chemLab2-main run build",
+    "check": "npm --prefix chemLab2-main run check"
+  }
+}
