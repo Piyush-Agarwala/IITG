@@ -13,6 +13,7 @@ interface EquipmentProps {
   id: string;
   name: string;
   icon: React.ReactNode;
+  imageSrc?: string;
   onDrag?: (id: string, x: number, y: number) => void;
   position: { x: number; y: number } | null;
   chemicals?: Array<{
@@ -36,6 +37,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   id,
   name,
   icon,
+  imageSrc,
   onDrag,
   position,
   chemicals = [],
@@ -115,7 +117,11 @@ export const Equipment: React.FC<EquipmentProps> = ({
         const oxalicAcid = chemicals.find(c => c.id === "oxalic_acid");
         return (
           <div className="text-center">
-            <Scale className="w-8 h-8 mx-auto mb-2 text-gray-600" />
+            {imageSrc ? (
+              <img src={imageSrc} alt={name} className="w-20 h-20 mx-auto mb-2 object-contain" />
+            ) : (
+              <Scale className="w-8 h-8 mx-auto mb-2 text-gray-600" />
+            )}
             <div className="text-xs space-y-1">
               <div>Digital Display</div>
               {oxalicAcid && (
