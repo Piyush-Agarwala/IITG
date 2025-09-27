@@ -122,8 +122,8 @@ const confirmAddAcetic = () => {
   }
   // Update visual: transparent/clear liquid in the test tube
   setTestTubeVolume(prev => Math.max(0, Math.min(20, prev + v)));
-  // semi-transparent clear color
-  setTestTubeColor('rgba(255,255,255,0.2)');
+  // semi-transparent light-blue color
+  setTestTubeColor('rgba(173,216,230,0.6)');
 
   // mark the step complete when the user confirms adding the acetic volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
