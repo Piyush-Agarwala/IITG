@@ -476,12 +476,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <>
                   {/* Existing Test pH button (kept below for continuity) */}
                   <div style={{ position: 'absolute', left: phPaperItem.position.x, top: phPaperItem.position.y + 40, transform: 'translate(-50%, 0)' }}>
-                    <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>Test pH</Button>
+                    <Button size="sm" className={`bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm ${!measurePressed ? 'animate-pulse' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>Test pH</Button>
                   </div>
 
                   {/* New MEASURE button placed beside the pH paper */}
                   <div style={{ position: 'absolute', left: phPaperItem.position.x + 90, top: phPaperItem.position.y, transform: 'translate(-50%, -50%)' }}>
-                    <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>MEASURE</Button>
+                    <Button size="sm" className={`bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm ${!measurePressed ? 'animate-pulse' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
                   </div>
                 </>
               )}
