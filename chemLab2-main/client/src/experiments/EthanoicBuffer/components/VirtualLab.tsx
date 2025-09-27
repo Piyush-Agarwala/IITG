@@ -359,6 +359,28 @@ const stepsProgress = (
                 })()
               )}
 
+              {(() => {
+                const sodiumItem = equipmentOnBench.find(e => (e.name && e.name.toLowerCase().includes('sodium')) || e.id.toLowerCase().includes('sodium'));
+                if (!sodiumItem) return null;
+                return (
+                  <div key="reset-sodium" style={{ position: 'absolute', left: sodiumItem.position.x, top: sodiumItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
+                    <Button
+                      size="sm"
+                      className="bg-red-500 text-white hover:bg-red-600 shadow-sm"
+                      onClick={() => {
+                        // Reset sodium ethanoate state and remove sodium bottle from bench
+                        setSodiumMoles(0);
+                        setEquipmentOnBench(prev => prev.filter(e => !((e.name && e.name.toLowerCase().includes('sodium')) || e.id.toLowerCase().includes('sodium'))));
+                        setShowToast('Sodium ethanoate reset');
+                        setTimeout(() => setShowToast(null), 1400);
+                      }}
+                    >
+                      RESET Sodium Ethanoate
+                    </Button>
+                  </div>
+                );
+              })()}
+
             </WorkBench>
           </div>
 
