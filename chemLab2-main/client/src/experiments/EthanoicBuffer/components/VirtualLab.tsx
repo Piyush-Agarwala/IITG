@@ -77,8 +77,8 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
 
     // place the pH paper / universal indicator directly below the test tube and make it fixed
     if (id === 'universal-indicator' || id.toLowerCase().includes('ph')) {
-      // align horizontally with the test-tube and position slightly below it
-      return { x: baseX, y: baseY + 220 };
+      // align horizontally with the test-tube and position slightly further below it
+      return { x: baseX, y: baseY + 280 };
     }
 
     return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
