@@ -65,6 +65,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   // Results modal and analysis log
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
+  const [showPouring, setShowPouring] = useState(false);
+  const [pourKey, setPourKey] = useState(0);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
