@@ -74,6 +74,12 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
     if (id === 'test-tube') {
       return { x: baseX, y: baseY + 140 };
     }
+
+    // place the pH paper / universal indicator at a fixed location to match the requested layout
+    if (id === 'universal-indicator' || id.toLowerCase().includes('ph')) {
+      return { x: baseX + 140, y: baseY + 220 };
+    }
+
     return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
   };
 
