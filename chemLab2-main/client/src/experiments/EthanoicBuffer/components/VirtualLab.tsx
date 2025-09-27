@@ -301,6 +301,19 @@ const stepsProgress = (
                   {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : {})}
                 />
               ))}
+
+              {/* Contextual MEASURE action near pH paper when present */}
+              {equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) && (
+                (() => {
+                  const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
+                  return (
+                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 40, transform: 'translate(-50%, 0)' }}>
+                      <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>MEASURE</Button>
+                    </div>
+                  );
+                })()
+              )}
+
             </WorkBench>
           </div>
 
