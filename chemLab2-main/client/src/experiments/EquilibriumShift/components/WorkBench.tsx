@@ -105,15 +105,6 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       {/* Workbench title and actions */}
       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md border border-gray-200 flex items-center space-x-2">
         <span className="text-sm font-medium text-gray-700">Laboratory Workbench</span>
-        {onTestPH && (
-          <button
-            onClick={onTestPH}
-            className="px-3 py-1 bg-amber-600 text-white rounded-md text-sm font-medium hover:bg-amber-700 transition-colors"
-            aria-label="Test pH"
-          >
-            Test pH
-          </button>
-        )}
       </div>
 
       {/* small inline message when no handler is provided */}
