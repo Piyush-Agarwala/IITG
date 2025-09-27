@@ -251,15 +251,15 @@ const stepsProgress = (
             <input
               type="number"
               step="0.1"
-              min={5.0}
-              max={10.0}
+              min={10.0}
+              max={15.0}
               value={aceticVolume}
               onChange={(e) => {
                 const val = e.target.value;
                 setAceticVolume(val);
                 const parsed = parseFloat(val);
-                if (Number.isNaN(parsed) || parsed < 5.0 || parsed > 10.0) {
-                  setAceticError("Please enter a value between 5.0 and 10.0 mL");
+                if (Number.isNaN(parsed) || parsed < 10.0 || parsed > 15.0) {
+                  setAceticError("Please enter a value between 10.0 and 15.0 mL");
                 } else {
                   setAceticError(null);
                 }
@@ -268,11 +268,11 @@ const stepsProgress = (
               placeholder="Enter volume in mL"
             />
             {aceticError && <p className="text-xs text-red-600">{aceticError}</p>}
-            <p className="text-xs text-gray-500">Recommended range: 5.0 – 10.0 mL</p>
+            <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAceticDialog(false)}>Cancel</Button>
-            <Button onClick={confirmAddAcetic} disabled={!!aceticError || Number.isNaN(parseFloat(aceticVolume)) || parseFloat(aceticVolume) < 5.0 || parseFloat(aceticVolume) > 10.0}>Add Solution</Button>
+            <Button onClick={confirmAddAcetic} disabled={!!aceticError || Number.isNaN(parseFloat(aceticVolume)) || parseFloat(aceticVolume) < 10.0 || parseFloat(aceticVolume) > 15.0}>Add Solution</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
