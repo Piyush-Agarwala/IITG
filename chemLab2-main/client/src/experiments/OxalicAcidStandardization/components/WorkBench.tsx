@@ -302,7 +302,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               // If this position corresponds to a known equipment, render normally
               if (equipmentData) {
                 // Show the provided analytical balance image when in step 1 of the Oxalic Acid preparation
-                const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F52221253b4e74677842e5d59914ce1f5?format=webp&width=800";
+                const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F67b66a202a8646f6afbf454f1f73eda7?format=webp&width=800";
                 const shouldShowBalanceImage =
                   equipmentData.id === "analytical_balance" &&
                   step.id === 1 &&
