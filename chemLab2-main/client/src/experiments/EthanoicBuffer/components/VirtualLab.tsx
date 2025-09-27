@@ -29,7 +29,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [testTubeColor, setTestTubeColor] = useState<string | undefined>(undefined);
 
 const [showAceticDialog, setShowAceticDialog] = useState(false);
-const [aceticVolume, setAceticVolume] = useState("5.0");
+const [aceticVolume, setAceticVolume] = useState("10.0");
 const [aceticError, setAceticError] = useState<string | null>(null);
 const [showSodiumDialog, setShowSodiumDialog] = useState(false);
 const [sodiumVolume, setSodiumVolume] = useState("5.0");
@@ -74,6 +74,13 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
     if (id === 'test-tube') {
       return { x: baseX, y: baseY + 140 };
     }
+
+    // place the pH paper / universal indicator directly below the test tube and make it fixed
+    if (id === 'universal-indicator' || id.toLowerCase().includes('ph')) {
+      // align horizontally with the test-tube and position slightly further below it
+      return { x: baseX, y: baseY + 280 };
+    }
+
     return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
   };
 
@@ -82,17 +89,31 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
     if (!item) return;
 
     if (action === 'move') {
-      // update existing equipment position
-      setEquipmentOnBench(prev => prev.map(e => e.id === id ? { ...e, position: { x, y } } : e));
+      // do not allow moving fixed items (e.g., pH paper or fixed reagent bottles)
+      setEquipmentOnBench(prev => prev.map(e => e.id === id ? ((e.position as any)?.fixed ? e : { ...e, position: { x, y } }) : e));
       return;
     }
 
     // add new equipment at the exact drop coordinates
     if (!equipmentOnBench.find(e => e.id === id)) {
-      const isFixed = /ethanoic|acetic|sodium-ethanoate|sodium_ethanoate|sodium ethanoate|sodium acetate/i.test(item.name);
-      const positionObj = isFixed ? { x, y, fixed: true } : { x, y };
+      // treat pH paper / universal indicator as fixed and always place it at the designated position
+      const isFixedReagent = /ethanoic|acetic|sodium-ethanoate|sodium_ethanoate|sodium ethanoate|sodium acetate/i.test(item.name);
+      const isPhPaper = id === 'universal-indicator' || item.name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
+
+      let positionObj: any;
+      if (isPhPaper) {
+        // use the canonical getPosition to compute the exact fixed coordinates
+        const pos = getPosition(id);
+        positionObj = { x: pos.x, y: pos.y, fixed: true };
+      } else if (isFixedReagent) {
+        positionObj = { x, y, fixed: true };
+      } else {
+        positionObj = { x, y };
+      }
+
       setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: positionObj }]);
-      if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+      // Only mark the step complete for interactive actions (not when placing fixed reagent bottles)
+      if (!positionObj.fixed && !completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
   };
 
@@ -115,15 +136,17 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
 
 const confirmAddAcetic = () => {
   const v = parseFloat(aceticVolume);
-  if (Number.isNaN(v) || v < 5.0 || v > 10.0) {
-    setAceticError('Please enter a value between 5.0 and 10.0 mL');
+  if (Number.isNaN(v) || v < 10.0 || v > 15.0) {
+    setAceticError('Please enter a value between 10.0 and 15.0 mL');
     return;
   }
   // Update visual: transparent/clear liquid in the test tube
   setTestTubeVolume(prev => Math.max(0, Math.min(20, prev + v)));
-  // semi-transparent clear color
-  setTestTubeColor('rgba(255,255,255,0.2)');
+  // semi-transparent light-blue color
+  setTestTubeColor('rgba(173,216,230,0.6)');
 
+  // mark the step complete when the user confirms adding the acetic volume
+  if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowAceticDialog(false);
   setAceticError(null);
 };
@@ -134,6 +157,8 @@ const confirmAddSodium = () => {
     setSodiumError('Please enter a value between 1.0 and 20.0 mL');
     return;
   }
+  // mark the step complete when the user confirms adding the sodium ethanoate volume
+  if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowSodiumDialog(false);
   setSodiumError(null);
 };
@@ -246,15 +271,15 @@ const stepsProgress = (
             <input
               type="number"
               step="0.1"
-              min={5.0}
-              max={10.0}
+              min={10.0}
+              max={15.0}
               value={aceticVolume}
               onChange={(e) => {
                 const val = e.target.value;
                 setAceticVolume(val);
                 const parsed = parseFloat(val);
-                if (Number.isNaN(parsed) || parsed < 5.0 || parsed > 10.0) {
-                  setAceticError("Please enter a value between 5.0 and 10.0 mL");
+                if (Number.isNaN(parsed) || parsed < 10.0 || parsed > 15.0) {
+                  setAceticError("Please enter a value between 10.0 and 15.0 mL");
                 } else {
                   setAceticError(null);
                 }
@@ -263,11 +288,11 @@ const stepsProgress = (
               placeholder="Enter volume in mL"
             />
             {aceticError && <p className="text-xs text-red-600">{aceticError}</p>}
-            <p className="text-xs text-gray-500">Recommended range: 5.0 – 10.0 mL</p>
+            <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAceticDialog(false)}>Cancel</Button>
-            <Button onClick={confirmAddAcetic} disabled={!!aceticError || Number.isNaN(parseFloat(aceticVolume)) || parseFloat(aceticVolume) < 5.0 || parseFloat(aceticVolume) > 10.0}>Add Solution</Button>
+            <Button onClick={confirmAddAcetic} disabled={!!aceticError || Number.isNaN(parseFloat(aceticVolume)) || parseFloat(aceticVolume) < 10.0 || parseFloat(aceticVolume) > 15.0}>Add Solution</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
