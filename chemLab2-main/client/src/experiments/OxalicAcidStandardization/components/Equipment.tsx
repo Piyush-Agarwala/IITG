@@ -305,7 +305,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
   const containerClass = isAnalytical
     ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-all ${isDragging ? 'scale-105' : ''}`
-    : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover-border-blue-400'}`;
+    : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
 
   return (
     <div
