@@ -28,14 +28,20 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [testTubeVolume, setTestTubeVolume] = useState(0);
   const [testTubeColor, setTestTubeColor] = useState<string | undefined>(undefined);
 
-const [showAceticDialog, setShowAceticDialog] = useState(false);
-const [aceticVolume, setAceticVolume] = useState("10.0");
-const [aceticError, setAceticError] = useState<string | null>(null);
-const [showSodiumDialog, setShowSodiumDialog] = useState(false);
-const [sodiumVolume, setSodiumVolume] = useState("5.0");
-const [sodiumError, setSodiumError] = useState<string | null>(null);
+  // Track moles of acid (HA) and conjugate base (A-)
+  const [acidMoles, setAcidMoles] = useState(0);
+  const [sodiumMoles, setSodiumMoles] = useState(0);
+  const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [showToast, setShowToast] = useState<string | null>(null);
 
-  useEffect(() => { setEquipmentOnBench([]); }, [experiment.id]);
+  const [showAceticDialog, setShowAceticDialog] = useState(false);
+  const [aceticVolume, setAceticVolume] = useState("10.0");
+  const [aceticError, setAceticError] = useState<string | null>(null);
+  const [showSodiumDialog, setShowSodiumDialog] = useState(false);
+  const [sodiumVolume, setSodiumVolume] = useState("5.0");
+  const [sodiumError, setSodiumError] = useState<string | null>(null);
+
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setShowToast(null); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
