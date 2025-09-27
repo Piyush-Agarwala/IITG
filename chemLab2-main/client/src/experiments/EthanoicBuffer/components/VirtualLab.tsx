@@ -316,8 +316,31 @@ const stepsProgress = (
                 (() => {
                   const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
                   return (
-                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 40, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${lastMeasuredPH === null ? 'animate-pulse' : ''}`} onClick={testPH}>MEASURE</Button>
+                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
+                      <Button
+                        size="sm"
+                        className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${lastMeasuredPH === null ? 'animate-pulse' : ''}`}
+                        onClick={() => {
+                          if (lastMeasuredPH === null) {
+                            testPH();
+                            return;
+                          }
+                          // Replace pH paper: clear tint/color and reset measurement
+                          setEquipmentOnBench(prev => prev.map(e => {
+                            if (e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) {
+                              const copy = { ...e } as any;
+                              delete copy.color;
+                              return copy;
+                            }
+                            return e;
+                          }));
+                          setLastMeasuredPH(null);
+                          setShowToast('New pH paper placed');
+                          setTimeout(() => setShowToast(null), 1400);
+                        }}
+                      >
+                        {lastMeasuredPH === null ? 'MEASURE' : 'New pH paper'}
+                      </Button>
                     </div>
                   );
                 })()
@@ -353,7 +376,7 @@ const stepsProgress = (
                 <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
                 <div className="flex items-center space-x-2">
                   {(() => {
-                    const display = lastMeasuredPH != null ? `${lastMeasuredPH.toFixed(2)} to ${lastMeasuredPH.toFixed(1)}` : '--';
+                    const display = lastMeasuredPH != null ? '2.4 – 3.5' : '--';
                     return (
                       <>
                         <div className="text-2xl font-bold text-purple-700">{display}</div>
