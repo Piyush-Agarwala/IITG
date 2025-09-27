@@ -99,36 +99,51 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     e.stopPropagation();
     setIsDragOver(false);
 
-    try {
-      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-      // If the dragged item includes concentration or volume, treat it as a chemical and create a bottle
+    const raw = e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list") || "";
+
+    let data: any = null;
+    try {
+      if (raw) {
+        data = JSON.parse(raw);
+      }
+    } catch (err) {
+      // raw wasn't JSON, handle common fallbacks below
+      data = null;
+    }
+
+    // Helper to add a bottle (chemical)
+    const addBottle = (payload: any) => {
+      setEquipmentPositions(prev => [
+        ...prev,
+        {
+          id: `${payload.id || 'bottle'}_${Date.now()}`,
+          x: x - 30,
+          y: y - 30,
+          isBottle: true,
+          chemicals: [
+            {
+              id: payload.id,
+              name: payload.name || payload.id,
+              color: payload.color || "#87CEEB",
+              amount: payload.amount || (payload.volume || 50),
+              concentration: payload.concentration || "",
+            }
+          ],
+        }
+      ]);
+    };
+
+    // If data parsed as object, handle as before
+    if (data && typeof data === 'object') {
       if (data.concentration || data.volume) {
-        setEquipmentPositions(prev => [
-          ...prev,
-          {
-            id: `${data.id}_${Date.now()}`,
-            x: x - 30,
-            y: y - 30,
-            isBottle: true,
-            chemicals: [
-              {
-                id: data.id,
-                name: data.name,
-                color: data.color || "#87CEEB",
-                amount: data.amount || (data.volume || 50),
-                concentration: data.concentration || "",
-              }
-            ],
-          }
-        ]);
+        addBottle(data);
         return;
       }
 
-      // Add equipment to workbench
       if (data.id && data.name) {
         setEquipmentPositions(prev => [
           ...prev,
@@ -137,12 +152,63 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             x: x - 50,
             y: y - 50,
             chemicals: [],
+            typeId: data.id,
+            name: data.name,
+            imageSrc: data.imageSrc,
           }
         ]);
+        return;
       }
-    } catch (error) {
-      console.error("Failed to parse drop data:", error);
     }
+
+    // If raw is a URL (user dragged an image), create a generic equipment that displays the image
+    if (raw && raw.startsWith("http")) {
+      setEquipmentPositions(prev => [
+        ...prev,
+        {
+          id: `image_${Date.now()}`,
+          x: x - 60,
+          y: y - 60,
+          chemicals: [],
+          name: 'Dropped Image',
+          imageSrc: raw,
+        }
+      ]);
+      return;
+    }
+
+    // If raw is a plain id string (e.g., "analytical_balance" or chemical id), try to resolve from props
+    if (raw) {
+      const trimmed = raw.trim();
+
+      // Try equipment list first
+      const eq = equipment.find(eqp => eqp.id === trimmed);
+      if (eq) {
+        setEquipmentPositions(prev => [
+          ...prev,
+          {
+            id: `${eq.id}_${Date.now()}`,
+            x: x - 50,
+            y: y - 50,
+            chemicals: [],
+            typeId: eq.id,
+            name: eq.name,
+            imageSrc: undefined,
+          }
+        ]);
+        return;
+      }
+
+      // Try chemicals list
+      const chem = chemicals.find(c => c.id === trimmed);
+      if (chem) {
+        addBottle(chem);
+        return;
+      }
+    }
+
+    // Fallback: log and ignore
+    console.warn('Unrecognized drop data:', raw);
   };
 
   const handleEquipmentDrag = (id: string, x: number, y: number) => {
