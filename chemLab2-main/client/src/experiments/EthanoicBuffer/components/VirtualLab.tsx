@@ -223,11 +223,20 @@ const testPH = () => {
   setShowToast(`Measured pH ≈ ${rounded.toFixed(2)}`);
   setTimeout(() => setShowToast(null), 2000);
 
-  // Update test tube color based on pH (simple mapping)
-  if (rounded < 4.5) setTestTubeColor('#FFECB3'); // acidic (yellow)
-  else if (rounded < 6.5) setTestTubeColor('#FFF9C4'); // weak acidic (pale)
-  else if (rounded < 8) setTestTubeColor('#C8E6C9'); // near neutral
-  else setTestTubeColor('#BBDEFB'); // basic
+  // Update pH paper color based on pH (do NOT change test tube color)
+  let paperColor: string | undefined = undefined;
+  if (rounded < 4.5) paperColor = '#ff6b6b'; // acidic - red
+  else if (rounded < 6.5) paperColor = '#ffb74d'; // weak acidic - orange
+  else if (rounded < 8) paperColor = '#C8E6C9'; // near neutral - green
+  else paperColor = '#64b5f6'; // basic - blue
+
+  // tint pH paper on the bench if present
+  setEquipmentOnBench(prev => prev.map(e => {
+    if (e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) {
+      return { ...e, color: paperColor } as any;
+    }
+    return e;
+  }));
 
   // Auto-complete relevant steps: initial measure (3) and observe pH change (5)
   if (currentStep === 3 || currentStep === 5) {
