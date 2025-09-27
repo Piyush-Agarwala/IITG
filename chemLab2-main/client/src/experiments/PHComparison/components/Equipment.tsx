@@ -165,7 +165,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#e1bee7' }}>
-                <FlaskConical className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-purple-700 opacity-70" />
+                <FlaskConical className="w-7 h-7 absolute top-3 left-1/2 -translate-x-1/2 text-purple-700 opacity-70" />
               </div>
               <span className="text-xs font-medium text-center">Universal Indicator</span>
             </div>
