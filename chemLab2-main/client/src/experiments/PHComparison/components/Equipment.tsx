@@ -158,8 +158,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
             </div>
           ) : (name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph')) ? (
             <div className="flex flex-col items-center">
-              <div className="w-24 h-8 relative overflow-visible mb-2">
-                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fa1eea72a49464b2f93611a90f0edd819?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-0 scale-[5] origin-center max-w-none" />
+              <div className="w-24 h-8 relative overflow-visible mb-2" style={{ backgroundColor: color, borderRadius: '6px', padding: '4px' }}>
+                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fa1eea72a49464b2f93611a90f0edd819?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-0 scale-[5] origin-center max-w-none" style={{ mixBlendMode: 'multiply', opacity: 0.95 }} />
               </div>
             </div>
           ) : id === 'universal-indicator' ? (
