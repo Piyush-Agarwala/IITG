@@ -165,41 +165,43 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
             <CardTitle className="text-lg">Experiment Steps</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {(experimentStarted ? experiment.stepDetails.filter((_, i) => i === currentStep) : experiment.stepDetails).map((step, index) => {
-              // If experimentStarted we filtered to only current step so index may be 0; compute displayIndex
-              const displayIndex = experimentStarted ? currentStep : index;
-              return (
-                <div
-                  key={step.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                    displayIndex === currentStep
-                      ? "bg-blue-50 border-blue-200"
-                      : displayIndex < currentStep
-                      ? "bg-green-50 border-green-200"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                  onClick={() => handleStepChange(displayIndex)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        displayIndex < currentStep
-                          ? "bg-green-500 text-white"
-                          : displayIndex === currentStep
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-300 text-gray-600"
-                      }`}
-                    >
-                      {displayIndex + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{step.title}</p>
-                      <p className="text-xs text-gray-600">{step.duration}</p>
+            {(() => {
+              const stepsToShow = (experimentStarted || currentStep > 0) ? [experiment.stepDetails[currentStep]] : experiment.stepDetails;
+              return stepsToShow.map((step, index) => {
+                const displayIndex = (experimentStarted || currentStep > 0) ? currentStep : index;
+                return (
+                  <div
+                    key={step.id}
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                      displayIndex === currentStep
+                        ? "bg-blue-50 border-blue-200"
+                        : displayIndex < currentStep
+                        ? "bg-green-50 border-green-200"
+                        : "bg-gray-50 border-gray-200"
+                    }`}
+                    onClick={() => handleStepChange(displayIndex)}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                          displayIndex < currentStep
+                            ? "bg-green-500 text-white"
+                            : displayIndex === currentStep
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-300 text-gray-600"
+                        }`}
+                      >
+                        {displayIndex + 1}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{step.title}</p>
+                        <p className="text-xs text-gray-600">{step.duration}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              });
+            })()}
           </CardContent>
         </Card>
 
