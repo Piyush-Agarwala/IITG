@@ -375,7 +375,10 @@ const stepsProgress = (
                         setTimeout(() => setShowToast(null), 1400);
                       }}
                     >
-                      RESET Sodium Ethanoate
+                      <div className="flex flex-col items-center leading-tight">
+                        <span className="font-semibold">RESET</span>
+                        <span className="text-xs lowercase">sodium ethanoate</span>
+                      </div>
                     </Button>
                   </div>
                 );
