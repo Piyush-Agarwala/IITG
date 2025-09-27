@@ -53,6 +53,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const equipmentRef = useRef<HTMLDivElement>(null);
+  const isAnalytical = (typeId ?? id) === "analytical_balance";
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (position) {
@@ -121,18 +122,25 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="text-center">
             {imageSrc ? (
-              <img src={imageSrc} alt={name} className="w-20 h-20 mx-auto mb-2 object-contain" />
+              <img
+                src={imageSrc}
+                alt={name}
+                className={
+                  isAnalytical && position
+                    ? "mx-auto block h-[22rem] w-auto object-contain"
+                    : "w-20 h-20 mx-auto mb-2 object-contain"
+                }
+              />
             ) : (
-              <Scale className="w-8 h-8 mx-auto mb-2 text-gray-600" />
+              <Scale className={isAnalytical && position ? "w-12 h-12 mx-auto mb-2 text-gray-600" : "w-8 h-8 mx-auto mb-2 text-gray-600"} />
             )}
-            <div className="text-xs space-y-1">
-              <div>Digital Display</div>
-              {oxalicAcid && (
-                <div className="bg-black text-green-400 px-2 py-1 rounded font-mono">
+            {oxalicAcid && (
+              <div className="mt-2 text-xs">
+                <div className="bg-black text-green-400 px-2 py-1 rounded font-mono inline-block">
                   {(oxalicAcid.amount / 1000).toFixed(4)} g
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         );
 
@@ -209,7 +217,11 @@ export const Equipment: React.FC<EquipmentProps> = ({
       default:
         return (
           <div className="text-center">
-            {icon}
+            {imageSrc ? (
+              <img src={imageSrc} alt={name} className="w-24 h-24 mx-auto mb-2 object-contain" />
+            ) : (
+              icon
+            )}
             <div className="text-xs mt-1">{name}</div>
           </div>
         );
@@ -294,14 +306,14 @@ export const Equipment: React.FC<EquipmentProps> = ({
     );
   }
 
+  const containerClass = isAnalytical
+    ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-transform ${isDragging ? 'scale-105' : ''}`
+    : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
+
   return (
     <div
       ref={equipmentRef}
-      className={`absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${
-        isDragging 
-          ? "border-blue-500 shadow-xl scale-105" 
-          : "border-gray-300 hover:border-blue-400"
-      }`}
+      className={containerClass}
       style={{
         left: position.x,
         top: position.y,

@@ -54,6 +54,9 @@ export interface EquipmentPosition {
   }>;
   // Optional flag for items created from chemicals (e.g., bottles)
   isBottle?: boolean;
+  typeId?: string;
+  name?: string;
+  imageSrc?: string;
 }
 
 export interface SolutionPreparationState {
