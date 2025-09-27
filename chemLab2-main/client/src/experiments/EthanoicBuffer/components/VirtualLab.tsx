@@ -125,6 +125,8 @@ const confirmAddAcetic = () => {
   // semi-transparent clear color
   setTestTubeColor('rgba(255,255,255,0.2)');
 
+  // mark the step complete when the user confirms adding the acetic volume
+  if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowAceticDialog(false);
   setAceticError(null);
 };
