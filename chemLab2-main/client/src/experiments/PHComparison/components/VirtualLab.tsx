@@ -293,7 +293,23 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const handleInteract = (id: string) => {
     if (id === 'hcl-0-01m') setShowHclDialog(true);
     if (id === 'acetic-0-01m') setShowAceticDialog(true);
-    if (id === 'universal-indicator') setShowIndicatorDialog(true);
+    if (id === 'universal-indicator') {
+      // If a test tube is present on the bench, show a pouring animation from tube to the pH paper
+      const tube = equipmentOnBench.find(e => e.id === 'test-tube');
+      const ph = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
+      if (tube && ph) {
+        setPourKey(k => k + 1);
+        setShowPouring(true);
+        setTimeout(() => {
+          setShowPouring(false);
+          testPH();
+        }, 900);
+        return;
+      }
+
+      // fallback: open indicator dialog when no tube present
+      setShowIndicatorDialog(true);
+    }
   };
 
   const handleRemove = (id: string) => {
