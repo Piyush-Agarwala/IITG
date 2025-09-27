@@ -7,6 +7,7 @@ interface WorkBenchProps {
   children: React.ReactNode;
   isRunning: boolean;
   currentStep: number;
+  onTestPH?: () => void;
 }
 
 export const WorkBench: React.FC<WorkBenchProps> = ({
@@ -14,8 +15,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   children,
   isRunning,
   currentStep,
+  onTestPH,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -60,6 +63,15 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     }
   };
 
+  const handleTestPHClick = () => {
+    if (onTestPH) {
+      onTestPH();
+      return;
+    }
+    setMessage('No test available to measure pH');
+    setTimeout(() => setMessage(null), 1800);
+  };
+
   return (
     <div
       data-workbench="true"
@@ -90,12 +102,24 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         </div>
       </div>
 
-      {/* Workbench title */}
-      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md border border-gray-200">
-        <span className="text-sm font-medium text-gray-700">
-          Laboratory Workbench
-        </span>
+      {/* Workbench title and actions */}
+      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md border border-gray-200 flex items-center space-x-2">
+        <span className="text-sm font-medium text-gray-700">Laboratory Workbench</span>
+        <button
+          onClick={handleTestPHClick}
+          className="px-3 py-1 bg-amber-100 text-amber-800 rounded-md text-sm font-medium hover:bg-amber-200 transition-colors"
+          aria-label="Test pH"
+        >
+          Test pH
+        </button>
       </div>
+
+      {/* small inline message when no handler is provided */}
+      {message && (
+        <div className="absolute top-20 right-6 bg-white/95 border border-gray-200 rounded-md px-3 py-2 shadow-md text-sm text-gray-800">
+          {message}
+        </div>
+      )}
 
       {/* Drop zone indicator */}
       {isDragOver && (
