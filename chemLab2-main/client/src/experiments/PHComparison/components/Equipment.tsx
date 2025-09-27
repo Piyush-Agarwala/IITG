@@ -94,6 +94,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') || name.toLowerCase().includes('sodium ethanoate') || name.toLowerCase().includes('sodium acetate');
   const bottleBgColor = name.toLowerCase().includes('sodium') ? '#e6f0ff' : '#fffacc';
   const dropletColorClass = name.toLowerCase().includes('sodium') ? 'text-blue-600' : 'text-yellow-700';
+  const isPH = name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
 
   const renderNameParts = (n: string) => {
     const m = /^(.*?)\s*\((.*)\)\s*$/.exec(n);
@@ -110,7 +111,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
   return (
     <div style={{ position: 'absolute', left: position.x, top: position.y, transform: 'translate(-50%, -50%)' }} className="relative group" draggable={!disabled && !isFixed} onDragStart={handleDragStart}>
-      <div className={`relative ${id === 'test-tube' ? 'min-w-[240px] min-h-[360px]' : 'bg-white rounded-xl shadow-lg border-2 p-4 min-w-[90px] min-h-[120px]'} ${isActive && id !== 'test-tube' ? 'border-blue-400 shadow-xl' : 'border-gray-200'}`} onClick={handleClick}>
+      <div className={`relative ${id === 'test-tube' ? 'min-w-[240px] min-h-[360px]' : isPH ? 'bg-transparent border-0 shadow-none p-0 min-w-0 min-h-0' : 'bg-white rounded-xl shadow-lg border-2 p-4 min-w-[90px] min-h-[120px]'} ${!isPH && id !== 'test-tube' ? (isActive ? 'border-blue-400 shadow-xl' : 'border-gray-200') : ''}`} onClick={handleClick}>
         {onRemove && (
           <Button onClick={(e) => { e.stopPropagation(); onRemove(id); }} size="sm" variant="outline" className={`absolute w-6 h-6 p-0 bg-red-500 text-white border-red-500 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity ${id === 'test-tube' ? 'top-0 right-0' : '-top-2 -right-2'}`}>
             <X className="w-3 h-3" />
@@ -158,9 +159,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
           ) : (name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph')) ? (
             <div className="flex flex-col items-center">
               <div className="w-24 h-8 relative overflow-visible mb-2">
-                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F8ecc3e8563ce47d6a0fe4df2a07203b9?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-12" />
+                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fa1eea72a49464b2f93611a90f0edd819?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-0 scale-[5] origin-center max-w-none" />
               </div>
-              <span className="text-xs font-medium text-center">{name}</span>
             </div>
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">

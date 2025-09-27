@@ -88,6 +88,14 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     }
   }, [testTube]);
 
+  // Advance progress to step 3 when the test tube has any volume added
+  useEffect(() => {
+    if ((testTube.volume ?? 0) > 0 && currentStep < 3) {
+      setCurrentStep(3);
+      if (onStepComplete) onStepComplete(3);
+    }
+  }, [testTube.volume, currentStep, onStepComplete]);
+
   const animateColorTransition = (toColor: string) => {
     const fromColor = testTube.colorHex;
     const totalSteps = 16;
