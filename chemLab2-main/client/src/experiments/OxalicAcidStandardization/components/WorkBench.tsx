@@ -363,7 +363,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           >
             {/* Equipment on workbench */}
             {equipmentPositions.map((position) => {
-              const equipmentData = equipment.find(eq => position.id.startsWith(eq.id));
+              const equipmentData = equipment.find(eq =>
+                position.typeId ? eq.id === position.typeId : position.id.startsWith(eq.id),
+              );
 
               // If this position corresponds to a known equipment, render normally
               if (equipmentData) {
@@ -422,13 +424,14 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               }
 
               // If a custom image or name was added via a drop, render it
-              if ((position as any).imageSrc || (position as any).name) {
+              if (position.imageSrc || position.name) {
                 return (
                   <Equipment
                     key={position.id}
                     id={position.id}
-                    name={(position as any).name || 'Dropped Item'}
-                    imageSrc={(position as any).imageSrc}
+                    name={position.name || "Dropped Item"}
+                    icon={<span />}
+                    imageSrc={position.imageSrc}
                     onDrag={handleEquipmentDrag}
                     position={{ x: position.x, y: position.y }}
                     chemicals={position.chemicals}
