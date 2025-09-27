@@ -158,7 +158,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
           ) : (name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph')) ? (
             <div className="flex flex-col items-center">
               <div className="w-24 h-8 relative overflow-visible mb-2">
-                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F8ecc3e8563ce47d6a0fe4df2a07203b9?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-12" />
+                <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fde9ae615152f42f9810112de4f21dcb9?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-12" />
               </div>
               <span className="text-xs font-medium text-center">{name}</span>
             </div>
