@@ -56,6 +56,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [indicatorVolume, setIndicatorVolume] = useState<string>("0.5");
   const [previewIndicatorVolume, setPreviewIndicatorVolume] = useState<number | null>(0.5);
   const [indicatorError, setIndicatorError] = useState<string | null>(null);
+  // Track whether the MEASURE/Test pH action has been pressed so we can stop blinking
+  const [measurePressed, setMeasurePressed] = useState(false);
 
   // Comparison mode and snapshots
   const [compareMode, setCompareMode] = useState(false);
