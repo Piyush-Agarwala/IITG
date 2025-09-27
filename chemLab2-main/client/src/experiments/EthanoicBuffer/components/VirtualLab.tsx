@@ -116,8 +116,8 @@ const [sodiumError, setSodiumError] = useState<string | null>(null);
 
 const confirmAddAcetic = () => {
   const v = parseFloat(aceticVolume);
-  if (Number.isNaN(v) || v < 5.0 || v > 10.0) {
-    setAceticError('Please enter a value between 5.0 and 10.0 mL');
+  if (Number.isNaN(v) || v < 10.0 || v > 15.0) {
+    setAceticError('Please enter a value between 10.0 and 15.0 mL');
     return;
   }
   // Update visual: transparent/clear liquid in the test tube
