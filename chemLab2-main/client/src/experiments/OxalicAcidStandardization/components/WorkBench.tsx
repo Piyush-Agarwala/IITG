@@ -421,6 +421,25 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 );
               }
 
+              // If a custom image or name was added via a drop, render it
+              if ((position as any).imageSrc || (position as any).name) {
+                return (
+                  <Equipment
+                    key={position.id}
+                    id={position.id}
+                    name={(position as any).name || 'Dropped Item'}
+                    imageSrc={(position as any).imageSrc}
+                    onDrag={handleEquipmentDrag}
+                    position={{ x: position.x, y: position.y }}
+                    chemicals={position.chemicals}
+                    onChemicalDrop={handleChemicalDrop}
+                    onRemove={handleEquipmentRemove}
+                    preparationState={preparationState}
+                    onAction={handleEquipmentAction}
+                  />
+                );
+              }
+
               return null;
             })}
 
