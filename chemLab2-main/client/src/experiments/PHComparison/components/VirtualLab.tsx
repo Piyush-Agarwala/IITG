@@ -338,6 +338,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   );
 
   const shouldShowRestore = testTube.contents.includes('IND') && testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2;
+  const hasPhPaper = equipmentOnBench.some(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
 
   const handleRestore = () => {
     setHistory([]);
@@ -383,7 +384,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
           {/* Workbench - Center */}
           <div className="lg:col-span-6">
-            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={() => {
+            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={hasPhPaper ? (() => {
               // Determine pH based on current test tube contents and indicator
               if (!testTube || (testTube.volume ?? 0) <= 0) {
                 setShowToast('No solution in test tube');
@@ -418,7 +419,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
               setShowToast('pH measurement inconclusive');
               setTimeout(() => setShowToast(''), 1600);
-            }}>
+            }) : undefined}>
               {equipmentOnBench.find(e => e.id === 'test-tube') && !compareMode && (
                 <>
                   <Equipment id="test-tube" name="20 mL Test Tube" icon={<TestTube className="w-8 h-8" />} position={getEquipmentPosition('test-tube')} onRemove={handleRemove} onInteract={() => {}} color={testTube.colorHex} volume={testTube.volume} displayVolume={showHclDialog && previewHclVolume != null ? previewHclVolume : showAceticDialog && previewAceticVolume != null ? previewAceticVolume : showIndicatorDialog && previewIndicatorVolume != null ? Math.min(20, testTube.volume + previewIndicatorVolume) : testTube.volume} isActive={true} />
