@@ -317,7 +317,30 @@ const stepsProgress = (
                   const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${lastMeasuredPH === null ? 'animate-pulse' : ''}`} onClick={testPH}>{lastMeasuredPH === null ? 'MEASURE' : 'New pH paper'}</Button>
+                      <Button
+                        size="sm"
+                        className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${lastMeasuredPH === null ? 'animate-pulse' : ''}`}
+                        onClick={() => {
+                          if (lastMeasuredPH === null) {
+                            testPH();
+                            return;
+                          }
+                          // Replace pH paper: clear tint/color and reset measurement
+                          setEquipmentOnBench(prev => prev.map(e => {
+                            if (e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) {
+                              const copy = { ...e } as any;
+                              delete copy.color;
+                              return copy;
+                            }
+                            return e;
+                          }));
+                          setLastMeasuredPH(null);
+                          setShowToast('New pH paper placed');
+                          setTimeout(() => setShowToast(null), 1400);
+                        }}
+                      >
+                        {lastMeasuredPH === null ? 'MEASURE' : 'New pH paper'}
+                      </Button>
                     </div>
                   );
                 })()
