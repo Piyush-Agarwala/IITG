@@ -73,7 +73,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       'test-tube': { x: 200, y: 250 },
       'hcl-0-01m': { x: 500, y: 200 },
       'acetic-0-01m': { x: 500, y: 360 },
-      'universal-indicator': { x: 500, y: 560 },
+      'universal-indicator': { x: 500, y: 520 },
     };
     return positions[equipmentId] || { x: 300, y: 250 };
   };
