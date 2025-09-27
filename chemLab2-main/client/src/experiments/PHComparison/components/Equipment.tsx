@@ -160,7 +160,6 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <div className="w-24 h-8 relative overflow-visible mb-2">
                 <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb66e358d599145cbb09026d0c36a7a77?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-12" />
               </div>
-              <span className="text-xs font-medium text-center">{name}</span>
             </div>
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">
