@@ -147,14 +147,16 @@ const confirmAddAcetic = () => {
     return;
   }
   // Update visual: add liquid to the test tube and track moles
-  setTestTubeVolume(prev => Math.max(0, Math.min(20, prev + v)));
+  const newTestTubeVolume = Math.max(0, Math.min(20, testTubeVolume + v));
+  setTestTubeVolume(newTestTubeVolume);
   // semi-transparent light-blue color
   setTestTubeColor('rgba(173,216,230,0.6)');
 
   // compute moles: 0.1 M * volume(L)
   const vL = v / 1000;
   const moles = 0.1 * vL;
-  setAcidMoles(prev => prev + moles);
+  const newAcidMoles = acidMoles + moles;
+  setAcidMoles(newAcidMoles);
 
   // mark the step complete when the user confirms adding the acetic volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
@@ -162,6 +164,7 @@ const confirmAddAcetic = () => {
   setAceticError(null);
   setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
   setTimeout(() => setShowToast(null), 2000);
+
 };
 
 const confirmAddSodium = () => {
@@ -171,10 +174,12 @@ const confirmAddSodium = () => {
     return;
   }
   // update volume and moles for sodium ethanoate
-  setTestTubeVolume(prev => Math.max(0, Math.min(20, prev + v)));
+  const newTestTubeVolume = Math.max(0, Math.min(20, testTubeVolume + v));
+  setTestTubeVolume(newTestTubeVolume);
   const vL = v / 1000;
   const moles = 0.1 * vL;
-  setSodiumMoles(prev => prev + moles);
+  const newSodiumMoles = sodiumMoles + moles;
+  setSodiumMoles(newSodiumMoles);
 
   // mark the step complete when the user confirms adding the sodium ethanoate volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
@@ -182,55 +187,45 @@ const confirmAddSodium = () => {
   setSodiumError(null);
   setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
   setTimeout(() => setShowToast(null), 2000);
+
 };
 
-// Measure pH using Henderson-Hasselbalch when both species exist, fallback to simple rules
-const testPH = () => {
-  const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
-  if (testTubeVolume <= 0) {
-    setShowToast('No solution in test tube');
-    setTimeout(() => setShowToast(null), 1400);
-    return;
-  }
-
+// Helper: compute pH given moles of HA (acid), A (conjugate base) and total volume (L)
+function computePHFrom(HA: number, A: number, totalVolL: number): number | null {
   const pKa = 4.76;
   let ph: number | null = null;
+  const ha = Math.max(0, HA);
+  const a = Math.max(0, A);
 
-  const HA = Math.max(0, acidMoles);
-  const A = Math.max(0, sodiumMoles);
-
-  if (HA > 0 && A > 0) {
-    const concHA = HA / totalVolL;
-    const concA = A / totalVolL;
+  if (ha > 0 && a > 0) {
+    const concHA = ha / totalVolL;
+    const concA = a / totalVolL;
     ph = pKa + Math.log10(concA / concHA);
-  } else if (HA > 0 && A === 0) {
-    // approximate pH of weak acid (very rough) using pH = 1/2(pKa - log C)
-    const C = HA / totalVolL;
+  } else if (ha > 0 && a === 0) {
+    // approximate pH of weak acid (very rough)
+    const C = ha / totalVolL;
     ph = 0.5 * (pKa - Math.log10(C));
-  } else if (A > 0 && HA === 0) {
-    // basic solution (conjugate base only)
-    ph = 8.5; // indicate basic (approx)
+  } else if (a > 0 && ha === 0) {
+    ph = 8.5; // basic approximation
   }
 
-  if (ph === null || Number.isNaN(ph) || !isFinite(ph)) {
-    setShowToast('pH measurement inconclusive');
-    setTimeout(() => setShowToast(null), 1400);
-    return;
-  }
+  if (ph === null || Number.isNaN(ph) || !isFinite(ph)) return null;
+  return Math.max(0, Math.min(14, ph));
+}
 
-  const rounded = Math.max(0, Math.min(14, ph));
+function applyPHResult(ph: number) {
+  const rounded = ph;
   setLastMeasuredPH(rounded);
   setShowToast(`Measured pH ≈ ${rounded.toFixed(2)}`);
   setTimeout(() => setShowToast(null), 2000);
 
-  // Update pH paper color based on pH (do NOT change test tube color)
+  // choose paper color
   let paperColor: string | undefined = undefined;
   if (rounded < 4.5) paperColor = '#ff6b6b'; // acidic - red
   else if (rounded < 6.5) paperColor = '#ffb74d'; // weak acidic - orange
   else if (rounded < 8) paperColor = '#C8E6C9'; // near neutral - green
   else paperColor = '#64b5f6'; // basic - blue
 
-  // tint pH paper on the bench if present
   setEquipmentOnBench(prev => prev.map(e => {
     if (e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) {
       return { ...e, color: paperColor } as any;
@@ -242,7 +237,25 @@ const testPH = () => {
   if (currentStep === 3 || currentStep === 5) {
     if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   }
-};
+}
+
+function testPH() {
+  const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
+  if (testTubeVolume <= 0) {
+    setShowToast('No solution in test tube');
+    setTimeout(() => setShowToast(null), 1400);
+    return;
+  }
+
+  const ph = computePHFrom(acidMoles, sodiumMoles, totalVolL);
+  if (ph == null) {
+    setShowToast('pH measurement inconclusive');
+    setTimeout(() => setShowToast(null), 1400);
+    return;
+  }
+
+  applyPHResult(ph);
+}
 
 const stepsProgress = (
     <div className="mb-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-blue-200 shadow-sm">
@@ -346,6 +359,31 @@ const stepsProgress = (
                 })()
               )}
 
+              {(() => {
+                const sodiumItem = equipmentOnBench.find(e => (e.name && e.name.toLowerCase().includes('sodium')) || e.id.toLowerCase().includes('sodium'));
+                if (!sodiumItem) return null;
+                return (
+                  <div key="reset-sodium" style={{ position: 'absolute', left: sodiumItem.position.x, top: sodiumItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
+                    <Button
+                      size="sm"
+                      className="bg-red-500 text-white hover:bg-red-600 shadow-sm"
+                      onClick={() => {
+                        // Reset sodium ethanoate state and remove sodium bottle from bench
+                        setSodiumMoles(0);
+                        setEquipmentOnBench(prev => prev.filter(e => !((e.name && e.name.toLowerCase().includes('sodium')) || e.id.toLowerCase().includes('sodium'))));
+                        setShowToast('Sodium ethanoate reset');
+                        setTimeout(() => setShowToast(null), 1400);
+                      }}
+                    >
+                      <div className="flex flex-col items-center leading-tight">
+                        <span className="font-semibold">RESET</span>
+                        <span className="text-xs lowercase">sodium ethanoate</span>
+                      </div>
+                    </Button>
+                  </div>
+                );
+              })()}
+
             </WorkBench>
           </div>
 
@@ -376,7 +414,7 @@ const stepsProgress = (
                 <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
                 <div className="flex items-center space-x-2">
                   {(() => {
-                    const display = lastMeasuredPH != null ? '2.4 – 3.5' : '--';
+                    const display = lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '--';
                     return (
                       <>
                         <div className="text-2xl font-bold text-purple-700">{display}</div>
