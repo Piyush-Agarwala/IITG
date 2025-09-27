@@ -475,6 +475,27 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>Test pH</Button>
                 </div>
               )}
+
+              {/* Pouring stream animation (from test tube to pH paper) */}
+              {showPouring && phPaperItem && equipmentOnBench.find(e => e.id === 'test-tube') && (
+                (() => {
+                  const tubePos = getEquipmentPosition('test-tube');
+                  const targetPos = phPaperItem.position;
+                  const left = tubePos.x;
+                  const top = tubePos.y + 40; // start a bit below the tube
+                  const height = Math.max(20, Math.min(300, targetPos.y - tubePos.y - 20));
+                  return (
+                    <div key={pourKey} style={{ position: 'absolute', left: left, top: top, transform: 'translate(-50%, 0)', pointerEvents: 'none' }}>
+                      <style>{`@keyframes pourStream { 0% { height: 0 } 100% { height: ${height}px } } @keyframes dripFall { 0% { transform: translateY(0); opacity:1 } 90% { opacity:1 } 100% { transform: translateY(${height}px); opacity:0 } } .pour-stream { width: 8px; border-radius: 8px; background: linear-gradient(to bottom, rgba(59,130,246,0.95), rgba(99,102,241,0.95)); animation: pourStream 350ms linear forwards; } .drip { width:8px; height:12px; border-radius:50%; background: linear-gradient(to bottom, rgba(59,130,246,0.95), rgba(99,102,241,0.95)); animation: dripFall 700ms linear forwards; margin-top:6px; }`}</style>
+                      <div className="pour-stream" style={{ margin: '0 auto' }} />
+                      <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div className="drip" />
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
+
               {/* Comparison overlay */}
               {compareMode && (
                 <div className="absolute inset-0 pointer-events-none">
