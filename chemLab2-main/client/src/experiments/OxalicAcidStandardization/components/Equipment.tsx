@@ -302,14 +302,14 @@ export const Equipment: React.FC<EquipmentProps> = ({
     );
   }
 
+  const containerClass = isAnalytical
+    ? `absolute bg-transparent p-0 border-0 cursor-move select-none transition-all ${isDragging ? 'scale-105' : ''}`
+    : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
+
   return (
     <div
       ref={equipmentRef}
-      className={`absolute ${isAnalytical ? "bg-transparent p-0 border-0" : "bg-white rounded-lg border-2 p-3"} shadow-lg cursor-move select-none transition-all ${
-        isDragging
-          ? "border-blue-500 shadow-xl scale-105"
-          : "border-gray-300 hover:border-blue-400"
-      }`}
+      className={containerClass}
       style={{
         left: position.x,
         top: position.y,
