@@ -65,6 +65,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   // Results modal and analysis log
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
+  const [showPouring, setShowPouring] = useState(false);
+  const [pourKey, setPourKey] = useState(0);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
@@ -291,7 +293,23 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const handleInteract = (id: string) => {
     if (id === 'hcl-0-01m') setShowHclDialog(true);
     if (id === 'acetic-0-01m') setShowAceticDialog(true);
-    if (id === 'universal-indicator') setShowIndicatorDialog(true);
+    if (id === 'universal-indicator') {
+      // If a test tube is present on the bench, show a pouring animation from tube to the pH paper
+      const tube = equipmentOnBench.find(e => e.id === 'test-tube');
+      const ph = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
+      if (tube && ph) {
+        setPourKey(k => k + 1);
+        setShowPouring(true);
+        setTimeout(() => {
+          setShowPouring(false);
+          testPH();
+        }, 900);
+        return;
+      }
+
+      // fallback: open indicator dialog when no tube present
+      setShowIndicatorDialog(true);
+    }
   };
 
   const handleRemove = (id: string) => {
@@ -339,6 +357,42 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const shouldShowRestore = testTube.contents.includes('IND') && testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2;
   const hasPhPaper = equipmentOnBench.some(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
+  const phPaperItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
+
+  const testPH = () => {
+    if (!testTube || (testTube.volume ?? 0) <= 0) {
+      setShowToast('No solution in test tube');
+      setTimeout(() => setShowToast(''), 1400);
+      return;
+    }
+
+    if (!testTube.contents.includes('IND')) {
+      setShowToast('No indicator present. Add universal indicator or pH paper');
+      setTimeout(() => setShowToast(''), 1800);
+      return;
+    }
+
+    if (testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2) {
+      setShowToast('Measured pH ≈ 2 (strong acid)');
+      setTimeout(() => setShowToast(''), 2000);
+      return;
+    }
+
+    if (testTube.contents.includes('CH3COOH') && testTube.colorHex === COLORS.ACETIC_PH3) {
+      setShowToast('Measured pH ≈ 3���4 (weak acid)');
+      setTimeout(() => setShowToast(''), 2000);
+      return;
+    }
+
+    if (testTube.colorHex === COLORS.NEUTRAL) {
+      setShowToast('Measured pH ≈ 7 (neutral)');
+      setTimeout(() => setShowToast(''), 2000);
+      return;
+    }
+
+    setShowToast('pH measurement inconclusive');
+    setTimeout(() => setShowToast(''), 1600);
+  };
 
   const handleRestore = () => {
     setHistory([]);
@@ -384,42 +438,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
           {/* Workbench - Center */}
           <div className="lg:col-span-6">
-            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={hasPhPaper ? (() => {
-              // Determine pH based on current test tube contents and indicator
-              if (!testTube || (testTube.volume ?? 0) <= 0) {
-                setShowToast('No solution in test tube');
-                setTimeout(() => setShowToast(''), 1400);
-                return;
-              }
-
-              if (!testTube.contents.includes('IND')) {
-                setShowToast('No indicator present. Add universal indicator or pH paper');
-                setTimeout(() => setShowToast(''), 1800);
-                return;
-              }
-
-              if (testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2) {
-                setShowToast('Measured pH ≈ 2 (strong acid)');
-                setTimeout(() => setShowToast(''), 2000);
-                return;
-              }
-
-              if (testTube.contents.includes('CH3COOH') && testTube.colorHex === COLORS.ACETIC_PH3) {
-                setShowToast('Measured pH ≈ 3–4 (weak acid)');
-                setTimeout(() => setShowToast(''), 2000);
-                return;
-              }
-
-              // Fallback: show neutral or approximate
-              if (testTube.colorHex === COLORS.NEUTRAL) {
-                setShowToast('Measured pH ≈ 7 (neutral)');
-                setTimeout(() => setShowToast(''), 2000);
-                return;
-              }
-
-              setShowToast('pH measurement inconclusive');
-              setTimeout(() => setShowToast(''), 1600);
-            }) : undefined}>
+            <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={hasPhPaper ? testPH : undefined}>
               {equipmentOnBench.find(e => e.id === 'test-tube') && !compareMode && (
                 <>
                   <Equipment id="test-tube" name="20 mL Test Tube" icon={<TestTube className="w-8 h-8" />} position={getEquipmentPosition('test-tube')} onRemove={handleRemove} onInteract={() => {}} color={testTube.colorHex} volume={testTube.volume} displayVolume={showHclDialog && previewHclVolume != null ? previewHclVolume : showAceticDialog && previewAceticVolume != null ? previewAceticVolume : showIndicatorDialog && previewIndicatorVolume != null ? Math.min(20, testTube.volume + previewIndicatorVolume) : testTube.volume} isActive={true} />
@@ -449,6 +468,34 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   onInteract={handleInteract}
                 />
               ))}
+
+              {/* Contextual Test pH action below pH paper when present */}
+              {phPaperItem && !compareMode && (
+                <div style={{ position: 'absolute', left: phPaperItem.position.x, top: phPaperItem.position.y + 40, transform: 'translate(-50%, 0)' }}>
+                  <Button size="sm" className="bg-amber-100 text-amber-800 hover:bg-amber-200 shadow-sm" onClick={testPH}>Test pH</Button>
+                </div>
+              )}
+
+              {/* Pouring stream animation (from test tube to pH paper) */}
+              {showPouring && phPaperItem && equipmentOnBench.find(e => e.id === 'test-tube') && (
+                (() => {
+                  const tubePos = getEquipmentPosition('test-tube');
+                  const targetPos = phPaperItem.position;
+                  const left = tubePos.x;
+                  const top = tubePos.y + 40; // start a bit below the tube
+                  const height = Math.max(20, Math.min(300, targetPos.y - tubePos.y - 20));
+                  return (
+                    <div key={pourKey} style={{ position: 'absolute', left: left, top: top, transform: 'translate(-50%, 0)', pointerEvents: 'none' }}>
+                      <style>{`@keyframes pourStream { 0% { height: 0 } 100% { height: ${height}px } } @keyframes dripFall { 0% { transform: translateY(0); opacity:1 } 90% { opacity:1 } 100% { transform: translateY(${height}px); opacity:0 } } .pour-stream { width: 8px; border-radius: 8px; background: linear-gradient(to bottom, rgba(59,130,246,0.95), rgba(99,102,241,0.95)); animation: pourStream 350ms linear forwards; } .drip { width:8px; height:12px; border-radius:50%; background: linear-gradient(to bottom, rgba(59,130,246,0.95), rgba(99,102,241,0.95)); animation: dripFall 700ms linear forwards; margin-top:6px; }`}</style>
+                      <div className="pour-stream" style={{ margin: '0 auto' }} />
+                      <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div className="drip" />
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
+
               {/* Comparison overlay */}
               {compareMode && (
                 <div className="absolute inset-0 pointer-events-none">
