@@ -213,7 +213,11 @@ export const Equipment: React.FC<EquipmentProps> = ({
       default:
         return (
           <div className="text-center">
-            {icon}
+            {imageSrc ? (
+              <img src={imageSrc} alt={name} className="w-24 h-24 mx-auto mb-2 object-contain" />
+            ) : (
+              icon
+            )}
             <div className="text-xs mt-1">{name}</div>
           </div>
         );
