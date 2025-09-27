@@ -363,7 +363,7 @@ const stepsProgress = (
                 const sodiumItem = equipmentOnBench.find(e => (e.name && e.name.toLowerCase().includes('sodium')) || e.id.toLowerCase().includes('sodium'));
                 if (!sodiumItem) return null;
                 return (
-                  <div key="reset-sodium" style={{ position: 'absolute', left: sodiumItem.position.x, top: sodiumItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
+                  <div key="reset-sodium" style={{ position: 'absolute', left: sodiumItem.position.x, top: sodiumItem.position.y + 110, transform: 'translate(-50%, 0)' }}>
                     <Button
                       size="sm"
                       className="bg-red-500 text-white hover:bg-red-600 shadow-sm"
