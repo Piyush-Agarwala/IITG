@@ -229,7 +229,7 @@ export const LAB_EQUIPMENT = [
     id: 'test-tube',
     name: '25ml Test Tube',
     icon: <TestTube className="w-8 h-8" />,
-    description: 'Glass test tube for reactions (20 mL capacity)'
+    description: 'Glass test tube for reactions (25ml capacity)'
   },
   {
     id: 'cobalt-ii-solution',
