@@ -390,6 +390,10 @@ const stepsProgress = (
                                 }
                                 return e;
                               }));
+                              // If we're currently on step 4, advance it
+                              if (currentStep === 4 && !completedSteps.includes(4)) {
+                                onStepComplete(4);
+                              }
                               setShowToast('New pH paper placed');
                               setTimeout(() => setShowToast(null), 1400);
                             }}
