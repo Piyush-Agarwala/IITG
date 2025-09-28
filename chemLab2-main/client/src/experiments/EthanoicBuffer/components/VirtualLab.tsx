@@ -35,6 +35,11 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [initialAcidPH, setInitialAcidPH] = useState<number | null>(null);
   const [case1PH, setCase1PH] = useState<number | null>(null);
   const [case2PH, setCase2PH] = useState<number | null>(null);
+  // measurementVersion increments every time MEASURE is pressed. CASE results are revealed only when
+  // measurementVersion >= the version assigned to that CASE (set when sodium is added)
+  const [measurementVersion, setMeasurementVersion] = useState(0);
+  const [case1Version, setCase1Version] = useState<number | null>(null);
+  const [case2Version, setCase2Version] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
 
   const [showAceticDialog, setShowAceticDialog] = useState(false);
