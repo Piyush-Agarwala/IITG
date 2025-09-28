@@ -273,8 +273,8 @@ function applyPHResult(ph: number) {
     return e;
   }));
 
-  // Auto-complete relevant steps: initial measure (3) and observe pH change (5)
-  if (currentStep === 3 || currentStep === 5) {
+  // Auto-complete relevant steps: initial measure (3), observe pH change (5), and post-addition measure (6)
+  if (currentStep === 3 || currentStep === 5 || currentStep === 6) {
     if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   }
 }
