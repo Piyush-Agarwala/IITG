@@ -502,7 +502,7 @@ const stepsProgress = (
                   </div>
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 2</div>
-                    <div className="text-lg text-black font-semibold">{lastMeasuredPH != null && case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                    <div className="text-lg text-black font-semibold">{(case2PH != null && case2Version != null && measurementVersion >= case2Version) ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                   </div>
                 </div>
 
