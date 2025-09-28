@@ -32,9 +32,16 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [acidMoles, setAcidMoles] = useState(0);
   const [sodiumMoles, setSodiumMoles] = useState(0);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [initialAcidPH, setInitialAcidPH] = useState<number | null>(null);
   const [case1PH, setCase1PH] = useState<number | null>(null);
   const [case2PH, setCase2PH] = useState<number | null>(null);
+  // measurementVersion increments every time MEASURE is pressed. CASE results are revealed only when
+  // measurementVersion >= the version assigned to that CASE (set when sodium is added)
+  const [measurementVersion, setMeasurementVersion] = useState(0);
+  const [case1Version, setCase1Version] = useState<number | null>(null);
+  const [case2Version, setCase2Version] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
+  const [showResultsModal, setShowResultsModal] = useState(false);
 
   const [showAceticDialog, setShowAceticDialog] = useState(false);
   const [aceticVolume, setAceticVolume] = useState("10.0");
@@ -45,7 +52,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   // Track cumulative volume (mL) of sodium ethanoate added to the test tube so we can revert it on reset
   const [sodiumVolumeAdded, setSodiumVolumeAdded] = useState<number>(0);
 
-  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
@@ -66,15 +73,17 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     });
 
     // Reorder so that Test Tube is first, then Ethanoic Acid and Sodium Ethanoate
-    const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
-    const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+  const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
+  const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+  // exclude bulky/irrelevant equipment from the quick selection
+  const excludedRe = /distilled\s*water|glass\s*stirr?ing\s*rod|measuring\s*cylinder/i;
 
-    const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
-    const ethanoic = raw.find(i => isEthanoic(i.name));
-    const sodium = raw.find(i => isSodiumEthanoate(i.name));
-    const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium);
+  const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
+  const ethanoic = raw.find(i => isEthanoic(i.name));
+  const sodium = raw.find(i => isSodiumEthanoate(i.name));
+  const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium && !excludedRe.test(i.name));
 
-    return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
+  return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
@@ -162,11 +171,20 @@ const confirmAddAcetic = () => {
   const newAcidMoles = acidMoles + moles;
   setAcidMoles(newAcidMoles);
 
+  // compute and store initial pH of the ethanoic acid solution (before adding sodium)
+  const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
+  const initialPH = computePHFrom(newAcidMoles, sodiumMoles, totalVolL);
+  if (initialPH != null) {
+    setInitialAcidPH(initialPH);
+    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid • pH ≈ ${initialPH.toFixed(2)}`);
+  } else {
+    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
+  }
+
   // mark the step complete when the user confirms adding the acetic volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowAceticDialog(false);
   setAceticError(null);
-  setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
   setTimeout(() => setShowToast(null), 2000);
 
 };
@@ -191,12 +209,14 @@ const confirmAddSodium = () => {
   const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
   const phAfter = computePHFrom(acidMoles, newSodiumMoles, totalVolL);
   if (phAfter != null) {
-    setLastMeasuredPH(phAfter);
     if (case1PH == null) {
       setCase1PH(phAfter);
+      // require the next MEASURE to reveal this stored CASE result
+      setCase1Version(measurementVersion + 1);
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 1`);
     } else if (case2PH == null) {
       setCase2PH(phAfter);
+      setCase2Version(measurementVersion + 1);
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 2`);
     } else {
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
@@ -238,7 +258,15 @@ function computePHFrom(HA: number, A: number, totalVolL: number): number | null 
 
 function applyPHResult(ph: number) {
   const rounded = ph;
+  // increment measurement version so any pending CASE results become eligible to show
+  setMeasurementVersion(prev => prev + 1);
   setLastMeasuredPH(rounded);
+  // store measured pH as initial acid pH on first measurement
+  if (initialAcidPH == null) {
+    setInitialAcidPH(rounded);
+    // if we're on step 4 (Place a new pH paper / Measure initial pH), mark it complete
+    if (currentStep === 4 && !completedSteps.includes(4)) onStepComplete(4);
+  }
   setShowToast(`Measured pH ≈ ${rounded.toFixed(2)}`);
   setTimeout(() => setShowToast(null), 2000);
 
@@ -256,11 +284,18 @@ function applyPHResult(ph: number) {
     return e;
   }));
 
-  // Auto-complete relevant steps: initial measure (3) and observe pH change (5)
-  if (currentStep === 3 || currentStep === 5) {
+  // Auto-complete relevant steps: initial measure (3), observe pH change (5), and post-addition measure (6)
+  if (currentStep === 3 || currentStep === 5 || currentStep === 6) {
     if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   }
 }
+
+// When CASE 2 becomes available (measured and revealed), open results modal
+useEffect(() => {
+  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
+    setShowResultsModal(true);
+  }
+}, [case2PH, case2Version, measurementVersion]);
 
 function testPH() {
   const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
@@ -353,30 +388,38 @@ const stepsProgress = (
                   const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
-                      <Button
-                        size="sm"
-                        className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${lastMeasuredPH === null ? 'animate-pulse' : ''}`}
-                        onClick={() => {
-                          if (lastMeasuredPH === null) {
-                            testPH();
-                            return;
-                          }
-                          // Replace pH paper: clear tint/color and reset measurement
-                          setEquipmentOnBench(prev => prev.map(e => {
-                            if (e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) {
-                              const copy = { ...e } as any;
-                              delete copy.color;
-                              return copy;
-                            }
-                            return e;
-                          }));
-                          setLastMeasuredPH(null);
-                          setShowToast('New pH paper placed');
-                          setTimeout(() => setShowToast(null), 1400);
-                        }}
-                      >
-                        {lastMeasuredPH === null ? 'MEASURE' : 'New pH paper'}
-                      </Button>
+                      {(() => {
+                        const paperHasColor = Boolean((phItem as any).color);
+                        return (
+                          <Button
+                            size="sm"
+                            className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!paperHasColor ? 'animate-pulse' : ''}`}
+                            onClick={() => {
+                              if (!paperHasColor) {
+                                testPH();
+                                return;
+                              }
+                              // Replace pH paper: clear tint/color but KEEP last measured value so previous results remain visible
+                              setEquipmentOnBench(prev => prev.map(e => {
+                                if (e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) {
+                                  const copy = { ...e } as any;
+                                  delete copy.color;
+                                  return copy;
+                                }
+                                return e;
+                              }));
+                              // If we're currently on step 4, advance it
+                              if (currentStep === 4 && !completedSteps.includes(4)) {
+                                onStepComplete(4);
+                              }
+                              setShowToast('New pH paper placed');
+                              setTimeout(() => setShowToast(null), 1400);
+                            }}
+                          >
+                            {!paperHasColor ? 'MEASURE' : 'New pH paper'}
+                          </Button>
+                        );
+                      })()}
                     </div>
                   );
                 })()
@@ -452,16 +495,22 @@ const stepsProgress = (
                   })()}
                 </div>
 
+                {/* pH of Ethanoic Acid (initial) */}
+                <div className="mt-8">
+                  <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">A</span>pH of Ethanoic acid</h5>
+                  <div className="text-lg text-black font-semibold">{lastMeasuredPH != null && initialAcidPH != null ? `${initialAcidPH.toFixed(2)} (${initialAcidPH < 7 ? 'Acidic' : initialAcidPH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                </div>
+
                 {/* CASE results (auto-filled after adding sodium ethanoate) */}
-                <div className="text-xs text-gray-600 mb-2">When Sodium Ethanoate is added</div>
+                <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span>When Sodium Ethanoate is added</div>
                 <div className="mt-3 grid grid-cols-1 gap-2">
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 1</div>
-                    <div className="text-xs text-gray-600">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                    <div className="text-lg text-black font-semibold">{(case1PH != null && case1Version != null && measurementVersion >= case1Version) ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                   </div>
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 2</div>
-                    <div className="text-xs text-gray-600">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                    <div className="text-lg text-black font-semibold">{(case2PH != null && case2Version != null && measurementVersion >= case2Version) ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                   </div>
                 </div>
 
@@ -549,6 +598,62 @@ const stepsProgress = (
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Results modal shown after CASE 2 is available */}
+      <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Experiment Results & Analysis</DialogTitle>
+            <DialogDescription>Complete analysis of your pH buffer experiment</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border rounded bg-red-50">
+                <div className="text-sm font-medium">0.1 M Ethanoic Acid</div>
+                <div className="text-lg font-semibold mt-2">{initialAcidPH != null ? `${initialAcidPH.toFixed(2)} (Acidic)` : '—'}</div>
+              </div>
+              <div className="p-4 border rounded bg-green-50">
+                <div className="text-sm font-medium">0.1 M Sodium Ethanoate (after addition)</div>
+                <div className="text-lg font-semibold mt-2">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : '���'}</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">pH Comparison Analysis</h4>
+              <p className="text-sm text-gray-700">Initial pH: {initialAcidPH != null ? initialAcidPH.toFixed(2) : 'N/A'}. After adding sodium ethanoate the pH shifted to {case2PH != null ? case2PH.toFixed(2) : 'N/A'}. This indicates buffer formation (CH3COOH/CH3COO–) and can be interpreted using the Henderson–Hasselbalch relation.</p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Action Timeline</h4>
+              <ol className="list-decimal list-inside text-sm text-gray-700">
+                <li>Added ethanoic acid — initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
+                <li>Added sodium ethanoate — stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
+              </ol>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Final Experimental State</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 border rounded">
+                  <div className="text-sm font-medium">Solution</div>
+                  <div className="text-sm mt-1">pH: {case2PH != null ? case2PH.toFixed(2) : 'N/A'}</div>
+                </div>
+                <div className="p-3 border rounded">
+                  <div className="text-sm font-medium">Notes</div>
+                  <div className="text-sm mt-1">Buffer formed: CH3COOH/CH3COO–</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowResultsModal(false)}>Return to Experiments</Button>
+            <Button onClick={() => setShowResultsModal(false)}>Close Analysis</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </TooltipProvider>
   );
 }
