@@ -116,6 +116,14 @@ export class MemStorage implements IStorage {
           },
           {
             id: 7,
+            title: "Reset Sodium Ethanoate & Press New pH paper",
+            description:
+              "Reset the sodium ethanoate (use the reset control) and place a fresh pH paper by pressing 'New pH paper' to prepare for the next measurement.",
+            duration: "2 minutes",
+            completed: false,
+          },
+          {
+            id: 8,
             title: "Explore Different Ratios",
             description:
               "Repeat by varying the volume of sodium ethanoate (e.g., 2 mL, 10 mL). Record pH for each ratio of A– to HA.",
@@ -123,7 +131,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 8,
+            id: 9,
             title: "Relate to Henderson–Hasselbalch",
             description:
               "Compare observations with pH = pKa + log([A–]/[HA]) for ethanoic acid (pKa ≈ 4.76). Discuss buffering and limitations.",
