@@ -598,6 +598,62 @@ const stepsProgress = (
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Results modal shown after CASE 2 is available */}
+      <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Experiment Results & Analysis</DialogTitle>
+            <DialogDescription>Complete analysis of your pH buffer experiment</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border rounded bg-red-50">
+                <div className="text-sm font-medium">0.1 M Ethanoic Acid</div>
+                <div className="text-lg font-semibold mt-2">{initialAcidPH != null ? `${initialAcidPH.toFixed(2)} (Acidic)` : '—'}</div>
+              </div>
+              <div className="p-4 border rounded bg-green-50">
+                <div className="text-sm font-medium">0.1 M Sodium Ethanoate (after addition)</div>
+                <div className="text-lg font-semibold mt-2">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : '���'}</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">pH Comparison Analysis</h4>
+              <p className="text-sm text-gray-700">Initial pH: {initialAcidPH != null ? initialAcidPH.toFixed(2) : 'N/A'}. After adding sodium ethanoate the pH shifted to {case2PH != null ? case2PH.toFixed(2) : 'N/A'}. This indicates buffer formation (CH3COOH/CH3COO–) and can be interpreted using the Henderson–Hasselbalch relation.</p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Action Timeline</h4>
+              <ol className="list-decimal list-inside text-sm text-gray-700">
+                <li>Added ethanoic acid — initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
+                <li>Added sodium ethanoate — stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
+              </ol>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Final Experimental State</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 border rounded">
+                  <div className="text-sm font-medium">Solution</div>
+                  <div className="text-sm mt-1">pH: {case2PH != null ? case2PH.toFixed(2) : 'N/A'}</div>
+                </div>
+                <div className="p-3 border rounded">
+                  <div className="text-sm font-medium">Notes</div>
+                  <div className="text-sm mt-1">Buffer formed: CH3COOH/CH3COO–</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowResultsModal(false)}>Return to Experiments</Button>
+            <Button onClick={() => setShowResultsModal(false)}>Close Analysis</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </TooltipProvider>
   );
 }
