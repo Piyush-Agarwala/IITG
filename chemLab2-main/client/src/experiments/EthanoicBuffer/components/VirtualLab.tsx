@@ -257,6 +257,8 @@ function computePHFrom(HA: number, A: number, totalVolL: number): number | null 
 
 function applyPHResult(ph: number) {
   const rounded = ph;
+  // increment measurement version so any pending CASE results become eligible to show
+  setMeasurementVersion(prev => prev + 1);
   setLastMeasuredPH(rounded);
   // store measured pH as initial acid pH on first measurement
   if (initialAcidPH == null) {
