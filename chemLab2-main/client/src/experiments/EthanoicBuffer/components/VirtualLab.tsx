@@ -467,7 +467,7 @@ const stepsProgress = (
                 {/* pH of Ethanoic Acid (initial) */}
                 <div className="mt-8">
                   <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">A</span>pH of Ethanoic acid</h5>
-                  <div className="text-sm font-semibold text-gray-800">{initialAcidPH != null ? `${initialAcidPH.toFixed(2)} (${initialAcidPH < 7 ? 'Acidic' : initialAcidPH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                  <div className="text-sm text-black font-semibold">{initialAcidPH != null ? `${initialAcidPH.toFixed(2)} (${initialAcidPH < 7 ? 'Acidic' : initialAcidPH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                 </div>
 
                 {/* CASE results (auto-filled after adding sodium ethanoate) */}
