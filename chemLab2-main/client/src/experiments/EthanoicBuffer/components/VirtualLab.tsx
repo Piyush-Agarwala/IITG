@@ -290,6 +290,13 @@ function applyPHResult(ph: number) {
   }
 }
 
+// When CASE 2 becomes available (measured and revealed), open results modal
+useEffect(() => {
+  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
+    setShowResultsModal(true);
+  }
+}, [case2PH, case2Version, measurementVersion]);
+
 function testPH() {
   const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
   if (testTubeVolume <= 0) {
