@@ -67,6 +67,9 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   // Results modal and analysis log
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
+  const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [case1PH, setCase1PH] = useState<number | null>(null);
+  const [case2PH, setCase2PH] = useState<number | null>(null);
   const [showPouring, setShowPouring] = useState(false);
   const [pourKey, setPourKey] = useState(0);
 
@@ -375,6 +378,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     }
 
     if (testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2) {
+      const ph = 2.0;
+      setLastMeasuredPH(ph);
       setShowToast('Measured pH ≈ 2 (strong acid)');
       // color pH paper
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#ff6b6b' } : item));
@@ -383,6 +388,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     }
 
     if (testTube.contents.includes('CH3COOH') && testTube.colorHex === COLORS.ACETIC_PH3) {
+      const ph = 3.5;
+      setLastMeasuredPH(ph);
       setShowToast('Measured pH ≈ 3–4 (weak acid)');
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#ffb74d' } : item));
       setTimeout(() => setShowToast(''), 2000);
@@ -390,6 +397,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     }
 
     if (testTube.colorHex === COLORS.NEUTRAL) {
+      const ph = 7.0;
+      setLastMeasuredPH(ph);
       setShowToast('Measured pH ≈ 7 (neutral)');
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#C8E6C9' } : item));
       setTimeout(() => setShowToast(''), 2000);
@@ -397,6 +406,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     }
 
     // default: inconclusive -> show neutral tint
+    setLastMeasuredPH(null);
     setShowToast('pH measurement inconclusive');
     setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#ffffff' } : item));
     setTimeout(() => setShowToast(''), 1600);
@@ -573,6 +583,38 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                       <span>{step.title}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Measured pH */}
+              <div className="mb-4">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
+                <div className="flex items-center space-x-2">
+                  {(() => {
+                    const display = lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '--';
+                    return (
+                      <>
+                        <div className="text-2xl font-bold text-purple-700">{display}</div>
+                        <div className="text-xs text-gray-500">{lastMeasuredPH != null ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement yet'}</div>
+                      </>
+                    );
+                  })()}
+                </div>
+
+                <div className="mt-2 flex space-x-2">
+                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase1PH(lastMeasuredPH); setShowToast('Saved to CASE 1'); setTimeout(() => setShowToast(''), 1500); } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 1</Button>
+                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase2PH(lastMeasuredPH); setShowToast('Saved to CASE 2'); setTimeout(() => setShowToast(''), 1500); } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 2</Button>
+                </div>
+
+                <div className="mt-3 grid grid-cols-1 gap-2">
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 1</div>
+                    <div className="text-xs text-gray-600">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                  </div>
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 2</div>
+                    <div className="text-xs text-gray-600">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                  </div>
                 </div>
               </div>
             </div>
