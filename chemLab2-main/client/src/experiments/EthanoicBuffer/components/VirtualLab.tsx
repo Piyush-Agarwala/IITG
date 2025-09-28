@@ -475,7 +475,7 @@ const stepsProgress = (
                 <div className="mt-3 grid grid-cols-1 gap-2">
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 1</div>
-                    <div className="text-sm text-gray-600 font-semibold">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                    <div className="text-sm text-black font-semibold">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                   </div>
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 2</div>
