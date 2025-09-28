@@ -453,6 +453,7 @@ const stepsProgress = (
                 </div>
 
                 {/* CASE results (auto-filled after adding sodium ethanoate) */}
+                <div className="text-xs text-gray-600 mb-2">When Sodium Ethanoate is added</div>
                 <div className="mt-3 grid grid-cols-1 gap-2">
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 1</div>
