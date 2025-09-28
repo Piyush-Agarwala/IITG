@@ -203,7 +203,6 @@ const confirmAddSodium = () => {
   const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
   const phAfter = computePHFrom(acidMoles, newSodiumMoles, totalVolL);
   if (phAfter != null) {
-    setLastMeasuredPH(phAfter);
     if (case1PH == null) {
       setCase1PH(phAfter);
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 1`);
