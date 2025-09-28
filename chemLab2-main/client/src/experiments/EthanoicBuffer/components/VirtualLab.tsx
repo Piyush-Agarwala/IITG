@@ -250,6 +250,8 @@ function computePHFrom(HA: number, A: number, totalVolL: number): number | null 
 function applyPHResult(ph: number) {
   const rounded = ph;
   setLastMeasuredPH(rounded);
+  // store measured pH as initial acid pH on first measurement
+  if (initialAcidPH == null) setInitialAcidPH(rounded);
   setShowToast(`Measured pH ≈ ${rounded.toFixed(2)}`);
   setTimeout(() => setShowToast(null), 2000);
 
