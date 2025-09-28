@@ -41,6 +41,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [case1Version, setCase1Version] = useState<number | null>(null);
   const [case2Version, setCase2Version] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
+  const [showResultsModal, setShowResultsModal] = useState(false);
 
   const [showAceticDialog, setShowAceticDialog] = useState(false);
   const [aceticVolume, setAceticVolume] = useState("10.0");
