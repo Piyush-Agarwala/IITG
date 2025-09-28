@@ -475,11 +475,11 @@ const stepsProgress = (
                 <div className="mt-3 grid grid-cols-1 gap-2">
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 1</div>
-                    <div className="text-xs text-gray-600">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                    <div className="text-sm text-gray-600 font-semibold">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                   </div>
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 2</div>
-                    <div className="text-xs text-gray-600">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                    <div className="text-sm text-gray-600 font-semibold">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                   </div>
                 </div>
 
@@ -520,7 +520,7 @@ const stepsProgress = (
               placeholder="Enter volume in mL"
             />
             {aceticError && <p className="text-xs text-red-600">{aceticError}</p>}
-            <p className="text-xs text-gray-500">Recommended range: 10.0 �� 15.0 mL</p>
+            <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAceticDialog(false)}>Cancel</Button>
