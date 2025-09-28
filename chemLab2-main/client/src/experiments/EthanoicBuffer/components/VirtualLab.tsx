@@ -32,6 +32,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [acidMoles, setAcidMoles] = useState(0);
   const [sodiumMoles, setSodiumMoles] = useState(0);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [initialAcidPH, setInitialAcidPH] = useState<number | null>(null);
   const [case1PH, setCase1PH] = useState<number | null>(null);
   const [case2PH, setCase2PH] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
@@ -45,7 +46,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   // Track cumulative volume (mL) of sodium ethanoate added to the test tube so we can revert it on reset
   const [sodiumVolumeAdded, setSodiumVolumeAdded] = useState<number>(0);
 
-  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
@@ -162,11 +163,20 @@ const confirmAddAcetic = () => {
   const newAcidMoles = acidMoles + moles;
   setAcidMoles(newAcidMoles);
 
+  // compute and store initial pH of the ethanoic acid solution (before adding sodium)
+  const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
+  const initialPH = computePHFrom(newAcidMoles, sodiumMoles, totalVolL);
+  if (initialPH != null) {
+    setInitialAcidPH(initialPH);
+    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid • pH ≈ ${initialPH.toFixed(2)}`);
+  } else {
+    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
+  }
+
   // mark the step complete when the user confirms adding the acetic volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowAceticDialog(false);
   setAceticError(null);
-  setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
   setTimeout(() => setShowToast(null), 2000);
 
 };
@@ -450,6 +460,12 @@ const stepsProgress = (
                       </>
                     );
                   })()}
+                </div>
+
+                {/* pH of Ethanoic Acid (initial) */}
+                <div className="mt-3">
+                  <h5 className="font-medium text-xs text-gray-600 mb-1">pH of Ethanoic acid</h5>
+                  <div className="text-sm font-semibold text-gray-800">{initialAcidPH != null ? `${initialAcidPH.toFixed(2)} (${initialAcidPH < 7 ? 'Acidic' : initialAcidPH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                 </div>
 
                 {/* CASE results (auto-filled after adding sodium ethanoate) */}
