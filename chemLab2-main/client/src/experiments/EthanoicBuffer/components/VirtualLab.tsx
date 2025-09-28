@@ -119,7 +119,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
         positionObj = { x, y };
       }
 
-      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '20 mL Test Tube' : item.name, position: positionObj }]);
+      setEquipmentOnBench(prev => [...prev, { id, name: id === 'test-tube' ? '25ml Test Tube' : item.name, position: positionObj }]);
       // Only mark the step complete for interactive actions (not when placing fixed reagent bottles)
       if (!positionObj.fixed && !completedSteps.includes(currentStep)) onStepComplete(currentStep);
     }
@@ -297,7 +297,7 @@ const stepsProgress = (
               </h3>
               <div className="space-y-3">
                 {items.map((eq) => (
-                  <PHEquipment key={eq.id} id={eq.id} name={eq.id === 'test-tube' ? '20 mL Test Tube' : eq.name} icon={eq.icon} disabled={!experimentStarted} onInteract={handleInteract} />
+                  <PHEquipment key={eq.id} id={eq.id} name={eq.id === 'test-tube' ? '25ml Test Tube' : eq.name} icon={eq.icon} disabled={!experimentStarted} onInteract={handleInteract} />
                 ))}
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">

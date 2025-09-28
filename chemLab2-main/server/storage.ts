@@ -52,7 +52,7 @@ export class MemStorage implements IStorage {
         category: "Acid-Base Chemistry",
         difficulty: "Beginner",
         duration: 30,
-        steps: 7,
+        steps: 8,
         rating: 4.6,
         imageUrl:
           "https://cdn.builder.io/api/v1/image/assets%2Fc52292a04d4c4255a87bdaa80a28beb9%2Fd9024b9081e64d6c94e0588d642ffd0d?format=webp&width=800",
@@ -92,6 +92,14 @@ export class MemStorage implements IStorage {
           },
           {
             id: 4,
+            title: "Place a new pH paper",
+            description:
+              "Place a fresh pH paper or pH meter strip next to the test tube so you can measure the pH after adding reagents.",
+            duration: "1 minute",
+            completed: false,
+          },
+          {
+            id: 5,
             title: "Add Sodium Ethanoate",
             description:
               "Add 5 mL of 0.1 M sodium ethanoate solution (the conjugate base A–). Mix gently and allow to equilibrate.",
@@ -99,7 +107,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 5,
+            id: 6,
             title: "Observe pH Change",
             description:
               "Measure the pH again. Note the increase in pH due to buffer formation (CH3COOH/CH3COO– pair).",
@@ -107,7 +115,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 6,
+            id: 7,
             title: "Explore Different Ratios",
             description:
               "Repeat by varying the volume of sodium ethanoate (e.g., 2 mL, 10 mL). Record pH for each ratio of A– to HA.",
@@ -115,7 +123,7 @@ export class MemStorage implements IStorage {
             completed: false,
           },
           {
-            id: 7,
+            id: 8,
             title: "Relate to Henderson–Hasselbalch",
             description:
               "Compare observations with pH = pKa + log([A–]/[HA]) for ethanoic acid (pKa ≈ 4.76). Discuss buffering and limitations.",

@@ -9,7 +9,7 @@ const PHComparisonData = {
   rating: 4.6,
   imageUrl: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop",
   equipment: [
-    "20 mL Test Tube",
+    "25ml Test Tube",
     "0.01 M HCl",
     "0.01 M CH3COOH",
     "Universal Indicator",

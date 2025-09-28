@@ -376,23 +376,29 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
     if (testTube.contents.includes('HCL') && testTube.colorHex === COLORS.HCL_PH2) {
       setShowToast('Measured pH ≈ 2 (strong acid)');
+      // color pH paper
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#ff6b6b' } : item));
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
 
     if (testTube.contents.includes('CH3COOH') && testTube.colorHex === COLORS.ACETIC_PH3) {
-      setShowToast('Measured pH ≈ 3���4 (weak acid)');
+      setShowToast('Measured pH ≈ 3–4 (weak acid)');
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#ffb74d' } : item));
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
 
     if (testTube.colorHex === COLORS.NEUTRAL) {
       setShowToast('Measured pH ≈ 7 (neutral)');
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#C8E6C9' } : item));
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
 
+    // default: inconclusive -> show neutral tint
     setShowToast('pH measurement inconclusive');
+    setEquipmentOnBench(prev => prev.map(item => (item.id === 'universal-indicator' || item.id.toLowerCase().includes('ph')) ? { ...item, color: '#ffffff' } : item));
     setTimeout(() => setShowToast(''), 1600);
   };
 
@@ -443,7 +449,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
             <WorkBench onDrop={handleEquipmentDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={hasPhPaper ? testPH : undefined}>
               {equipmentOnBench.find(e => e.id === 'test-tube') && !compareMode && (
                 <>
-                  <Equipment id="test-tube" name="20 mL Test Tube" icon={<TestTube className="w-8 h-8" />} position={getEquipmentPosition('test-tube')} onRemove={handleRemove} onInteract={() => {}} color={testTube.colorHex} volume={testTube.volume} displayVolume={showHclDialog && previewHclVolume != null ? previewHclVolume : showAceticDialog && previewAceticVolume != null ? previewAceticVolume : showIndicatorDialog && previewIndicatorVolume != null ? Math.min(20, testTube.volume + previewIndicatorVolume) : testTube.volume} isActive={true} />
+                  <Equipment id="test-tube" name="25ml Test Tube" icon={<TestTube className="w-8 h-8" />} position={getEquipmentPosition('test-tube')} onRemove={handleRemove} onInteract={() => {}} color={testTube.colorHex} volume={testTube.volume} displayVolume={showHclDialog && previewHclVolume != null ? previewHclVolume : showAceticDialog && previewAceticVolume != null ? previewAceticVolume : showIndicatorDialog && previewIndicatorVolume != null ? Math.min(20, testTube.volume + previewIndicatorVolume) : testTube.volume} isActive={true} />
                   {shouldShowRestore && (
                     <div style={{ position: 'absolute', left: getEquipmentPosition('test-tube').x, top: getEquipmentPosition('test-tube').y + 220, transform: 'translate(-50%, 0)' }}>
                       <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm animate-pulse" onClick={handleRestore}>RESET</Button>
@@ -468,6 +474,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   position={e.position}
                   onRemove={handleRemove}
                   onInteract={handleInteract}
+                  {...((e as any).color ? { color: (e as any).color } : {})}
                 />
               ))}
 
