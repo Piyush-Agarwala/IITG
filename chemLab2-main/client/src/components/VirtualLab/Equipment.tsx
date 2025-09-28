@@ -628,7 +628,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         <div className="relative group">
           {/* Volume label above test tube */}
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-300 shadow-sm">
-            <span className="text-xs font-semibold text-gray-700">20 mL test tube</span>
+            <span className="text-xs font-semibold text-gray-700">25ml Test Tube</span>
           </div>
 
           <img
