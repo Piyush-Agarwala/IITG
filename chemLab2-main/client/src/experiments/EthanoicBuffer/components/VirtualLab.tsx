@@ -67,15 +67,17 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     });
 
     // Reorder so that Test Tube is first, then Ethanoic Acid and Sodium Ethanoate
-    const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
-    const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+  const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
+  const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+  // exclude bulky/irrelevant equipment from the quick selection
+  const excludedRe = /distilled\s*water|glass\s*stirr?ing\s*rod|measuring\s*cylinder/i;
 
-    const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
-    const ethanoic = raw.find(i => isEthanoic(i.name));
-    const sodium = raw.find(i => isSodiumEthanoate(i.name));
-    const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium);
+  const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
+  const ethanoic = raw.find(i => isEthanoic(i.name));
+  const sodium = raw.find(i => isSodiumEthanoate(i.name));
+  const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium && !excludedRe.test(i.name));
 
-    return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
+  return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
@@ -518,7 +520,7 @@ const stepsProgress = (
               placeholder="Enter volume in mL"
             />
             {aceticError && <p className="text-xs text-red-600">{aceticError}</p>}
-            <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>
+            <p className="text-xs text-gray-500">Recommended range: 10.0 �� 15.0 mL</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAceticDialog(false)}>Cancel</Button>
