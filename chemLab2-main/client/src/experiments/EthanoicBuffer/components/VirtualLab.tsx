@@ -32,6 +32,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [acidMoles, setAcidMoles] = useState(0);
   const [sodiumMoles, setSodiumMoles] = useState(0);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [case1PH, setCase1PH] = useState<number | null>(null);
+  const [case2PH, setCase2PH] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
 
   const [showAceticDialog, setShowAceticDialog] = useState(false);
@@ -43,7 +45,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   // Track cumulative volume (mL) of sodium ethanoate added to the test tube so we can revert it on reset
   const [sodiumVolumeAdded, setSodiumVolumeAdded] = useState<number>(0);
 
-  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setShowToast(null); }, [experiment.id]);
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
@@ -185,11 +187,28 @@ const confirmAddSodium = () => {
   // track cumulative sodium volume added so Reset can revert the volume
   setSodiumVolumeAdded(prev => Math.max(0, prev + v));
 
+  // compute and store pH after sodium ethanoate addition
+  const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
+  const phAfter = computePHFrom(acidMoles, newSodiumMoles, totalVolL);
+  if (phAfter != null) {
+    setLastMeasuredPH(phAfter);
+    if (case1PH == null) {
+      setCase1PH(phAfter);
+      setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 1`);
+    } else if (case2PH == null) {
+      setCase2PH(phAfter);
+      setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 2`);
+    } else {
+      setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
+    }
+  } else {
+    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
+  }
+
   // mark the step complete when the user confirms adding the sodium ethanoate volume
   if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowSodiumDialog(false);
   setSodiumError(null);
-  setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
   setTimeout(() => setShowToast(null), 2000);
 
 };
@@ -432,6 +451,19 @@ const stepsProgress = (
                     );
                   })()}
                 </div>
+
+                {/* CASE results (auto-filled after adding sodium ethanoate) */}
+                <div className="mt-3 grid grid-cols-1 gap-2">
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 1</div>
+                    <div className="text-xs text-gray-600">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                  </div>
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 2</div>
+                    <div className="text-xs text-gray-600">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                  </div>
+                </div>
+
                 {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
             </div>
