@@ -210,9 +210,12 @@ const confirmAddSodium = () => {
   if (phAfter != null) {
     if (case1PH == null) {
       setCase1PH(phAfter);
+      // require the next MEASURE to reveal this stored CASE result
+      setCase1Version(measurementVersion + 1);
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 1`);
     } else if (case2PH == null) {
       setCase2PH(phAfter);
+      setCase2Version(measurementVersion + 1);
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 2`);
     } else {
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
