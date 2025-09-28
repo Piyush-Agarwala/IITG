@@ -464,12 +464,12 @@ const stepsProgress = (
 
                 {/* pH of Ethanoic Acid (initial) */}
                 <div className="mt-3">
-                  <h5 className="font-medium text-sm text-gray-700 mb-1"><span className="inline-block mr-2 font-bold">A</span>pH of Ethanoic acid</h5>
+                  <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block mr-2 font-bold">A</span>pH of Ethanoic acid</h5>
                   <div className="text-sm font-semibold text-gray-800">{initialAcidPH != null ? `${initialAcidPH.toFixed(2)} (${initialAcidPH < 7 ? 'Acidic' : initialAcidPH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
                 </div>
 
                 {/* CASE results (auto-filled after adding sodium ethanoate) */}
-                <div className="text-sm text-gray-700 mt-3 mb-2"><span className="inline-block mr-2 font-bold">B</span>When Sodium Ethanoate is added</div>
+                <div className="text-sm text-black mt-3 mb-2"><span className="inline-block mr-2 font-bold">B</span>When Sodium Ethanoate is added</div>
                 <div className="mt-3 grid grid-cols-1 gap-2">
                   <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
                     <div className="font-medium">CASE 1</div>
