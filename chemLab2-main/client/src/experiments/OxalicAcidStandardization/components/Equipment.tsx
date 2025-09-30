@@ -119,20 +119,32 @@ export const Equipment: React.FC<EquipmentProps> = ({
     switch (eqId) {
       case "analytical_balance":
         const oxalicAcid = chemicals.find(c => c.id === "oxalic_acid");
+        // When the analytical balance is placed on the workbench, hide the visual icon/image
+        // but preserve any numeric readout / actions via the action button below.
+        if (position) {
+          return (
+            <div className="text-center">
+              {oxalicAcid && (
+                <div className="mt-2 text-xs">
+                  <div className="bg-black text-green-400 px-2 py-1 rounded font-mono inline-block">
+                    {(oxalicAcid.amount / 1000).toFixed(4)} g
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+
         return (
           <div className="text-center">
             {imageSrc ? (
               <img
                 src={imageSrc}
                 alt={name}
-                className={
-                  isAnalytical && position
-                    ? "mx-auto block h-[22rem] w-auto object-contain"
-                    : "w-20 h-20 mx-auto mb-2 object-contain"
-                }
+                className={"w-20 h-20 mx-auto mb-2 object-contain"}
               />
             ) : (
-              <Scale className={isAnalytical && position ? "w-12 h-12 mx-auto mb-2 text-gray-600" : "w-8 h-8 mx-auto mb-2 text-gray-600"} />
+              <Scale className={"w-8 h-8 mx-auto mb-2 text-gray-600"} />
             )}
             {oxalicAcid && (
               <div className="mt-2 text-xs">
