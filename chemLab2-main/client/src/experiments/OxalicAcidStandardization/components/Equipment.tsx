@@ -54,54 +54,6 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const [showDetails, setShowDetails] = useState(false);
   const equipmentRef = useRef<HTMLDivElement>(null);
   const isAnalytical = (typeId ?? id) === "analytical_balance";
-  const isWeighingBoat = (typeId ?? id) === "weighing_boat";
-  const [processedImageSrc, setProcessedImageSrc] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    if (!imageSrc || !isWeighingBoat) {
-      setProcessedImageSrc(undefined);
-      return;
-    }
-
-    let cancelled = false;
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = imageSrc;
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          if (!cancelled) setProcessedImageSrc(imageSrc);
-          return;
-        }
-        ctx.drawImage(img, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-          // if pixel is near-white, make transparent
-          if (r > 240 && g > 240 && b > 240) {
-            data[i + 3] = 0;
-          }
-        }
-        ctx.putImageData(imageData, 0, 0);
-        if (!cancelled) setProcessedImageSrc(canvas.toDataURL());
-      } catch (e) {
-        if (!cancelled) setProcessedImageSrc(imageSrc);
-      }
-    };
-    img.onerror = () => {
-      if (!cancelled) setProcessedImageSrc(imageSrc);
-    };
-    return () => {
-      cancelled = true;
-    };
-  }, [imageSrc, isWeighingBoat]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (position) {
@@ -171,9 +123,13 @@ export const Equipment: React.FC<EquipmentProps> = ({
           <div className="text-center">
             {imageSrc ? (
               <img
-                src={processedImageSrc || imageSrc}
+                src={imageSrc}
                 alt={name}
-                className={`${isAnalytical && position ? "mx-auto block h-[22rem] w-auto object-contain" : "w-20 h-20 mx-auto mb-2 object-contain"} ${isWeighingBoat ? "mix-blend-multiply" : ""}`}
+                className={
+                  isAnalytical && position
+                    ? "mx-auto block h-[22rem] w-auto object-contain"
+                    : "w-20 h-20 mx-auto mb-2 object-contain"
+                }
               />
             ) : (
               <Scale className={isAnalytical && position ? "w-12 h-12 mx-auto mb-2 text-gray-600" : "w-8 h-8 mx-auto mb-2 text-gray-600"} />
@@ -262,7 +218,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="text-center">
             {imageSrc ? (
-              <img src={processedImageSrc || imageSrc} alt={name} className={`${"w-24 h-24 mx-auto mb-2 object-contain"} ${isWeighingBoat ? "mix-blend-multiply" : ""}`} />
+              <img src={imageSrc} alt={name} className="w-24 h-24 mx-auto mb-2 object-contain" />
             ) : (
               icon
             )}
