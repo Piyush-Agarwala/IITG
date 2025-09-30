@@ -241,6 +241,8 @@ const confirmAddSodium = () => {
     } else if (case2PH == null) {
       setCase2PH(phAfter);
       setCase2Version(measurementVersion + 1);
+      // stop prompting the user to measure once CASE 2 is recorded
+      setShouldBlinkMeasure(false);
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 2`);
     } else {
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
