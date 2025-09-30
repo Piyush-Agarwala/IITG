@@ -45,6 +45,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   // Guided UI cues
   const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
   const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
+  // Count how many times sodium ethanoate has been added this session
+  const [sodiumAdditions, setSodiumAdditions] = useState(0);
 
   const [showAceticDialog, setShowAceticDialog] = useState(false);
   const [aceticVolume, setAceticVolume] = useState("10.0");
@@ -207,6 +209,10 @@ const confirmAddSodium = () => {
   setSodiumMoles(newSodiumMoles);
   // track cumulative sodium volume added so Reset can revert the volume
   setSodiumVolumeAdded(prev => Math.max(0, prev + v));
+  // bump additions count; if this is the 2nd (or later) addition, ensure reset won't blink anymore
+  const nextAdditions = sodiumAdditions + 1;
+  setSodiumAdditions(nextAdditions);
+  if (nextAdditions >= 2) setShouldBlinkReset(false);
   // prompt user to measure after adding sodium ethanoate
   setShouldBlinkMeasure(true);
 
@@ -319,8 +325,9 @@ function testPH() {
 
   // stop prompting MEASURE (we just measured)
   setShouldBlinkMeasure(false);
-  // after measuring, prompt to reset sodium if any was added
-  if (sodiumVolumeAdded > 0) setShouldBlinkReset(true);
+  // after measuring, prompt to reset sodium if any was added and fewer than 2 additions so far
+  if (sodiumVolumeAdded > 0 && sodiumAdditions < 2) setShouldBlinkReset(true);
+  else setShouldBlinkReset(false);
   applyPHResult(ph);
 }
 
