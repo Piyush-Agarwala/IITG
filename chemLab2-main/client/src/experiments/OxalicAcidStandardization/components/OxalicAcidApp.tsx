@@ -199,7 +199,7 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
             <CardContent>
               <h3 className="text-sm font-semibold text-gray-900 mb-3">Equipment</h3>
               <div className="grid grid-cols-2 gap-3 mb-4">
-                {OXALIC_ACID_EQUIPMENT.filter(eq => !usedEquipment.includes(eq.id)).map((eq) => (
+                {OXALIC_ACID_EQUIPMENT.filter(eq => (eq.id === 'analytical_balance') || !usedEquipment.includes(eq.id)).map((eq) => (
                   <Equipment key={eq.id} id={eq.id} name={eq.name} icon={eq.icon} position={null} />
                 ))}
               </div>
