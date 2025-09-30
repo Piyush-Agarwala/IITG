@@ -382,6 +382,7 @@ function OxalicAcidVirtualLab({
           onUndoStep={onUndoStep}
           onResetExperiment={onResetExperiment}
           currentStepIndex={currentStepIndex}
+          onEquipmentPlaced={onEquipmentPlaced}
         />
       </div>
     </TooltipProvider>
