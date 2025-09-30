@@ -493,7 +493,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <>
                   {/* MEASURE button placed beside the pH paper */}
                   <div style={{ position: 'absolute', left: phPaperItem.position.x + 90, top: phPaperItem.position.y, transform: 'translate(-50%, -50%)' }}>
-                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'animate-pulse' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
+                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
                   </div>
                 </>
               )}
