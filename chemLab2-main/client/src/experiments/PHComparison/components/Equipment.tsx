@@ -142,7 +142,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               </div>
               <span className="text-sm font-medium mt-2 text-center block">{name}</span>
             </div>
-          ) : id === 'hcl-0-01m' ? (
+          ) : (id === 'hcl-0-01m' || id === 'nh4oh-0-1m' || id === 'nh4cl-0-1m') ? (
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacc' }}>
                 <Droplets className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-yellow-700 opacity-70" />
@@ -184,6 +184,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
 export const PH_LAB_EQUIPMENT = [
   { id: 'test-tube', name: '25ml Test Tube', icon: <TestTube className="w-8 h-8" /> },
   { id: 'hcl-0-01m', name: '0.01 M HCl', icon: <Droplets className="w-8 h-8" /> },
+  { id: 'nh4oh-0-1m', name: '0.1 M NH4OH (Ammonium hydroxide)', icon: <Droplets className="w-8 h-8" /> },
+  { id: 'nh4cl-0-1m', name: 'NH4Cl (Ammonium chloride)', icon: <Droplets className="w-8 h-8" /> },
   { id: 'acetic-0-01m', name: '0.1 M Ethanoic (Acetic) Acid', icon: <Droplets className="w-8 h-8" /> },
   { id: 'universal-indicator', name: 'Universal Indicator', icon: <FlaskConical className="w-8 h-8" /> },
 ];
