@@ -22,6 +22,11 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
   const [timer, setTimer] = useState(0);
   const [experimentStarted, setExperimentStarted] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [usedEquipment, setUsedEquipment] = useState<string[]>([]);
+
+  const handleEquipmentPlaced = (id: string) => {
+    setUsedEquipment(prev => (prev.includes(id) ? prev : [...prev, id]));
+  };
 
   const experiment = OxalicAcidData;
   const [match, params] = useRoute("/experiment/:id");
@@ -194,7 +199,7 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
             <CardContent>
               <h3 className="text-sm font-semibold text-gray-900 mb-3">Equipment</h3>
               <div className="grid grid-cols-2 gap-3 mb-4">
-                {OXALIC_ACID_EQUIPMENT.map((eq) => (
+                {OXALIC_ACID_EQUIPMENT.filter(eq => !usedEquipment.includes(eq.id)).map((eq) => (
                   <Equipment key={eq.id} id={eq.id} name={eq.name} icon={eq.icon} position={null} />
                 ))}
               </div>
@@ -239,6 +244,7 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
               onUndoStep={handleUndoStep}
               onResetExperiment={handleResetExperiment}
               currentStepIndex={currentStep + 1}
+              onEquipmentPlaced={handleEquipmentPlaced}
             />
           </div>
         </div>

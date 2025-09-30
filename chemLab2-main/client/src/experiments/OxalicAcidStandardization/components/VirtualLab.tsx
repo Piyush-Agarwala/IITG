@@ -26,6 +26,7 @@ import type {
 } from "../types";
 
 interface OxalicAcidVirtualLabProps {
+  onEquipmentPlaced?: (id: string) => void;
   step: ExperimentStep;
   onStepComplete: () => void;
   isActive: boolean;
@@ -59,6 +60,7 @@ function OxalicAcidVirtualLab({
   onUndoStep,
   onResetExperiment,
   currentStepIndex,
+  onEquipmentPlaced,
 }: OxalicAcidVirtualLabProps) {
   const [equipmentPositions, setEquipmentPositions] = useState<
     EquipmentPosition[]
@@ -380,6 +382,7 @@ function OxalicAcidVirtualLab({
           onUndoStep={onUndoStep}
           onResetExperiment={onResetExperiment}
           currentStepIndex={currentStepIndex}
+          onEquipmentPlaced={onEquipmentPlaced}
         />
       </div>
     </TooltipProvider>
