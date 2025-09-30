@@ -314,11 +314,31 @@ function applyPHResult(ph: number) {
   }
 }
 
-// When CASE 2 becomes available (measured and revealed), open results modal
+// When CASE 2 becomes available (measured and revealed), open results modal after 10s
+const case2TimeoutRef = useRef<number | null>(null);
 useEffect(() => {
-  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
-    setShowResultsModal(true);
+  // clear any previous scheduled open
+  if (case2TimeoutRef.current) {
+    clearTimeout(case2TimeoutRef.current as number);
+    case2TimeoutRef.current = null;
   }
+
+  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
+    setShowToast('Opening Results in 10 seconds...');
+    case2TimeoutRef.current = window.setTimeout(() => {
+      setShowResultsModal(true);
+      case2TimeoutRef.current = null;
+    }, 10000);
+    // clear the toast a bit earlier than the modal
+    setTimeout(() => setShowToast(null), 8000);
+  }
+
+  return () => {
+    if (case2TimeoutRef.current) {
+      clearTimeout(case2TimeoutRef.current as number);
+      case2TimeoutRef.current = null;
+    }
+  };
 }, [case2PH, case2Version, measurementVersion]);
 
 function testPH() {
