@@ -178,8 +178,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <img
                 src={imageSrc}
                 alt={name}
-                className="w-auto h-auto object-contain mix-blend-multiply pointer-events-none select-none"
-                style={{ transform: "scale(0.15)", transformOrigin: "center" }}
+                className="h-24 w-auto object-contain mix-blend-multiply pointer-events-none select-none"
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
               />
