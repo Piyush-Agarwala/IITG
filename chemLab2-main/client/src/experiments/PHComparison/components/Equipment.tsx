@@ -142,7 +142,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               </div>
               <span className="text-sm font-medium mt-2 text-center block">{name}</span>
             </div>
-          ) : id === 'hcl-0-01m' ? (
+          ) : (id === 'hcl-0-01m' || id === 'nh4oh-0-1m' || id === 'nh4cl-0-1m') ? (
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacc' }}>
                 <Droplets className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-yellow-700 opacity-70" />
