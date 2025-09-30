@@ -72,6 +72,31 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [case2PH, setCase2PH] = useState<number | null>(null);
   const [showPouring, setShowPouring] = useState(false);
   const [pourKey, setPourKey] = useState(0);
+  // Count how many times the MEASURE action has been invoked
+  const [measureCount, setMeasureCount] = useState(0);
+  // Timeout handle for scheduled results opening
+  const measureResultsTimeoutRef = useRef<number | null>(null);
+
+  // Clean up any scheduled timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (measureResultsTimeoutRef.current) {
+        clearTimeout(measureResultsTimeoutRef.current as number);
+        measureResultsTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  // If results modal opens, clear scheduled timeout and reset counter
+  useEffect(() => {
+    if (showResultsModal) {
+      if (measureResultsTimeoutRef.current) {
+        clearTimeout(measureResultsTimeoutRef.current as number);
+        measureResultsTimeoutRef.current = null;
+      }
+      setMeasureCount(0);
+    }
+  }, [showResultsModal]);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
@@ -365,6 +390,25 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const phPaperItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
 
   const testPH = () => {
+    // increment measure press count immediately (counts even if measurement is inconclusive)
+    setMeasureCount(prev => {
+      const next = prev + 1;
+      if (next === 3) {
+        // schedule opening results modal after 5 seconds
+        if (measureResultsTimeoutRef.current) {
+          clearTimeout(measureResultsTimeoutRef.current as number);
+        }
+        setShowToast('Opening Results in 5 seconds...');
+        measureResultsTimeoutRef.current = window.setTimeout(() => {
+          setShowResultsModal(true);
+          measureResultsTimeoutRef.current = null;
+        }, 5000);
+        // clear the short toast message shortly
+        setTimeout(() => setShowToast(''), 3500);
+      }
+      return next;
+    });
+
     if (!testTube || (testTube.volume ?? 0) <= 0) {
       setShowToast('No solution in test tube');
       setTimeout(() => setShowToast(''), 1400);
