@@ -53,7 +53,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const equipmentRef = useRef<HTMLDivElement>(null);
-  const isAnalytical = (typeId ?? id) === "analytical_balance";
+  const equipmentIdentifier = typeId ?? id;
+  const isAnalytical = equipmentIdentifier === "analytical_balance";
+  const isWeighingBoat = equipmentIdentifier === "weighing_boat";
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (position) {
@@ -114,9 +116,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
   const getEquipmentContent = () => {
     const totalVolume = chemicals.reduce((sum, chemical) => sum + chemical.amount, 0);
-    const eqId = typeId ?? id;
 
-    switch (eqId) {
+    switch (equipmentIdentifier) {
       case "analytical_balance":
         const oxalicAcid = chemicals.find(c => c.id === "oxalic_acid");
         return (
@@ -170,7 +171,23 @@ export const Equipment: React.FC<EquipmentProps> = ({
             </div>
           </div>
         );
-        
+      case "weighing_boat":
+        return (
+          <div className="relative flex justify-center">
+            {imageSrc ? (
+              <img
+                src={imageSrc}
+                alt={name}
+                className="h-24 w-auto object-contain mix-blend-multiply pointer-events-none select-none"
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+              />
+            ) : (
+              icon
+            )}
+          </div>
+        );
+
       case "beaker":
         const hasOxalicAcid = chemicals.some(c => c.id === "oxalic_acid");
         const hasWater = chemicals.some(c => c.id === "distilled_water");
@@ -237,7 +254,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   };
 
   const canAcceptChemical = (chemicalId: string) => {
-    const eqId = typeId ?? id;
+    const eqId = equipmentIdentifier;
     switch (eqId) {
       case "analytical_balance":
         return chemicalId === "oxalic_acid";
@@ -251,7 +268,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   };
 
   const getActionButton = () => {
-    const eqId = typeId ?? id;
+    const eqId = equipmentIdentifier;
     switch (eqId) {
       case "analytical_balance":
         if (chemicals.some(c => c.id === "oxalic_acid")) {
@@ -321,7 +338,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
   const containerClass = isAnalytical
     ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-transform ${isDragging ? 'scale-105' : ''}`
-    : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
+    : isWeighingBoat
+      ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-transform ${isDragging ? 'scale-105' : ''}`
+      : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
 
   return (
     <div
