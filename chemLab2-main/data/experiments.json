@@ -146,7 +146,6 @@
     "safetyInfo": "Oxalic acid is toxic and corrosive. Avoid skin contact and inhalation. Wear safety goggles and gloves. Work in a well-ventilated area. Wash hands thoroughly after handling."
   },
   {
-
     "title": "Chemical Equilibrium",
     "description": "Investigate Le Chatelier's principle by observing how changes in concentration, temperature, and pressure affect chemical equilibrium. Study the cobalt(II) chloride equilibrium system.",
     "category": "Equilibrium",
@@ -223,7 +222,7 @@
     "duration": 65,
     "steps": 8,
     "rating": 4.8,
-    "imageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
+    "imageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fHx8&auto=format&fit=crop&w=800&h=400",
     "equipment": [
       "Test Tubes (12 pieces)",
       "Test Tube Racks (2 pieces)",
@@ -412,7 +411,7 @@
       {
         "id": 4,
         "title": "Initial Titration",
-        "description": "Begin titrating by adding NaOH solution dropwise while swirling the flask continuously. The reaction is: H₂C₂O₄ + 2NaOH → Na₂C₂O₄ + 2H₂O",
+        "description": "Begin titrating by adding NaOH solution dropwise while swirling the flask continuously. The reaction is: H₂C₂O₄ + 2NaOH �� Na₂C₂O₄ + 2H₂O",
         "duration": "8 minutes",
         "completed": false
       },
@@ -440,12 +439,12 @@
       {
         "id": 8,
         "title": "Record and Analyze",
-        "description": "Record all observations, calculate the strength of NaOH solution in g/L, and analyze the accuracy of your results. Discuss sources of error.",
+        "description": "Record all observations, calculate the average titre volume and determine the normality. Analyze the accuracy of your results and discuss sources of error.",
         "duration": "6 minutes",
         "completed": false
       }
     ],
-    "safetyInfo": "Sodium hydroxide is highly corrosive and can cause severe burns. Oxalic acid is toxic if ingested and can cause irritation. Always wear safety goggles and gloves. Handle all chemicals with care and wash hands thoroughly after the experiment. Work in a well-ventilated area."
+    "safetyInfo": "Sodium hydroxide is highly corrosive and can cause severe burns. Oxalic acid is toxic if ingested and can cause irritation. Always wear safety goggles and gloves. Handle all chemicals with care and wash hands thoroughly after handling. Work in a well-ventilated area."
   },
   {
     "title": "Detection of Nitrogen, Sulphur, Chlorine, Bromine, and Iodine (Lassaigne's Test)",
@@ -546,5 +545,33 @@
       { "id": 7, "title": "Labeling & documentation", "description": "Label the flask with concentration, reagent name and date. Document all observations and recorded masses in the lab notebook or digital log.", "duration": "5 minutes", "completed": false }
     ],
     "safetyInfo": "Oxalic acid is toxic and corrosive. Avoid skin contact and inhalation. Wear safety goggles and gloves. Work in a well-ventilated area. Wash hands thoroughly after handling."
+  },
+  {
+    "title": "To study the change in pH of ammonium hydroxide solution on addition of ammonium chloride",
+    "description": "Investigate how adding ammonium chloride (NH4Cl) to an ammonium hydroxide (NH4OH) solution affects pH. Observe the common-ion effect: adding NH4+ shifts the NH3/NH4+ equilibrium and lowers the pH.",
+    "category": "Acid-Base Chemistry",
+    "difficulty": "Beginner",
+    "duration": 25,
+    "steps": 6,
+    "rating": 4.5,
+    "imageUrl": "https://images.unsplash.com/photo-1581093588401-1c7b6f0b1c8f?auto=format&fit=crop&w=800&q=80",
+    "equipment": [
+      "Beakers",
+      "Test Tubes",
+      "pH Meter or Universal Indicator",
+      "Dropper Pipettes",
+      "Stirring Rod",
+      "Volumetric Flask",
+      "Burette (optional)"
+    ],
+    "stepDetails": [
+      { "id": 1, "title": "Prepare 0.1 M NH4OH Solution", "description": "Prepare approximately 100 mL of 0.1 M ammonium hydroxide solution (NH4OH) using dilute ammonia solution. Record initial concentration and temperature.", "duration": "5 minutes", "completed": false },
+      { "id": 2, "title": "Measure Initial pH", "description": "Calibrate the pH meter or prepare universal indicator. Measure and record the initial pH of the NH4OH solution (expect a basic pH due to NH3 in water).", "duration": "3 minutes", "completed": false },
+      { "id": 3, "title": "Add NH4Cl Incrementally", "description": "Add small known amounts (e.g., 0.1 g increments) of solid ammonium chloride to the NH4OH solution. Stir thoroughly after each addition and allow the solution to equilibrate.", "duration": "8 minutes", "completed": false },
+      { "id": 4, "title": "Record pH After Each Addition", "description": "Measure and record pH after each NH4Cl addition. Observe the pH dropping as NH4+ concentration increases and the common-ion effect suppresses NH3 ionization.", "duration": "5 minutes", "completed": false },
+      { "id": 5, "title": "Analyze Results", "description": "Plot pH vs amount of NH4Cl added. Discuss the common-ion effect, buffer region behavior, and calculate expected pH changes using Kb for NH3 (Kb ≈ 1.8×10⁻⁵).", "duration": "7 minutes", "completed": false },
+      { "id": 6, "title": "Cleanup and Safety", "description": "Neutralize and dispose solutions according to local guidelines. Rinse glassware thoroughly and wash hands. Store reagents properly.", "duration": "2 minutes", "safety": "Ammonia vapors are irritating; work in well-ventilated area. Wear goggles and gloves.", "completed": false }
+    ],
+    "safetyInfo": "Ammonium hydroxide and ammonia vapors are irritating to eyes and respiratory tract. Ammonium chloride is an irritant. Work in a well-ventilated area or fume hood. Wear safety goggles, gloves, and avoid inhalation."
   }
 ]
