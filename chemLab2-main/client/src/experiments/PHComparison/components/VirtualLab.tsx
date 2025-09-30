@@ -394,13 +394,18 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     setMeasureCount(prev => {
       const next = prev + 1;
       if (next === 3) {
-        // schedule opening results modal after 5 seconds
+        // schedule opening results modal after 5 seconds *only if CASE 2 saved*
         if (measureResultsTimeoutRef.current) {
           clearTimeout(measureResultsTimeoutRef.current as number);
         }
         setShowToast('Opening Results in 5 seconds...');
         measureResultsTimeoutRef.current = window.setTimeout(() => {
-          setShowResultsModal(true);
+          if (case2PH != null) {
+            setShowResultsModal(true);
+          } else {
+            setShowToast('Save a pH to CASE 2 to view full results');
+            setTimeout(() => setShowToast(''), 3000);
+          }
           measureResultsTimeoutRef.current = null;
         }, 5000);
         // clear the short toast message shortly
