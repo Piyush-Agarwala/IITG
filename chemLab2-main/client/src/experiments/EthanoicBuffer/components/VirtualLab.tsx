@@ -432,7 +432,7 @@ const stepsProgress = (
                   <div key="reset-sodium" style={{ position: 'absolute', left: sodiumItem.position.x, top: sodiumItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
                     <Button
                       size="sm"
-                      className="bg-red-500 text-white hover:bg-red-600 shadow-sm"
+                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm ${sodiumVolumeAdded > 0 ? 'blink-until-pressed' : ''}`}
                       onClick={() => {
                         // Reset sodium ethanoate state but keep the sodium bottle on the bench
                         // Revert any volume previously added by sodium ethanoate
