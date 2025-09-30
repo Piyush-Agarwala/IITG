@@ -354,7 +354,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     setShowToast('Results opening in 10 seconds...');
     setTimeout(() => setShowToast(""), 3000);
     setTimeout(() => {
-      setShowResultsModal(true);
+      if (case2PH != null) {
+        setShowResultsModal(true);
+      } else {
+        setShowToast('Save a pH to CASE 2 to view full results');
+        setTimeout(() => setShowToast(''), 3000);
+      }
     }, 10000);
   };
 
