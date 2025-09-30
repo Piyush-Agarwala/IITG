@@ -125,11 +125,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <img
                 src={imageSrc}
                 alt={name}
-                className={
-                  isAnalytical && position
-                    ? "mx-auto block h-[22rem] w-auto object-contain"
-                    : "w-20 h-20 mx-auto mb-2 object-contain"
-                }
+                className={`${isAnalytical && position ? "mx-auto block h-[22rem] w-auto object-contain" : "w-20 h-20 mx-auto mb-2 object-contain"} ${(typeId ?? id) === "weighing_boat" ? "mix-blend-multiply" : ""}`}
               />
             ) : (
               <Scale className={isAnalytical && position ? "w-12 h-12 mx-auto mb-2 text-gray-600" : "w-8 h-8 mx-auto mb-2 text-gray-600"} />
@@ -218,7 +214,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="text-center">
             {imageSrc ? (
-              <img src={imageSrc} alt={name} className="w-24 h-24 mx-auto mb-2 object-contain" />
+              <img src={imageSrc} alt={name} className={`${"w-24 h-24 mx-auto mb-2 object-contain"} ${(typeId ?? id) === "weighing_boat" ? "mix-blend-multiply" : ""}`} />
             ) : (
               icon
             )}
