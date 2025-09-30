@@ -562,7 +562,9 @@
       "Dropper Pipettes",
       "Stirring Rod",
       "Volumetric Flask",
-      "Burette (optional)"
+      "Burette (optional)",
+      "Ammonium hydroxide solution (0.1 M NH4OH)",
+      "Ammonium chloride solution (NH4Cl)"
     ],
     "stepDetails": [
       { "id": 1, "title": "Prepare 0.1 M NH4OH Solution", "description": "Prepare approximately 100 mL of 0.1 M ammonium hydroxide solution (NH4OH) using dilute ammonia solution. Record initial concentration and temperature.", "duration": "5 minutes", "completed": false },
