@@ -51,6 +51,35 @@ export const OXALIC_ACID_EQUIPMENT: Equipment[] = [
     icon: React.createElement(Beaker, { size: 36 }),
   },
   {
+    id: "weighing_boat",
+    name: "Weighing Boat",
+    icon: React.createElement(
+      "svg",
+      {
+        width: "36",
+        height: "36",
+        viewBox: "0 0 36 36",
+        fill: "none",
+        className: "text-gray-600",
+      },
+      [
+        React.createElement("path", {
+          key: "boat",
+          d: "M4 18c0 1.5 4 6 14 6s14-4.5 14-6c0-1.5-4-6-14-6S4 16.5 4 18z",
+          stroke: "currentColor",
+          strokeWidth: "1.5",
+          fill: "rgba(107, 114, 128, 0.06)",
+        }),
+        React.createElement("path", {
+          key: "rim",
+          d: "M6 12h24",
+          stroke: "currentColor",
+          strokeWidth: "1.5",
+        }),
+      ],
+    ),
+  },
+  {
     id: "funnel",
     name: "Funnel",
     icon: React.createElement(
