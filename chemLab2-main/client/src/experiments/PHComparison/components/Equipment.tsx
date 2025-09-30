@@ -92,8 +92,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
   // Placed item
   const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') || name.toLowerCase().includes('sodium ethanoate') || name.toLowerCase().includes('sodium acetate');
-  const bottleBgColor = name.toLowerCase().includes('sodium') ? '#e6f0ff' : '#fffacc';
-  const dropletColorClass = name.toLowerCase().includes('sodium') ? 'text-blue-600' : 'text-yellow-700';
+  const lowerName = name.toLowerCase();
+  const bottleBgColor = (lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? '#e6f0ff' : '#fffacc';
+  const dropletColorClass = (lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? 'text-blue-600' : 'text-yellow-700';
   const isPH = name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
 
   const renderNameParts = (n: string) => {
@@ -142,12 +143,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
               </div>
               <span className="text-sm font-medium mt-2 text-center block">{name}</span>
             </div>
-          ) : (id === 'hcl-0-01m' || id === 'nh4oh-0-1m' || id === 'nh4cl-0-1m') ? (
+          ) : (id === 'hcl-0-01m' || id === 'nh4oh-0-1m' || id === 'nh4cl-0-1m' || name.toLowerCase().includes('ammonium hydroxide') || name.toLowerCase().includes('ammonium chloride') || name.toLowerCase().includes('nh4oh') || name.toLowerCase().includes('nh4cl')) ? (
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacc' }}>
                 <Droplets className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-yellow-700 opacity-70" />
               </div>
-              <span className="text-xs font-medium text-center">0.01 M HCl</span>
+              {renderNameParts(name)}
             </div>
           ) : isAceticOrSodium ? (
             <div className="flex flex-col items-center">

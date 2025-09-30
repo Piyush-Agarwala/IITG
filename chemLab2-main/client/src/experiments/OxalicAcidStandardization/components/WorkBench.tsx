@@ -378,6 +378,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 // Show the provided analytical balance image when in step 1 of the Oxalic Acid preparation
                 const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F6430b7f56e744b15a955cffabccc28ab?format=webp&width=1200";
                 const shouldShowBalanceImage = equipmentData.id === "analytical_balance";
+                const imageSrc = position.imageSrc ?? (shouldShowBalanceImage ? balanceImageUrl : undefined);
 
                 return (
                   <Equipment
@@ -386,7 +387,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     typeId={equipmentData.id}
                     name={equipmentData.name}
                     icon={equipmentData.icon}
-                    imageSrc={shouldShowBalanceImage ? balanceImageUrl : undefined}
+                    imageSrc={imageSrc}
                     onDrag={handleEquipmentDrag}
                     position={{ x: position.x, y: position.y }}
                     chemicals={position.chemicals}
