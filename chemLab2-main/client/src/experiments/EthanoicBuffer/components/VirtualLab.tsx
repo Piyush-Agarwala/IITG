@@ -57,6 +57,19 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   // Track cumulative volume (mL) of sodium ethanoate added to the test tube so we can revert it on reset
   const [sodiumVolumeAdded, setSodiumVolumeAdded] = useState<number>(0);
 
+  // Count measure button presses and schedule showing results after 3rd press
+  const [measureCount, setMeasureCount] = useState(0);
+  const measureTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (measureTimeoutRef.current) {
+        clearTimeout(measureTimeoutRef.current as number);
+        measureTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
 
   const items = useMemo(() => {
@@ -403,7 +416,7 @@ const stepsProgress = (
                 (() => {
                   const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
                   return (
-                    <div key="measure-button" className="measure-button-wrapper" style={{ ['--left' as any]: `${phItem.position.x}px`, ['--top' as any]: `${phItem.position.y + 70}px` } as any}>
+                  <div key="measure-button" className="measure-button-wrapper" style={{ ['--left' as any]: `${phItem.position.x}px`, ['--top' as any]: `${phItem.position.y + 70}px` } as any}>
                       {(() => {
                         const paperHasColor = Boolean((phItem as any).color);
                         return (
@@ -411,6 +424,24 @@ const stepsProgress = (
                             size="sm"
                             className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : '')}`}
                             onClick={() => {
+                              // count presses and schedule results modal after 3rd press
+                              setMeasureCount(prev => {
+                                const next = prev + 1;
+                                if (next === 3) {
+                                  // clear any existing timeout
+                                  if (measureTimeoutRef.current) {
+                                    clearTimeout(measureTimeoutRef.current as number);
+                                  }
+                                  setShowToast('Opening Results in 5 seconds...');
+                                  measureTimeoutRef.current = window.setTimeout(() => {
+                                    setShowResultsModal(true);
+                                    measureTimeoutRef.current = null;
+                                  }, 5000);
+                                  setTimeout(() => setShowToast(null), 3500);
+                                }
+                                return next;
+                              });
+
                               if (!paperHasColor) {
                                 testPH();
                                 return;
@@ -645,7 +676,7 @@ const stepsProgress = (
               <h4 className="font-semibold mb-2">Action Timeline</h4>
               <ol className="list-decimal list-inside text-sm text-gray-700">
                 <li>Added ethanoic acid — initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
-                <li>Added sodium ethanoate — stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
+                <li>Added sodium ethanoate ��� stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
               </ol>
             </div>
 
