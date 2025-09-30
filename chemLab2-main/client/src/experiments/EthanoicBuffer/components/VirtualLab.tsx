@@ -325,9 +325,12 @@ useEffect(() => {
     case2TimeoutRef.current = null;
   }
 
-  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
-    // stop prompting the user to measure
+  // If CASE 2 has been recorded, stop any blinking prompt immediately
+  if (case2PH != null) {
     setShouldBlinkMeasure(false);
+  }
+
+  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
     setShowToast('Opening Results in 10 seconds...');
     case2TimeoutRef.current = window.setTimeout(() => {
       setShowResultsModal(true);
