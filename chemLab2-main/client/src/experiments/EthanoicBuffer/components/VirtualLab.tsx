@@ -42,6 +42,9 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [case2Version, setCase2Version] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  // Guided UI cues
+  const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
+  const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
 
   const [showAceticDialog, setShowAceticDialog] = useState(false);
   const [aceticVolume, setAceticVolume] = useState("10.0");
@@ -204,6 +207,8 @@ const confirmAddSodium = () => {
   setSodiumMoles(newSodiumMoles);
   // track cumulative sodium volume added so Reset can revert the volume
   setSodiumVolumeAdded(prev => Math.max(0, prev + v));
+  // prompt user to measure after adding sodium ethanoate
+  setShouldBlinkMeasure(true);
 
   // compute and store pH after sodium ethanoate addition
   const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
@@ -312,6 +317,10 @@ function testPH() {
     return;
   }
 
+  // stop prompting MEASURE (we just measured)
+  setShouldBlinkMeasure(false);
+  // after measuring, prompt to reset sodium if any was added
+  if (sodiumVolumeAdded > 0) setShouldBlinkReset(true);
   applyPHResult(ph);
 }
 
@@ -393,7 +402,7 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${paperHasColor ? 'blink-until-pressed' : ''}`}
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : '')}`}
                             onClick={() => {
                               if (!paperHasColor) {
                                 testPH();
@@ -432,7 +441,7 @@ const stepsProgress = (
                   <div key="reset-sodium" style={{ position: 'absolute', left: sodiumItem.position.x, top: sodiumItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
                     <Button
                       size="sm"
-                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm ${sodiumVolumeAdded > 0 ? 'blink-until-pressed' : ''}`}
+                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm ${shouldBlinkReset ? 'blink-until-pressed' : ''}`}
                       onClick={() => {
                         // Reset sodium ethanoate state but keep the sodium bottle on the bench
                         // Revert any volume previously added by sodium ethanoate
@@ -442,6 +451,7 @@ const stepsProgress = (
                           return Math.min(20, newVol);
                         });
                         setSodiumVolumeAdded(0);
+                        setShouldBlinkReset(false);
                         setShowToast('Sodium ethanoate reset');
                         setTimeout(() => setShowToast(null), 1400);
                       }}
