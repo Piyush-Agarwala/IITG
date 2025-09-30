@@ -301,7 +301,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
         }`}
         draggable
         onDragStart={(e) => {
-          e.dataTransfer.setData("text/plain", JSON.stringify({ id, name }));
+          const payload: any = { id, name };
+          // Attach the provided weighing boat image when dragging the weighing boat so drops render the image
+          if ((id === 'weighing_boat' || id === 'weighing-boat' || name.toLowerCase().includes('weighing boat'))) {
+            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F7ad44b71d4f0415fa275c152c8ecf3e0?format=webp&width=800";
+          }
+          e.dataTransfer.setData("text/plain", JSON.stringify(payload));
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
