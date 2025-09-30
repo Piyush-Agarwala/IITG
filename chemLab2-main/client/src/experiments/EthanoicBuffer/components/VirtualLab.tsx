@@ -387,13 +387,13 @@ const stepsProgress = (
                 (() => {
                   const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'))!;
                   return (
-                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
+                    <div key="measure-button" className="measure-button-wrapper" style={{ ['--left' as any]: `${phItem.position.x}px`, ['--top' as any]: `${phItem.position.y + 70}px` } as any}>
                       {(() => {
                         const paperHasColor = Boolean((phItem as any).color);
                         return (
                           <Button
                             size="sm"
-                            className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!paperHasColor ? 'animate-pulse' : ''}`}
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${paperHasColor ? 'blink-until-pressed' : ''}`}
                             onClick={() => {
                               if (!paperHasColor) {
                                 testPH();
