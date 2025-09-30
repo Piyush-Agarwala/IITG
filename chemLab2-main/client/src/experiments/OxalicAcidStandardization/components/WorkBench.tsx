@@ -59,6 +59,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   results,
   chemicals,
   equipment,
+  onEquipmentPlaced,
   onUndoStep,
   onResetExperiment,
   currentStepIndex,
