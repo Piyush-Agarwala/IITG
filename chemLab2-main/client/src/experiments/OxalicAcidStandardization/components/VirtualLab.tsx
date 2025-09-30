@@ -26,6 +26,7 @@ import type {
 } from "../types";
 
 interface OxalicAcidVirtualLabProps {
+  onEquipmentPlaced?: (id: string) => void;
   step: ExperimentStep;
   onStepComplete: () => void;
   isActive: boolean;
