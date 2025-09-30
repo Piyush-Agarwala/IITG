@@ -97,6 +97,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy and return an image from a remote URL to avoid CORS when processing in browser
+  app.get('/api/proxy-image', async (req, res) => {
+    const url = String(req.query.url || '');
+    if (!url) return res.status(400).json({ message: 'Missing url parameter' });
+
+    try {
+      const parsed = new URL(url);
+      if (!/^https?:$/.test(parsed.protocol)) {
+        return res.status(400).json({ message: 'Invalid URL protocol' });
+      }
+
+      const allowedHost = parsed.hostname.endsWith('builder.io') || parsed.hostname.endsWith('cdn.builder.io');
+      // For safety, allow builder.io host or cdn.builder.io only
+      if (!allowedHost) {
+        return res.status(403).json({ message: 'Host not allowed' });
+      }
+
+      const resp = await fetch(parsed.toString());
+      if (!resp.ok) return res.status(502).json({ message: 'Failed to fetch remote image' });
+      const contentType = resp.headers.get('content-type') || 'image/png';
+      const arrayBuffer = await resp.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      res.set('Content-Type', contentType);
+      res.set('Cache-Control', 'public, max-age=86400');
+      res.send(buffer);
+    } catch (e) {
+      res.status(500).json({ message: 'Failed to proxy image' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
