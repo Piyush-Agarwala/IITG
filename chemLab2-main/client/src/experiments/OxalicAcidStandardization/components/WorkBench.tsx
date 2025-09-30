@@ -34,6 +34,7 @@ interface WorkBenchProps {
   results: Result[];
   chemicals: ChemicalType[];
   equipment: EquipmentType[];
+  onEquipmentPlaced?: (id: string) => void;
   onUndoStep: () => void;
   onResetExperiment: () => void;
   currentStepIndex: number;
@@ -146,18 +147,20 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
       if (data.id && data.name) {
         setEquipmentPositions(prev => [
-          ...prev,
-          {
-            id: `${data.id}_${Date.now()}`,
-            x: x - 50,
-            y: y - 50,
-            chemicals: [],
-            typeId: data.id,
-            name: data.name,
-            imageSrc: data.imageSrc,
-          }
-        ]);
-        return;
+        ...prev,
+        {
+          id: `${data.id}_${Date.now()}`,
+          x: x - 50,
+          y: y - 50,
+          chemicals: [],
+          typeId: data.id,
+          name: data.name,
+          imageSrc: data.imageSrc,
+        }
+      ]);
+      // Notify parent that this equipment was placed so it can be removed from the palette
+      if (onEquipmentPlaced) onEquipmentPlaced(data.id);
+      return;
       }
     }
 
@@ -185,18 +188,20 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       const eq = equipment.find(eqp => eqp.id === trimmed);
       if (eq) {
         setEquipmentPositions(prev => [
-          ...prev,
-          {
-            id: `${eq.id}_${Date.now()}`,
-            x: x - 50,
-            y: y - 50,
-            chemicals: [],
-            typeId: eq.id,
-            name: eq.name,
-            imageSrc: undefined,
-          }
-        ]);
-        return;
+        ...prev,
+        {
+          id: `${eq.id}_${Date.now()}`,
+          x: x - 50,
+          y: y - 50,
+          chemicals: [],
+          typeId: eq.id,
+          name: eq.name,
+          imageSrc: undefined,
+        }
+      ]);
+      // Notify parent that this equipment was placed (hide from palette)
+      if (onEquipmentPlaced) onEquipmentPlaced(eq.id);
+      return;
       }
 
       // Try chemicals list
