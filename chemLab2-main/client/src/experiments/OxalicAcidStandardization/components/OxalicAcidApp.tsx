@@ -244,6 +244,7 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
               onUndoStep={handleUndoStep}
               onResetExperiment={handleResetExperiment}
               currentStepIndex={currentStep + 1}
+              onEquipmentPlaced={handleEquipmentPlaced}
             />
           </div>
         </div>
