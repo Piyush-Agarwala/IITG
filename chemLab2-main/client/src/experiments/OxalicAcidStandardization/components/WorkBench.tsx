@@ -377,10 +377,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               if (equipmentData) {
                 // Show the provided analytical balance image when in step 1 of the Oxalic Acid preparation
                 const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F6430b7f56e744b15a955cffabccc28ab?format=webp&width=1200";
-                const boatSource = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb234365b0cbb4a45af2518c02cba5927?format=webp&width=800";
-                const weighingBoatImageUrl = `/api/proxy-image?url=${encodeURIComponent(boatSource)}`;
                 const shouldShowBalanceImage = equipmentData.id === "analytical_balance";
-                const shouldShowWeighingBoatImage = equipmentData.id === "weighing_boat";
 
                 return (
                   <Equipment
@@ -389,7 +386,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     typeId={equipmentData.id}
                     name={equipmentData.name}
                     icon={equipmentData.icon}
-                    imageSrc={shouldShowBalanceImage ? balanceImageUrl : shouldShowWeighingBoatImage ? weighingBoatImageUrl : undefined}
+                    imageSrc={shouldShowBalanceImage ? balanceImageUrl : undefined}
                     onDrag={handleEquipmentDrag}
                     position={{ x: position.x, y: position.y }}
                     chemicals={position.chemicals}
