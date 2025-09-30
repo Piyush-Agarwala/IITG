@@ -354,7 +354,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     setShowToast('Results opening in 10 seconds...');
     setTimeout(() => setShowToast(""), 3000);
     setTimeout(() => {
-      setShowResultsModal(true);
+      if (case2PH != null) {
+        setShowResultsModal(true);
+      } else {
+        setShowToast('Save a pH to CASE 2 to view full results');
+        setTimeout(() => setShowToast(''), 3000);
+      }
     }, 10000);
   };
 
@@ -394,13 +399,18 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     setMeasureCount(prev => {
       const next = prev + 1;
       if (next === 3) {
-        // schedule opening results modal after 5 seconds
+        // schedule opening results modal after 5 seconds *only if CASE 2 saved*
         if (measureResultsTimeoutRef.current) {
           clearTimeout(measureResultsTimeoutRef.current as number);
         }
         setShowToast('Opening Results in 5 seconds...');
         measureResultsTimeoutRef.current = window.setTimeout(() => {
-          setShowResultsModal(true);
+          if (case2PH != null) {
+            setShowResultsModal(true);
+          } else {
+            setShowToast('Save a pH to CASE 2 to view full results');
+            setTimeout(() => setShowToast(''), 3000);
+          }
           measureResultsTimeoutRef.current = null;
         }, 5000);
         // clear the short toast message shortly
@@ -491,7 +501,14 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
 
               {(analysisLog.length > 0 || hclSample || aceticSample || compareMode) && (
-                <Button onClick={() => setShowResultsModal(true)} className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 mt-2 flex items-center justify-center">
+                <Button onClick={() => {
+                  if (case2PH != null) {
+                    setShowResultsModal(true);
+                  } else {
+                    setShowToast('Save a pH to CASE 2 to view full results');
+                    setTimeout(() => setShowToast(''), 2500);
+                  }
+                }} className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 mt-2 flex items-center justify-center">
                   <span>View RESULTS</span>
                 </Button>
               )}
@@ -647,7 +664,9 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
                 <div className="mt-2 flex space-x-2">
                   <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase1PH(lastMeasuredPH); setShowToast('Saved to CASE 1'); setTimeout(() => setShowToast(''), 1500); } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 1</Button>
-                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase2PH(lastMeasuredPH); setShowToast('Saved to CASE 2'); setTimeout(() => setShowToast(''), 1500); } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 2</Button>
+                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase2PH(lastMeasuredPH); setShowToast('Saved to CASE 2'); setTimeout(() => setShowToast(''), 1500); // open results when CASE 2 saved
+                    setTimeout(() => setShowResultsModal(true), 200);
+                  } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 2</Button>
                 </div>
 
                 <div className="mt-3 grid grid-cols-1 gap-2">

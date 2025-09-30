@@ -241,6 +241,8 @@ const confirmAddSodium = () => {
     } else if (case2PH == null) {
       setCase2PH(phAfter);
       setCase2Version(measurementVersion + 1);
+      // stop prompting the user to measure once CASE 2 is recorded
+      setShouldBlinkMeasure(false);
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate • Stored pH in CASE 2`);
     } else {
       setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
@@ -323,9 +325,12 @@ useEffect(() => {
     case2TimeoutRef.current = null;
   }
 
-  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
-    // stop prompting the user to measure
+  // If CASE 2 has been recorded, stop any blinking prompt immediately
+  if (case2PH != null) {
     setShouldBlinkMeasure(false);
+  }
+
+  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
     setShowToast('Opening Results in 10 seconds...');
     case2TimeoutRef.current = window.setTimeout(() => {
       setShowResultsModal(true);
