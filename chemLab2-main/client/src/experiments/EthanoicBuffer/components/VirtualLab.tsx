@@ -324,6 +324,8 @@ useEffect(() => {
   }
 
   if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
+    // stop prompting the user to measure
+    setShouldBlinkMeasure(false);
     setShowToast('Opening Results in 10 seconds...');
     case2TimeoutRef.current = window.setTimeout(() => {
       setShowResultsModal(true);
