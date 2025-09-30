@@ -104,6 +104,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     const positions: Record<string, { x: number; y: number }> = {
       'test-tube': { x: 200, y: 250 },
       'hcl-0-01m': { x: 500, y: 200 },
+      'nh4oh-0-1m': { x: 540, y: 200 },
+      'nh4cl-0-1m': { x: 540, y: 320 },
       'acetic-0-01m': { x: 500, y: 360 },
       'universal-indicator': { x: 500, y: 580 },
     };
