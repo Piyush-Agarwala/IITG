@@ -92,8 +92,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
   // Placed item
   const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') || name.toLowerCase().includes('sodium ethanoate') || name.toLowerCase().includes('sodium acetate');
-  const bottleBgColor = name.toLowerCase().includes('sodium') ? '#e6f0ff' : '#fffacc';
-  const dropletColorClass = name.toLowerCase().includes('sodium') ? 'text-blue-600' : 'text-yellow-700';
+  const lowerName = name.toLowerCase();
+  const bottleBgColor = (lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? '#e6f0ff' : '#fffacc';
+  const dropletColorClass = (lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? 'text-blue-600' : 'text-yellow-700';
   const isPH = name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
 
   const renderNameParts = (n: string) => {
