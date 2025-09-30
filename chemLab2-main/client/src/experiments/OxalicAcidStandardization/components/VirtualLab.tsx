@@ -60,6 +60,7 @@ function OxalicAcidVirtualLab({
   onUndoStep,
   onResetExperiment,
   currentStepIndex,
+  onEquipmentPlaced,
 }: OxalicAcidVirtualLabProps) {
   const [equipmentPositions, setEquipmentPositions] = useState<
     EquipmentPosition[]
