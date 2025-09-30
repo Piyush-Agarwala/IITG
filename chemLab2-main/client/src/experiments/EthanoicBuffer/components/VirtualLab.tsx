@@ -251,8 +251,17 @@ const confirmAddSodium = () => {
     setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M sodium ethanoate`);
   }
 
+  // If this is the second (or later) sodium addition and we're currently on step 8,
+  // immediately mark step 8 complete so the UI advances to step 9.
+  // Use a guard to avoid calling the parent's completion twice.
+  let autoAdvanced = false;
+  if (nextAdditions >= 2 && currentStep === 8 && !completedSteps.includes(8)) {
+    onStepComplete(8);
+    autoAdvanced = true;
+  }
+
   // mark the step complete when the user confirms adding the sodium ethanoate volume
-  if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+  if (!autoAdvanced && !completedSteps.includes(currentStep)) onStepComplete(currentStep);
   setShowSodiumDialog(false);
   setSodiumError(null);
   setTimeout(() => setShowToast(null), 2000);
