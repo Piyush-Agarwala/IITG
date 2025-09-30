@@ -213,8 +213,8 @@ const confirmAddSodium = () => {
   const nextAdditions = sodiumAdditions + 1;
   setSodiumAdditions(nextAdditions);
   if (nextAdditions >= 2) setShouldBlinkReset(false);
-  // prompt user to measure after adding sodium ethanoate
-  setShouldBlinkMeasure(true);
+  // prompt user to measure after adding sodium ethanoate (only if fewer than 3 total measurements so far)
+  setShouldBlinkMeasure(measurementVersion < 3);
 
   // compute and store pH after sodium ethanoate addition
   const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
