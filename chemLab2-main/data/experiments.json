@@ -580,7 +580,7 @@
     "duration": 30,
     "steps": 6,
     "rating": 4.6,
-    "imageUrl": "https://images.unsplash.com/photo-1581091012184-7a5f4b1b2f6a?auto=format&fit=crop&w=800&q=80",
+    "imageUrl": "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1db7dcc49eb14d588e9dbadced019952?format=webp&width=800",
     "equipment": [
       "Beakers",
       "Test Tubes",
