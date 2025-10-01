@@ -563,7 +563,7 @@ const stepsProgress = (
                         setTimeout(() => setShowToast(null), 1400);
                       }}
                     >
-                      RESET sodium ethanoate
+                      RESET  (CH₃COONa)
                     </Button>
                   </div>
                 );
