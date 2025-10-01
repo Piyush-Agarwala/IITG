@@ -76,7 +76,7 @@ export default function BufferWorkbenchMock() {
                         </div>
 
                         <div className="mt-4">
-                          <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">RESET sodium ethanoate</Button>
+                          <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">RESET  (CH₃COONa)</Button>
                         </div>
                       </div>
 
