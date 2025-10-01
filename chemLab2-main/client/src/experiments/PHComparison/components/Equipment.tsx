@@ -91,7 +91,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
   }
 
   // Placed item
-  const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') || name.toLowerCase().includes('sodium ethanoate') || name.toLowerCase().includes('sodium acetate');
+  const lowerName = name.toLowerCase();
+  const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || lowerName.includes('ethanoic') || lowerName.includes('acetic') || lowerName.includes('sodium ethanoate') || lowerName.includes('sodium acetate');
   const lowerName = name.toLowerCase();
   // Force ethanoic acid and sodium ethanoate bottles to use the same visual style as HCl (yellow bottle)
   const bottleBgClass = isAceticOrSodium ? 'bg-bottle-yellow' : ((lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? 'bg-bottle-blue' : 'bg-bottle-yellow');
