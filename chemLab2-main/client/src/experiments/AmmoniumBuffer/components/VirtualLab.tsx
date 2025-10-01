@@ -63,7 +63,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const getEquipmentPosition = (equipmentId: string) => {
     const baseTestTube = { x: 200, y: 250 };
     const tubeOnBench = equipmentOnBench.find(e => e.id === 'test-tube');
-    const commonBottleIds = ['nh4oh-0-1m', 'nh4cl-0-1m', 'universal-indicator'];
+    const commonBottleIds = ['nh4oh-0-1m', 'nh4cl-0-1m', 'ph-paper'];
     if (commonBottleIds.includes(equipmentId)) {
       const baseX = tubeOnBench ? tubeOnBench.position.x + 260 : 580;
       const baseY = tubeOnBench ? tubeOnBench.position.y - 80 : 200;
@@ -232,6 +232,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const handleInteract = (id: string) => {
     if (id === 'nh4oh-0-1m') setShowNh4ohDialog(true);
     if (id === 'nh4cl-0-1m') setShowNh4clDialog(true);
+    if (id === 'ph-paper') { addToTube('IND', 0); if (currentStep === 3 || currentStep === 5) onStepComplete(currentStep); return; }
     if (id === 'universal-indicator') { setShowIndicatorDialog(true); return; }
   };
 
