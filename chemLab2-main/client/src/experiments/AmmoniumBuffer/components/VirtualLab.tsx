@@ -233,7 +233,6 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (id === 'nh4oh-0-1m') setShowNh4ohDialog(true);
     if (id === 'nh4cl-0-1m') setShowNh4clDialog(true);
     if (id === 'ph-paper') { addToTube('IND', 0); if (currentStep === 3 || currentStep === 5) onStepComplete(currentStep); return; }
-    if (id === 'universal-indicator') { setShowIndicatorDialog(true); return; }
   };
 
   const handleRemove = (id: string) => { setEquipmentOnBench(prev => prev.filter(e => e.id !== id)); if (id === 'test-tube') setTestTube(INITIAL_TESTTUBE); };
