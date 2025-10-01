@@ -59,6 +59,10 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
   // Count measure button presses and schedule showing results after 3rd press
   const [measureCount, setMeasureCount] = useState(0);
+  // Track whether the MEASURE action has been pressed (used to stop blinking prompts)
+  const [measurePressed, setMeasurePressed] = useState(false);
+  // Track whether the 'New pH paper' action has been pressed
+  const [newPaperPressed, setNewPaperPressed] = useState(false);
   const measureTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -70,7 +74,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     };
   }, []);
 
-  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); setMeasurePressed(false); setNewPaperPressed(false); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
@@ -232,6 +236,9 @@ const confirmAddSodium = () => {
   if (nextAdditions >= 2) setShouldBlinkReset(false);
   // prompt user to measure after adding sodium ethanoate (only if fewer than 3 total measurements so far)
   setShouldBlinkMeasure(measurementVersion < 3);
+  // Re-enable the blinking prompt for MEASURE after adding sodium
+  setMeasurePressed(false);
+  setNewPaperPressed(false);
 
   // compute and store pH after sodium ethanoate addition
   const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
@@ -341,6 +348,8 @@ useEffect(() => {
   // If CASE 2 has been recorded, stop any blinking prompt immediately
   if (case2PH != null) {
     setShouldBlinkMeasure(false);
+    // stop blinking "New pH paper" as results are now calculated
+    setNewPaperPressed(true);
   }
 
   if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
@@ -463,8 +472,8 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${measureCount < 2 && (paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : ''))}` }
-                            onClick={() => {
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(shouldBlinkMeasure || (!paperHasColor ? !measurePressed : !newPaperPressed)) ? 'blink-until-pressed' : ''}` }
+                            onClick={() => { if (!paperHasColor) { setMeasurePressed(true); } else { setNewPaperPressed(true); }
                               // count presses and schedule results modal after 3rd press
                               setMeasureCount(prev => {
                                 const next = prev + 1;
@@ -718,7 +727,7 @@ const stepsProgress = (
             <div>
               <h4 className="font-semibold mb-2">Action Timeline</h4>
               <ol className="list-decimal list-inside text-sm text-gray-700">
-                <li>Added ethanoic acid — initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
+                <li>Added ethanoic acid �� initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
                 <li>Added sodium ethanoate ��� stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
               </ol>
             </div>
