@@ -103,22 +103,26 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const getEquipmentPosition = (equipmentId: string) => {
     const baseTestTube = { x: 200, y: 250 };
 
-    // If a test tube is already placed on the bench, anchor certain reagents relative to it
+    // If a test tube is already placed on the bench, anchor reagents relative to it
     const tubeOnBench = equipmentOnBench.find(e => e.id === 'test-tube');
 
-    // Place ammonium hydroxide to the right and slightly above the test tube (matches requested screenshot position)
-    if ((equipmentId === 'nh4oh-0-1m' || equipmentId.toLowerCase().includes('nh4oh') || equipmentId.toLowerCase().includes('ammonium hydroxide')) && tubeOnBench) {
-      return { x: tubeOnBench.position.x + 160, y: tubeOnBench.position.y - 60 };
+    // Provide a right-column layout for the three common bottles (HCl, Acetic, Indicator)
+    // with equal vertical spacing. If a test tube exists, base positions off it; otherwise
+    // fall back to fixed coordinates.
+    const commonBottleIds = ['hcl-0-01m', 'acetic-0-01m', 'universal-indicator'];
+    if (commonBottleIds.includes(equipmentId)) {
+      const baseX = tubeOnBench ? tubeOnBench.position.x + 220 : 500;
+      const baseY = tubeOnBench ? tubeOnBench.position.y - 80 : 200;
+      const spacing = 160; // equal vertical spacing between bottles
+      const index = commonBottleIds.indexOf(equipmentId);
+      return { x: baseX, y: baseY + index * spacing };
     }
 
     const positions: Record<string, { x: number; y: number }> = {
       'test-tube': baseTestTube,
-      'hcl-0-01m': { x: 500, y: 200 },
-      // Default fallback positions below the bench if no tube is present
+      // default fallbacks for other items
       'nh4oh-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 420 },
       'nh4cl-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 540 },
-      'acetic-0-01m': { x: 500, y: 360 },
-      'universal-indicator': { x: 500, y: 580 },
     };
     return positions[equipmentId] || { x: 300, y: 250 };
   };
