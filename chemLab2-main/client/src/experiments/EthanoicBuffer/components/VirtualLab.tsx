@@ -141,7 +141,9 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
         const pos = getPosition(id);
         positionObj = { x: pos.x, y: pos.y, fixed: true };
       } else if (isFixedReagent) {
-        positionObj = { x, y, fixed: true };
+        // always place reagents (ethanoic acid / sodium ethanoate) at their canonical workbench positions
+        const pos = getPosition(id);
+        positionObj = { x: pos.x, y: pos.y, fixed: true };
       } else {
         positionObj = { x, y };
       }
