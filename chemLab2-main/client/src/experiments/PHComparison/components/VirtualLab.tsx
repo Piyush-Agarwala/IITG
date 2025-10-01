@@ -501,7 +501,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               {(analysisLog.length > 0 || hclSample || aceticSample || compareMode) && (
                 <Button onClick={() => {
                   setShowResultsModal(true);
-                }} className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 mt-2 flex items-center justify-center">
+                }} className="w-full bg-blue-500 hover:bg-blue-600 text-white mt-2 flex items-center justify-center">
                   <span>View Results & Analysis</span>
                 </Button>
               )}
