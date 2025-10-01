@@ -65,8 +65,21 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     const tubeOnBench = equipmentOnBench.find(e => e.id === 'test-tube');
     const commonBottleIds = ['nh4oh-0-1m', 'nh4cl-0-1m', 'ph-paper'];
     if (commonBottleIds.includes(equipmentId)) {
-      const baseX = tubeOnBench ? tubeOnBench.position.x + 260 : 580;
-      const baseY = tubeOnBench ? tubeOnBench.position.y - 80 : 200;
+      // Place pH paper directly below the test tube when tube is present
+      if (tubeOnBench) {
+        if (equipmentId === 'ph-paper') {
+          return { x: tubeOnBench.position.x, y: tubeOnBench.position.y + 160 };
+        }
+        const baseX = tubeOnBench.position.x + 260;
+        const baseY = tubeOnBench.position.y - 80;
+        const spacing = 160;
+        const index = commonBottleIds.indexOf(equipmentId);
+        return { x: baseX, y: baseY + index * spacing };
+      }
+      // Fallback positions when no tube: place pH paper below center
+      if (equipmentId === 'ph-paper') return { x: 300, y: 420 };
+      const baseX = 580;
+      const baseY = 200;
       const spacing = 160;
       const index = commonBottleIds.indexOf(equipmentId);
       return { x: baseX, y: baseY + index * spacing };
