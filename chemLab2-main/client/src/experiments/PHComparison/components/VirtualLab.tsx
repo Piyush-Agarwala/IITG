@@ -101,11 +101,14 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
   const getEquipmentPosition = (equipmentId: string) => {
+    const baseTestTube = { x: 200, y: 250 };
     const positions: Record<string, { x: number; y: number }> = {
-      'test-tube': { x: 200, y: 250 },
+      'test-tube': baseTestTube,
       'hcl-0-01m': { x: 500, y: 200 },
-      'nh4oh-0-1m': { x: 540, y: 200 },
-      'nh4cl-0-1m': { x: 540, y: 320 },
+      // Place ammonium bottles just below the laboratory workbench area by default.
+      // If a test tube position is available on the bench later, these will still appear below the bench.
+      'nh4oh-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 420 },
+      'nh4cl-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 540 },
       'acetic-0-01m': { x: 500, y: 360 },
       'universal-indicator': { x: 500, y: 580 },
     };
