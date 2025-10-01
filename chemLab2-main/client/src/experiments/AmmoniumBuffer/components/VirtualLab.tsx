@@ -371,6 +371,18 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   onInteract={handleInteract}
                 />
               ))}
+
+              {/* Contextual MEASURE action near pH paper when present */}
+              {equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph')) && (
+                (() => {
+                  const phItem = equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph'))!;
+                  return (
+                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x + 90, top: phItem.position.y, transform: 'translate(-50%, -50%)' }}>
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
+                    </div>
+                  );
+                })()
+              )}
             </WorkBench>
           </div>
 
