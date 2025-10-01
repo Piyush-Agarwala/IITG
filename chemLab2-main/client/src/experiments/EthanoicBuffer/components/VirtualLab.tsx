@@ -76,13 +76,11 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     const iconFor = (name: string) => {
       const key = name.toLowerCase();
       if (key.includes("test tube")) return <TestTube className="w-8 h-8" />;
-      if (key.includes("dropper") || key.includes("pipette")) return <Droplets className="w-8 h-8" />;
-      if (key.includes("indicator") || key.includes("meter")) return <FlaskConical className="w-8 h-8" />;
-      return <Beaker className="w-8 h-8" />;
+      if (key.includes("indicator") || key.includes("meter") || key.includes('ph')) return <FlaskConical className="w-8 h-8" />;
+      return <Droplets className="w-8 h-8" />;
     };
     const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-    // Build in server-provided order first
     const raw = experiment.equipment.map((name) => {
       const key = name.toLowerCase();
       const baseId = slug(name);
@@ -90,35 +88,31 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       return { id, name, icon: iconFor(name) };
     });
 
-    // Reorder so that Test Tube is first, then Ethanoic Acid and Sodium Ethanoate
-  const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
-  const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
-  // exclude bulky/irrelevant equipment from the quick selection
-  const excludedRe = /distilled\s*water|glass\s*stirr?ing\s*rod|measuring\s*cylinder/i;
+    // Select only the four core items to mirror the provided UI: Test Tube, Ethanoic Acid, Sodium Ethanoate, pH Meter/Paper
+    const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
+    const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+    const isPhItem = (n: string) => /ph\s*(meter|paper)|universal\s*indicator/i.test(n);
 
-  const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
-  const ethanoic = raw.find(i => isEthanoic(i.name));
-  const sodium = raw.find(i => isSodiumEthanoate(i.name));
-  const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium && !excludedRe.test(i.name));
+    const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
+    const ethanoic = raw.find(i => isEthanoic(i.name));
+    const sodium = raw.find(i => isSodiumEthanoate(i.name));
+    const ph = raw.find(i => isPhItem(i.name));
 
-  return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
+    return [testTube, ethanoic, sodium, ph].filter(Boolean) as typeof raw;
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
     const idx = items.findIndex(i => i.id === id);
-    const baseX = 220; // center column
+    const baseX = 220;
     const baseY = 160;
     if (id === 'test-tube') {
       return { x: baseX, y: baseY + 140 };
     }
-
-    // place the pH paper / universal indicator directly below the test tube and make it fixed
     if (id === 'universal-indicator' || id.toLowerCase().includes('ph')) {
-      // align horizontally with the test-tube and position slightly further below it (lowered)
       return { x: baseX, y: baseY + 330 };
     }
-
-    return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
+    // Stack the two reagent cards in a right column similar to the screenshot
+    return { x: baseX + 260, y: baseY + (idx === 1 ? 40 : 220) };
   };
 
   const handleDrop = (id: string, x: number, y: number, action: 'new' | 'move' = 'new') => {
