@@ -377,7 +377,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 (() => {
                   const phItem = equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph'))!;
                   return (
-                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x + 90, top: phItem.position.y, transform: 'translate(-50%, -50%)' }}>
+                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
                       <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
                     </div>
                   );
