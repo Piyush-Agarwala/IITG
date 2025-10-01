@@ -407,7 +407,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <h4 className="font-semibold text-sm text-gray-700 mb-2">Current Solution</h4>
                 <div className="flex items-center space-x-2 mb-2">
                   <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: testTube.colorHex }}></div>
-                  <span className="text-sm">{testTube.colorHex === COLORS.CLEAR ? 'Clear (no indicator)' : 'With indicator'}</span>
+                  <span className="text-sm">{testTube.contents.includes('IND') ? 'With pH paper' : (testTube.colorHex === COLORS.CLEAR ? 'Clear (no indicator)' : 'With indicator')}</span>
                 </div>
                 <p className="text-xs text-gray-600">Contents: {testTube.contents.join(', ') || 'None'}</p>
               </div>
