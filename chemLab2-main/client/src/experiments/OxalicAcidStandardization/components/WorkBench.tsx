@@ -234,6 +234,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       // Try equipment list first
       const eq = equipment.find(eqp => eqp.id === trimmed);
       if (eq) {
+        if (enforceStepOneRestriction(eq.id)) {
+          return;
+        }
         setEquipmentPositions(prev => [
         ...prev,
         {
