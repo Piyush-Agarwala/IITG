@@ -132,7 +132,11 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       const isPhPaper = id === 'universal-indicator' || item.name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
 
       let positionObj: any;
-      if (isPhPaper) {
+      // Always place the test tube at the canonical workbench location regardless of drop point
+      if (id === 'test-tube' || id.toLowerCase().includes('test')) {
+        const pos = getPosition('test-tube');
+        positionObj = { x: pos.x, y: pos.y, fixed: true };
+      } else if (isPhPaper) {
         // use the canonical getPosition to compute the exact fixed coordinates
         const pos = getPosition(id);
         positionObj = { x: pos.x, y: pos.y, fixed: true };

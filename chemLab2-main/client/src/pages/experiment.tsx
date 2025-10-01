@@ -38,6 +38,8 @@ export default function Experiment() {
       case 8:
         return <OxalicAcidApp onBack={() => window.history.back()} />;
       case 9:
+        return <GenericExperimentApp experimentId={experimentId} onBack={() => window.history.back()} />;
+      case 10:
         return <BufferPHApp onBack={() => window.history.back()} />;
       default:
         return (
