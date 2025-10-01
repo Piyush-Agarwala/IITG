@@ -61,6 +61,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [measureCount, setMeasureCount] = useState(0);
   // Track whether the MEASURE action has been pressed (used to stop blinking prompts)
   const [measurePressed, setMeasurePressed] = useState(false);
+  // Track whether the 'New pH paper' action has been pressed
+  const [newPaperPressed, setNewPaperPressed] = useState(false);
   const measureTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     };
   }, []);
 
-  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); setMeasurePressed(false); }, [experiment.id]);
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); setMeasurePressed(false); setNewPaperPressed(false); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
@@ -465,8 +467,8 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}` }
-                            onClick={() => { setMeasurePressed(true);
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!paperHasColor ? !measurePressed : !newPaperPressed) ? 'blink-until-pressed' : ''}` }
+                            onClick={() => { if (!paperHasColor) { setMeasurePressed(true); } else { setNewPaperPressed(true); }
                               // count presses and schedule results modal after 3rd press
                               setMeasureCount(prev => {
                                 const next = prev + 1;
