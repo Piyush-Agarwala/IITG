@@ -357,7 +357,8 @@ function OxalicAcidVirtualLab({
       const targetBalanceX = Math.max(0, (surfaceRect.width - balanceRect.width) / 2);
       const targetBalanceY = Math.max(0, surfaceRect.height * 0.12);
       const targetBoatX = targetBalanceX + (balanceRect.width - boatRect.width) / 2;
-      const targetBoatY = targetBalanceY + balanceRect.height * 0.42;
+      const panCenterY = targetBalanceY + balanceRect.height * 0.55;
+      const targetBoatY = panCenterY - boatRect.height / 2;
 
       stepTwoAlignedRef.current = true;
       setEquipmentPositions(prev => {
