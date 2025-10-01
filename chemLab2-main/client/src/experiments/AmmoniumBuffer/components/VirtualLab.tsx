@@ -173,6 +173,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       return prev;
     });
 
+    // if pH paper placed, also add it logically to the test tube (contents) so measurement works immediately
+    if (equipmentId === 'ph-paper') {
+      addToTube('IND', 0);
+      if (currentStep === 3 || currentStep === 5) onStepComplete(currentStep);
+    }
+
     // mark step complete only for interactive (non-fixed) placements
     if (!['nh4oh-0-1m','nh4cl-0-1m','ph-paper'].includes(equipmentId)) {
       if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
