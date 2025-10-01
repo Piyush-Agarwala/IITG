@@ -52,6 +52,10 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [indicatorError, setIndicatorError] = useState<string | null>(null);
   const [measurePressed, setMeasurePressed] = useState(false);
   const [newPaperPressed, setNewPaperPressed] = useState(false);
+  // Track ammonium chloride additions so we can reset them
+  const [nh4clVolumeAdded, setNh4clVolumeAdded] = useState<number>(0);
+  const [nh4clAdditions, setNh4clAdditions] = useState<number>(0);
+  const [shouldBlinkNh4clReset, setShouldBlinkNh4clReset] = useState<boolean>(false);
 
   const [baseSample, setBaseSample] = useState<TestTubeState | null>(null);
   const [bufferedSample, setBufferedSample] = useState<TestTubeState | null>(null);
@@ -250,6 +254,11 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     const v = parseFloat(nh4clVolume);
     if (Number.isNaN(v) || v < 2.0 || v > 10.0) { setNh4clError('Please enter a value between 2.0 and 10.0 mL'); return; }
     addToTube('NH4Cl', v);
+    // track cumulative NH4Cl added to enable reset button behaviour
+    setNh4clVolumeAdded(prev => Math.max(0, prev + v));
+    const nextAdds = nh4clAdditions + 1;
+    setNh4clAdditions(nextAdds);
+    setShouldBlinkNh4clReset(nextAdds < 2);
     if (currentStep === 4) onStepComplete(4);
     setShowNh4clDialog(false);
   };
@@ -280,6 +289,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
+      // prompt reset button if NH4Cl was added and fewer than 2 additions
+      setShouldBlinkNh4clReset(nh4clVolumeAdded > 0 && nh4clAdditions < 2);
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
@@ -414,6 +425,31 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   );
                 })()
               )}
+
+              {(() => {
+                const nh4clItem = equipmentOnBench.find(e => e.id === 'nh4cl-0-1m' || ((e as any).name && (e as any).name.toLowerCase().includes('ammonium chloride')));
+                if (!nh4clItem) return null;
+                return (
+                  <div key="reset-nh4cl" style={{ position: 'absolute', left: nh4clItem.position.x, top: nh4clItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
+                    <Button
+                      size="sm"
+                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm px-3 ${shouldBlinkNh4clReset ? 'blink-until-pressed' : ''}`}
+                      onClick={() => {
+                        setTestTube(prev => ({ ...prev, volume: Math.max(0, Math.min(20, prev.volume - nh4clVolumeAdded)) }));
+                        setNh4clVolumeAdded(0);
+                        setNh4clAdditions(0);
+                        setShouldBlinkNh4clReset(false);
+                        setShowToast('Ammonium chloride reset');
+                        setTimeout(() => setShowToast(''), 1400);
+                      }}
+                    >
+                      <span className="block font-semibold">RESET</span>
+                      <span className="block text-xs">(NH₄Cl)</span>
+                    </Button>
+                  </div>
+                );
+              })()}
+
             </WorkBench>
           </div>
 
