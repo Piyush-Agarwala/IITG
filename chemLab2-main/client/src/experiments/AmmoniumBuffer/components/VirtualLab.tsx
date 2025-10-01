@@ -333,7 +333,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   {/* Show RESET button below the test tube when universal indicator has been added */}
                   {testTube.contents.includes('IND') && (
                     <div style={{ position: 'absolute', left: getEquipmentPosition('test-tube').x, top: getEquipmentPosition('test-tube').y + 220, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm animate-pulse" onClick={() => {
+                      <Button size="sm" className="hidden" onClick={() => {
                         // Restore test tube to empty/clear state
                         setHistory([]);
                         setTestTube(prev => ({ ...prev, volume: 0, contents: [], colorHex: COLORS.CLEAR }));
