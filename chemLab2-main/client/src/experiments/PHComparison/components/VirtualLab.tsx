@@ -337,20 +337,10 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (id === 'hcl-0-01m') setShowHclDialog(true);
     if (id === 'acetic-0-01m') setShowAceticDialog(true);
     if (id === 'universal-indicator') {
-      const tube = equipmentOnBench.find(e => e.id === 'test-tube');
-      const ph = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
-      if (tube && ph) {
-        // When the user presses the universal indicator bottle, perform the pH test but
-        // do NOT show the pouring / dropping animation from the test tube.
-        // A short delay improves perceived responsiveness without the visual pour.
-        setTimeout(() => {
-          testPH();
-        }, 150);
-        return;
-      }
-
-      // fallback: open indicator dialog when no tube present
+      // Always open the indicator volume dialog so the user can enter how much indicator
+      // to add. This applies whether or not the test tube/pH paper is already placed.
       setShowIndicatorDialog(true);
+      return;
     }
   };
 
