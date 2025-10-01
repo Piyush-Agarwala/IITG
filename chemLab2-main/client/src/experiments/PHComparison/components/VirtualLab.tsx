@@ -562,8 +562,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 />
               ))}
 
-              {/* Contextual actions near pH paper when present */}
-              {phPaperItem && !compareMode && (
+              {/* Contextual actions near pH paper when present (only for pH paper items, not the universal indicator bottle) */}
+              {phPaperItem && !compareMode && phPaperItem.id.toLowerCase().includes('ph') && (
                 <>
                   {/* MEASURE button placed beside the pH paper */}
                   <div style={{ position: 'absolute', left: phPaperItem.position.x + 90, top: phPaperItem.position.y, transform: 'translate(-50%, -50%)' }}>
