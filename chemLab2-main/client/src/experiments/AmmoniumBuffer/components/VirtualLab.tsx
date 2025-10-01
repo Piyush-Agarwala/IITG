@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React, { useCallback, useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment } from "./Equipment";
 import { AB_LAB_EQUIPMENT } from "./Equipment";
