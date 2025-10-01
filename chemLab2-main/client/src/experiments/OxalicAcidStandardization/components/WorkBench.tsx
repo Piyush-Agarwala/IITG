@@ -409,6 +409,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             {stepNumber}/{totalSteps}
           </span>
         </div>
+
+        {workbenchMessage && (
+          <div className="mt-3 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-3 py-2 rounded-md">
+            {workbenchMessage}
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
