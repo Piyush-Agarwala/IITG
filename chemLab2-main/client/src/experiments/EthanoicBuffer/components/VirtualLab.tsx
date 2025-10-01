@@ -416,6 +416,14 @@ const stepsProgress = (
     </div>
   );
 
+  // Precompute Henderson–Hasselbalch details for the results modal
+  const pKa = 4.76;
+  const totalVolLForResults = Math.max(1e-6, testTubeVolume / 1000);
+  const concHA = acidMoles > 0 ? acidMoles / totalVolLForResults : null;
+  const concA = sodiumMoles > 0 ? sodiumMoles / totalVolLForResults : null;
+  const hhRatio = concHA && concA ? concA / concHA : null;
+  const hhPH = hhRatio ? Math.max(0, Math.min(14, pKa + Math.log10(hhRatio))) : null;
+
   return (
     <TooltipProvider>
       <div className="w-full h-full bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 p-6">
@@ -715,20 +723,45 @@ const stepsProgress = (
               </div>
               <div className="p-4 border rounded bg-green-50">
                 <div className="text-sm font-medium">0.1 M Sodium Ethanoate (after addition)</div>
-                <div className="text-lg font-semibold mt-2">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : '���'}</div>
+                <div className="text-lg font-semibold mt-2">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : '—'}</div>
               </div>
             </div>
 
             <div>
               <h4 className="font-semibold mb-2">pH Comparison Analysis</h4>
               <p className="text-sm text-gray-700">Initial pH: {initialAcidPH != null ? initialAcidPH.toFixed(2) : 'N/A'}. After adding sodium ethanoate the pH shifted to {case2PH != null ? case2PH.toFixed(2) : 'N/A'}. This indicates buffer formation (CH3COOH/CH3COO–) and can be interpreted using the Henderson–Hasselbalch relation.</p>
+
+              {/* Henderson–Hasselbalch calculation details */}
+              <div className="mt-3 p-3 bg-gray-50 border rounded text-sm">
+                <div className="font-medium mb-2">Henderson–Hasselbalch Calculation</div>
+                {concHA != null && concA != null && hhRatio != null ? (
+                  <div className="space-y-1">
+                    <div>pKa = {pKa.toFixed(2)}</div>
+                    <div>[HA] = {concHA.toExponential(3)} M</div>
+                    <div>[A⁻] = {concA.toExponential(3)} M</div>
+                    <div>[A⁻]/[HA] = {hhRatio.toFixed(3)}</div>
+                    <div className="font-semibold">pH = pKa + log10([A⁻]/[HA]) = {pKa.toFixed(2)} + log10({hhRatio.toFixed(3)}) ≈ {hhPH != null ? hhPH.toFixed(2) : 'N/A'}</div>
+                  </div>
+                ) : (
+                  <div>
+                    {/* Fallback approximations when only one species is present */}
+                    {acidMoles > 0 && sodiumMoles === 0 && (
+                      <div>Only weak acid present. Approximate pH using weak acid formula: pH ≈ 0.5*(pKa - log10([HA])) ≈ {initialAcidPH != null ? initialAcidPH.toFixed(2) : 'N/A'}</div>
+                    )}
+                    {sodiumMoles > 0 && acidMoles === 0 && (
+                      <div>Only conjugate base present. Solution will be basic. Measured/estimated pH: {case2PH != null ? case2PH.toFixed(2) : 'N/A'}</div>
+                    )}
+                    {acidMoles === 0 && sodiumMoles === 0 && <div>No reagents present to compute Henderson–Hasselbalch values.</div>}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>
               <h4 className="font-semibold mb-2">Action Timeline</h4>
               <ol className="list-decimal list-inside text-sm text-gray-700">
-                <li>Added ethanoic acid �� initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
-                <li>Added sodium ethanoate ��� stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
+                <li>Added ethanoic acid — initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
+                <li>Added sodium ethanoate — stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
               </ol>
             </div>
 
