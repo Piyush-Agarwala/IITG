@@ -51,6 +51,11 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [previewIndicatorVolume, setPreviewIndicatorVolume] = useState<number | null>(0.5);
   const [indicatorError, setIndicatorError] = useState<string | null>(null);
   const [measurePressed, setMeasurePressed] = useState(false);
+  const [newPaperPressed, setNewPaperPressed] = useState(false);
+  // Track ammonium chloride additions so we can reset them
+  const [nh4clVolumeAdded, setNh4clVolumeAdded] = useState<number>(0);
+  const [nh4clAdditions, setNh4clAdditions] = useState<number>(0);
+  const [shouldBlinkNh4clReset, setShouldBlinkNh4clReset] = useState<boolean>(false);
 
   const [baseSample, setBaseSample] = useState<TestTubeState | null>(null);
   const [bufferedSample, setBufferedSample] = useState<TestTubeState | null>(null);
@@ -121,19 +126,32 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         const newVol = Math.min(prev.volume + volume, 20);
         const contents = Array.from(new Set([...prev.contents, reagent]));
         let nextColor = prev.colorHex;
-        if (contents.includes('IND')) {
-          if (contents.includes('NH4Cl')) nextColor = COLORS.NH4_BUFFERED; // common ion lowers pH
-          else if (contents.includes('NH4OH')) nextColor = COLORS.NH4OH_BASE; // basic
-          else nextColor = COLORS.NEUTRAL;
-          animateColorTransition(nextColor);
-        } else if (newVol > 0) {
-          // Show base blue liquid when volume is added but no pH paper is present (matches reference)
-          nextColor = COLORS.NH4OH_BASE;
+
+        // When adding pH paper (indicator), do NOT change the liquid color in the test tube.
+        // Also, when adding NH4Cl we do not change the visible liquid color (indicator/paper will show change).
+        if (reagent === 'IND') {
+          // keep nextColor as previous color
+        } else if (reagent === 'NH4Cl') {
+          // intentionally do not alter the visible liquid color when NH4Cl is added
+        } else {
+          if (contents.includes('IND')) {
+            // Only changes visible liquid color for NH4OH when indicator present
+            if (contents.includes('NH4OH')) nextColor = COLORS.NH4OH_BASE; // basic
+            else nextColor = COLORS.NEUTRAL;
+            animateColorTransition(nextColor);
+          } else if (newVol > 0) {
+            // Show base blue liquid when NH4OH volume is added but no pH paper is present
+            nextColor = COLORS.NH4OH_BASE;
+          }
         }
+
         const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added pH paper';
-        const observation = contents.includes('IND')
-          ? (contents.includes('NH4Cl') ? 'Indicator shifted toward green → lower pH (buffered)' : contents.includes('NH4OH') ? 'Indicator turned blue/green → basic (~pH > 7)' : 'Indicator added to neutral solution')
-          : 'Solution color unchanged (no indicator)';
+        const observation = reagent === 'IND'
+          ? 'pH paper placed (no change to liquid color)'
+          : reagent === 'NH4Cl'
+            ? 'NH4Cl added (no visible change to liquid color)'
+            : (contents.includes('IND') ? (contents.includes('NH4OH') ? 'Indicator turned blue/green → basic (~pH > 7)' : 'Indicator added to neutral solution') : 'Solution color unchanged (no indicator)');
+
         setAnalysisLog(prevLog => [...prevLog, { id: `${Date.now()}-${Math.random()}`, action: `${label} (${volume.toFixed(1)} mL)`, observation, colorBefore, colorAfter: nextColor }]);
         return { ...prev, volume: newVol, contents };
       });
@@ -236,6 +254,11 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     const v = parseFloat(nh4clVolume);
     if (Number.isNaN(v) || v < 2.0 || v > 10.0) { setNh4clError('Please enter a value between 2.0 and 10.0 mL'); return; }
     addToTube('NH4Cl', v);
+    // track cumulative NH4Cl added to enable reset button behaviour
+    setNh4clVolumeAdded(prev => Math.max(0, prev + v));
+    const nextAdds = nh4clAdditions + 1;
+    setNh4clAdditions(nextAdds);
+    setShouldBlinkNh4clReset(nextAdds < 2);
     if (currentStep === 4) onStepComplete(4);
     setShowNh4clDialog(false);
   };
@@ -266,6 +289,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
+      // prompt reset button if NH4Cl was added and fewer than 2 additions
+      setShouldBlinkNh4clReset(nh4clVolumeAdded > 0 && nh4clAdditions < 2);
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
@@ -390,13 +415,41 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               {equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph')) && (
                 (() => {
                   const phItem = equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph'))!;
+                  const paperHasColor = !!(phItem as any).color && (phItem as any).color !== COLORS.CLEAR;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!(measurePressed || newPaperPressed) ? 'blink-until-pressed' : ''}`} onClick={() => { if (!paperHasColor) { setMeasurePressed(true); testPH(); } else { setNewPaperPressed(true); setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item)); setShowToast('Replace pH paper'); setTimeout(() => setShowToast(''), 1500); } }}>
+                        {!paperHasColor ? 'MEASURE' : 'New pH paper'}
+                      </Button>
                     </div>
                   );
                 })()
               )}
+
+              {(() => {
+                const nh4clItem = equipmentOnBench.find(e => e.id === 'nh4cl-0-1m' || ((e as any).name && (e as any).name.toLowerCase().includes('ammonium chloride')));
+                if (!nh4clItem) return null;
+                return (
+                  <div key="reset-nh4cl" style={{ position: 'absolute', left: nh4clItem.position.x, top: nh4clItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
+                    <Button
+                      size="sm"
+                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm px-3 ${shouldBlinkNh4clReset ? 'blink-until-pressed' : ''}`}
+                      onClick={() => {
+                        setTestTube(prev => ({ ...prev, volume: Math.max(0, Math.min(20, prev.volume - nh4clVolumeAdded)) }));
+                        setNh4clVolumeAdded(0);
+                        setNh4clAdditions(0);
+                        setShouldBlinkNh4clReset(false);
+                        setShowToast('Ammonium chloride reset');
+                        setTimeout(() => setShowToast(''), 1400);
+                      }}
+                    >
+                      <span className="block font-semibold">RESET</span>
+                      <span className="block text-xs">(NH₄Cl)</span>
+                    </Button>
+                  </div>
+                );
+              })()}
+
             </WorkBench>
           </div>
 
