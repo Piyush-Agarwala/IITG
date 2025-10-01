@@ -252,11 +252,13 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const testPH = () => {
     if (!testTube || (testTube.volume ?? 0) <= 0) { setShowToast('No solution in test tube'); setTimeout(() => setShowToast(''), 1400); return; }
-    if (!testTube.contents.includes('IND')) { setShowToast('No indicator present. Add universal indicator or pH paper'); setTimeout(() => setShowToast(''), 1800); return; }
+    if (!testTube.contents.includes('IND')) { setShowToast('No indicator present. Add pH paper'); setTimeout(() => setShowToast(''), 1800); return; }
 
     if (testTube.contents.includes('NH4Cl')) {
       const ph = 9.0;
       setLastMeasuredPH(ph);
+      // color pH paper to buffered color
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
       setTimeout(() => setShowToast(''), 2000);
       return;
@@ -264,6 +266,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.contents.includes('NH4OH')) {
       const ph = 11.0;
       setLastMeasuredPH(ph);
+      // color pH paper to basic color
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4OH_BASE } : item));
       setShowToast('Measured pH ≈ 11 (basic NH4OH)');
       setTimeout(() => setShowToast(''), 2000);
       return;
@@ -271,11 +275,14 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.colorHex === COLORS.NEUTRAL) {
       const ph = 7.0;
       setLastMeasuredPH(ph);
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NEUTRAL } : item));
       setShowToast('Measured pH ≈ 7 (neutral)');
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
     setLastMeasuredPH(null);
+    // set pH paper to clear/inconclusive
+    setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item));
     setShowToast('pH measurement inconclusive');
     setTimeout(() => setShowToast(''), 1600);
   };
