@@ -61,33 +61,23 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
   const getEquipmentPosition = (equipmentId: string) => {
-    const baseTestTube = { x: 200, y: 250 };
-    const tubeOnBench = equipmentOnBench.find(e => e.id === 'test-tube');
-    const commonBottleIds = ['nh4oh-0-1m', 'nh4cl-0-1m', 'ph-paper'];
-    if (commonBottleIds.includes(equipmentId)) {
-      // Place pH paper directly below the test tube when tube is present
-      if (tubeOnBench) {
-        if (equipmentId === 'ph-paper') {
-          return { x: tubeOnBench.position.x, y: tubeOnBench.position.y + 160 };
-        }
-        const baseX = tubeOnBench.position.x + 260;
-        const baseY = tubeOnBench.position.y - 80;
-        const spacing = 160;
-        const index = commonBottleIds.indexOf(equipmentId);
-        return { x: baseX, y: baseY + index * spacing };
-      }
-      // Fallback positions when no tube: place pH paper below center
-      if (equipmentId === 'ph-paper') return { x: 300, y: 420 };
-      const baseX = 580;
-      const baseY = 200;
-      const spacing = 160;
-      const index = commonBottleIds.indexOf(equipmentId);
-      return { x: baseX, y: baseY + index * spacing };
+    const baseX = 220;
+    const baseY = 160;
+
+    if (equipmentId === 'test-tube') {
+      return { x: baseX, y: baseY + 140 };
     }
-    const positions: Record<string, { x: number; y: number }> = {
-      'test-tube': baseTestTube,
-    };
-    return positions[equipmentId] || { x: 300, y: 250 };
+
+    // pH paper / meter fixed below the test tube
+    if (equipmentId === 'ph-paper' || equipmentId.toLowerCase().includes('ph')) {
+      return { x: baseX, y: baseY + 330 };
+    }
+
+    // reagent bottles on right column
+    if (equipmentId === 'nh4oh-0-1m') return { x: baseX + 260, y: baseY + 40 };
+    if (equipmentId === 'nh4cl-0-1m') return { x: baseX + 260, y: baseY + 220 };
+
+    return { x: baseX + 260, y: baseY + 40 };
   };
 
   useEffect(() => {
@@ -137,7 +127,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           else nextColor = COLORS.NEUTRAL;
           animateColorTransition(nextColor);
         }
-        const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added Universal Indicator';
+        const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added pH paper';
         const observation = contents.includes('IND')
           ? (contents.includes('NH4Cl') ? 'Indicator shifted toward green → lower pH (buffered)' : contents.includes('NH4OH') ? 'Indicator turned blue/green → basic (~pH > 7)' : 'Indicator added to neutral solution')
           : 'Solution color unchanged (no indicator)';
@@ -145,7 +135,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         return { ...prev, volume: newVol, contents };
       });
       setActiveEquipment("");
-      if (reagent === 'IND') setShowToast('Indicator added');
+      if (reagent === 'IND') setShowToast('pH paper added');
       else setShowToast(`${reagent === 'NH4OH' ? 'NH4OH' : 'NH4Cl'} added`);
       setTimeout(() => setShowToast(""), 1500);
     }, ANIMATION.DROPPER_DURATION);
@@ -176,10 +166,17 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     }
 
     const pos = getEquipmentPosition(equipmentId);
+    // decide if this is a fixed reagent / paper
+    const isFixedReagent = ['nh4oh-0-1m','nh4cl-0-1m','ph-paper'].includes(equipmentId) || equipmentId.toLowerCase().includes('ph');
     setEquipmentOnBench(prev => {
-      if (!prev.find(e => e.id === equipmentId)) return [...prev, { id: equipmentId, position: pos, isActive: false }];
+      if (!prev.find(e => e.id === equipmentId)) return [...prev, { id: equipmentId, position: { x: pos.x, y: pos.y, fixed: isFixedReagent }, isActive: false }];
       return prev;
     });
+
+    // mark step complete only for interactive (non-fixed) placements
+    if (!['nh4oh-0-1m','nh4cl-0-1m','ph-paper'].includes(equipmentId)) {
+      if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+    }
   };
 
   const handleUndo = () => {
