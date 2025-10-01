@@ -186,6 +186,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       }
 
       if (data.id && data.name) {
+        if (enforceStepOneRestriction(data.id)) {
+          return;
+        }
         setEquipmentPositions(prev => [
         ...prev,
         {
