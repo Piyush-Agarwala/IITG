@@ -37,7 +37,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
       id: 2,
       title: "Weigh Oxalic Acid",
       description:
-        "Using an analytical balance, accurately weigh the calculated amount of oxalic acid dihydrate in a weighing bottle. Record the exact mass.",
+        "drag the oxalic acid dihydrate and spatula into the workspace",
       duration: "8 minutes",
       safety: "Handle with care, avoid skin contact",
       completed: false,
