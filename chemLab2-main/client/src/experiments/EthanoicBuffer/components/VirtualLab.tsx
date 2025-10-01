@@ -236,6 +236,9 @@ const confirmAddSodium = () => {
   if (nextAdditions >= 2) setShouldBlinkReset(false);
   // prompt user to measure after adding sodium ethanoate (only if fewer than 3 total measurements so far)
   setShouldBlinkMeasure(measurementVersion < 3);
+  // Re-enable the blinking prompt for MEASURE after adding sodium
+  setMeasurePressed(false);
+  setNewPaperPressed(false);
 
   // compute and store pH after sodium ethanoate addition
   const totalVolL = Math.max(1e-6, newTestTubeVolume / 1000);
@@ -467,7 +470,7 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!paperHasColor ? !measurePressed : !newPaperPressed) ? 'blink-until-pressed' : ''}` }
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(shouldBlinkMeasure || (!paperHasColor ? !measurePressed : !newPaperPressed)) ? 'blink-until-pressed' : ''}` }
                             onClick={() => { if (!paperHasColor) { setMeasurePressed(true); } else { setNewPaperPressed(true); }
                               // count presses and schedule results modal after 3rd press
                               setMeasureCount(prev => {
