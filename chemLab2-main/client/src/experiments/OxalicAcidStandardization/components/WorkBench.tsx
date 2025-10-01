@@ -262,8 +262,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       }
     }
 
-    // Fallback: log and ignore
-    console.warn('Unrecognized drop data:', raw);
+    // Fallback: notify user or log
+    if (isStepOne) {
+      showMessage(notThisStepMessage);
+    } else {
+      console.warn('Unrecognized drop data:', raw);
+    }
   };
 
   const handleEquipmentDrag = (id: string, x: number, y: number) => {
