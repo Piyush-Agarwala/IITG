@@ -437,7 +437,7 @@ const stepsProgress = (
                   onRemove={handleRemove}
                   onInteract={handleInteract}
                   // show test tube volume/color when available, or pass pH paper color if present
-                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : (e.color ? { color: (e as any).color } : {}))}
+                  {...(e.id === 'test-tube' ? { volume: testTubeVolume, color: testTubeColor } : ((e as any).color ? { color: (e as any).color } : {}))}
                 />
               ))}
 
@@ -624,7 +624,7 @@ const stepsProgress = (
               placeholder="Enter volume in mL"
             />
             {aceticError && <p className="text-xs text-red-600">{aceticError}</p>}
-            <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>
+            <p className="text-xs text-gray-500">Recommended range: 10.0 ��� 15.0 mL</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAceticDialog(false)}>Cancel</Button>
