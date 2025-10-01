@@ -1,5 +1,4 @@
 import React from "react";
-import React from "react";
 import { Scale, FlaskConical, Beaker, Pipette } from "lucide-react";
 import type { Chemical, Equipment } from "./types";
 

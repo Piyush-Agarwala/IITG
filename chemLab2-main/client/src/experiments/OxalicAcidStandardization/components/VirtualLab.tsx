@@ -325,12 +325,34 @@ function OxalicAcidVirtualLab({
       return;
     }
 
+    // If we've already auto-advanced for this step, skip
     if (stepTwoAlignedRef.current) {
       return;
     }
 
-    const hasBalance = equipmentPositions.some(pos => (pos.typeId ?? pos.id).toLowerCase().includes("analytical_balance"));
-    const hasBoat = equipmentPositions.some(pos => (pos.typeId ?? pos.id).toLowerCase().includes("weighing_boat"));
+    const normalize = (value?: string) =>
+      value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "";
+
+    // Detect classic weighing workflow: balance + weighing boat
+    const hasBalance = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("analytical_balance"));
+    const hasBoat = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("weighing_boat"));
+
+    // Also detect alternate workflow requested by user: spatula + oxalic acid bottle
+    const hasSpatula = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("spatula"));
+    const hasOxalicBottle = equipmentPositions.some(pos =>
+      Array.isArray(pos.chemicals) && pos.chemicals.some(c => normalize((c as any).id) === "oxalic_acid")
+    );
+
+    // If the alternate flow is satisfied, mark the oxalic acid as added and advance the step
+    if (hasSpatula && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
+      stepTwoAlignedRef.current = true;
+      setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
+      // small delay so UI updates (e.g., placement) are visible before advancing
+      setTimeout(() => onStepComplete(), 400);
+      return;
+    }
+
+    // Otherwise continue with original alignment flow for balance + boat
     if (!hasBalance || !hasBoat) {
       stepTwoAlignedRef.current = false;
       return;
@@ -391,7 +413,7 @@ function OxalicAcidVirtualLab({
         cancelAnimationFrame(frame);
       }
     };
-  }, [equipmentPositions, step.id]);
+  }, [equipmentPositions, step.id, preparationState.oxalicAcidAdded, onStepComplete]);
 
   const canProceed = useCallback(() => {
     switch (step.id) {
