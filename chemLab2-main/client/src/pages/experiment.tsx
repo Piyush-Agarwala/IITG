@@ -7,6 +7,7 @@ import FeSCNEquilibriumApp from "@/experiments/FeSCNEquilibrium/components/FeSCN
 import Titration1App from "@/experiments/Titration1/components/Titration1App";
 import LassaigneApp from "@/experiments/LassaigneTest/components/LassaigneApp";
 import PHComparisonApp from "@/experiments/PHComparison/components/PHComparisonApp";
+import AmmoniumBufferApp from "@/experiments/AmmoniumBuffer/components/AmmoniumBufferApp";
 import BufferPHApp from "@/experiments/EthanoicBuffer/components/BufferPHApp";
 import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
@@ -38,7 +39,7 @@ export default function Experiment() {
       case 8:
         return <OxalicAcidApp onBack={() => window.history.back()} />;
       case 9:
-        return <GenericExperimentApp experimentId={experimentId} onBack={() => window.history.back()} />;
+        return <AmmoniumBufferApp onBack={() => window.history.back()} />;
       case 10:
         return <BufferPHApp onBack={() => window.history.back()} />;
       default:
