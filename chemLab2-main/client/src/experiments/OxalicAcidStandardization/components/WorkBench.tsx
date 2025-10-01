@@ -131,7 +131,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     const isStepOne = step.id === 1;
     const allowedStepOneEquipment = new Set(["analytical_balance", "weighing_boat"]);
     const normalizeId = (value?: string) => (value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
-    const notThisStepMessage = "These equipments are not necessary in this current step.";
+    const notThisStepMessage = "These equipments not necessary in this current step.";
 
     const enforceStepOneRestriction = (incomingId?: string) => {
       if (!isStepOne) return false;
