@@ -112,6 +112,10 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       return { x: baseX, y: baseY + 330 };
     }
     // Stack the two reagent cards in a right column similar to the screenshot
+    // Ensure sodium ethanoate is slightly lower than ethanoic acid to provide a small gap
+    if (id.toLowerCase().includes('sodium')) {
+      return { x: baseX + 260, y: baseY + 280 };
+    }
     return { x: baseX + 260, y: baseY + (idx === 1 ? 40 : 220) };
   };
 
