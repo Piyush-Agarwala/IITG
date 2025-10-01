@@ -1,7 +1,7 @@
 const AmmoniumBufferData = {
   id: 9,
   title: "To study the change in pH of ammonium hydroxide solution on addition of ammonium chloride",
-  description: "Investigate how adding ammonium chloride (NH4Cl) to an ammonium hydroxide (NH4OH) solution affects pH via the common‑ion effect. Observe the color change with universal indicator and the drop in pH.",
+  description: "Investigate how adding ammonium chloride (NH4Cl) to an ammonium hydroxide (NH4OH) solution affects pH via the common‑ion effect. Observe the color change using pH paper and note the drop in pH.",
   category: "Acid-Base Chemistry",
   difficulty: "Beginner",
   duration: 20,
