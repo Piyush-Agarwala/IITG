@@ -628,13 +628,6 @@ const stepsProgress = (
                   </div>
                 </div>
 
-                {/* Show quick access button when CASE 2 is recorded and eligible to view */}
-                {(case2PH != null && case2Version != null && measurementVersion >= case2Version) && (
-                  <div className="mt-3">
-                    <Button onClick={() => setShowResultsModal(true)} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results & Analysis</Button>
-                  </div>
-                )}
-
                 {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
             </div>
