@@ -353,13 +353,13 @@ useEffect(() => {
   }
 
   if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
-    setShowToast('Opening Results in 10 seconds...');
+    setShowToast('Opening Results in 5 seconds...');
     case2TimeoutRef.current = window.setTimeout(() => {
       setShowResultsModal(true);
       case2TimeoutRef.current = null;
-    }, 10000);
+    }, 5000);
     // clear the toast a bit earlier than the modal
-    setTimeout(() => setShowToast(null), 8000);
+    setTimeout(() => setShowToast(null), 4000);
   }
 
   return () => {
