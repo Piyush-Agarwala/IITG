@@ -541,32 +541,18 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 </>
               )}
 
-              {equipmentOnBench.filter(e => e.id !== 'test-tube').map(e => {
-                const tube = equipmentOnBench.find(x => x.id === 'test-tube');
-                let anchoredPosition = e.position;
-                if (tube) {
-                  const lowerId = e.id.toLowerCase();
-                  const isNH4OH = lowerId.includes('nh4oh') || lowerId.includes('ammonium-hydroxide');
-                  const isNH4CL = lowerId.includes('nh4cl') || lowerId.includes('ammonium-chloride');
-                  if (isNH4OH || isNH4CL) {
-                    const offsetX = 120; // to the right of the test tube
-                    const offsetY = isNH4OH ? -20 : 80; // stack vertically
-                    anchoredPosition = { x: tube.position.x + offsetX, y: tube.position.y + offsetY };
-                  }
-                }
-                return (
-                  <Equipment
-                    key={e.id}
-                    id={e.id}
-                    name={PH_LAB_EQUIPMENT.find(x => x.id === e.id)?.name || e.id}
-                    icon={PH_LAB_EQUIPMENT.find(x => x.id === e.id)?.icon || <Beaker className="w-8 h-8" />}
-                    position={anchoredPosition}
-                    onRemove={handleRemove}
-                    onInteract={handleInteract}
-                    {...((e as any).color ? { color: (e as any).color } : {})}
-                  />
-                );
-              })}
+              {equipmentOnBench.filter(e => e.id !== 'test-tube').map(e => (
+                <Equipment
+                  key={e.id}
+                  id={e.id}
+                  name={PH_LAB_EQUIPMENT.find(x => x.id === e.id)?.name || e.id}
+                  icon={PH_LAB_EQUIPMENT.find(x => x.id === e.id)?.icon || <Beaker className="w-8 h-8" />}
+                  position={e.position}
+                  onRemove={handleRemove}
+                  onInteract={handleInteract}
+                  {...((e as any).color ? { color: (e as any).color } : {})}
+                />
+              ))}
 
               {/* Contextual actions near pH paper when present */}
               {phPaperItem && !compareMode && (
