@@ -356,6 +356,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             <p className="text-sm text-gray-600 mt-1">
               {getCurrentStepGuidance()}
             </p>
+            {step.id === 1 && (
+              <p className="text-sm text-blue-700 font-medium mt-2">
+                Drag the analytical balance and weighing boat into the workbench.
+              </p>
+            )}
           </div>
           <div className="flex items-center space-x-2">
             <Button
