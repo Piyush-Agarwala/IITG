@@ -115,6 +115,26 @@
   .bg-lab-gray {
     background-color: var(--lab-gray);
   }
+
+  /* Bottle background helpers */
+  .bg-bottle-yellow {
+    background-color: #fffacc;
+  }
+
+  .bg-bottle-blue {
+    background-color: #e6f0ff;
+  }
+
+  /* pH paper styling */
+  .ph-paper {
+    border-radius: 6px;
+    padding: 4px;
+    transition: background-color 2s ease;
+  }
+
+  .bg-universal-indicator {
+    background-color: #e1bee7;
+  }
 }
 
 /* Enhanced drag and drop styles */

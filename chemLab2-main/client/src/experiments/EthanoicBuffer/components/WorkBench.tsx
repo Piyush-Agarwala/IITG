@@ -96,16 +96,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         `,
       }}
     >
-      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md border border-gray-200">
-        <div className="flex items-center space-x-2">
-          <div className={`w-3 h-3 rounded-full ${isRunning ? "bg-green-500" : "bg-gray-400"} ${isRunning ? "animate-pulse" : ""}`}></div>
-          <span className="text-sm font-medium text-gray-700">
-            Step {currentStep} of {totalSteps}
-          </span>
-        </div>
+      <div className="absolute top-4 left-4 bg-white border border-gray-200 rounded-full px-3 py-1 shadow-sm">
+        <span className="text-xs font-medium text-gray-600">Step {currentStep} of {totalSteps}</span>
       </div>
 
-      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md border border-gray-200">
+      <div className="absolute top-4 right-4 bg-white border border-gray-200 rounded-md px-3 py-1 shadow-sm">
         <span className="text-sm font-medium text-gray-700">Laboratory Workbench</span>
       </div>
 

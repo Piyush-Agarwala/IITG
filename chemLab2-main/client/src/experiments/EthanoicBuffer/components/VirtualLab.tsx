@@ -76,13 +76,11 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     const iconFor = (name: string) => {
       const key = name.toLowerCase();
       if (key.includes("test tube")) return <TestTube className="w-8 h-8" />;
-      if (key.includes("dropper") || key.includes("pipette")) return <Droplets className="w-8 h-8" />;
-      if (key.includes("indicator") || key.includes("meter")) return <FlaskConical className="w-8 h-8" />;
-      return <Beaker className="w-8 h-8" />;
+      if (key.includes("indicator") || key.includes("meter") || key.includes('ph')) return <FlaskConical className="w-8 h-8" />;
+      return <Droplets className="w-8 h-8" />;
     };
     const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-    // Build in server-provided order first
     const raw = experiment.equipment.map((name) => {
       const key = name.toLowerCase();
       const baseId = slug(name);
@@ -90,35 +88,31 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       return { id, name, icon: iconFor(name) };
     });
 
-    // Reorder so that Test Tube is first, then Ethanoic Acid and Sodium Ethanoate
-  const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
-  const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
-  // exclude bulky/irrelevant equipment from the quick selection
-  const excludedRe = /distilled\s*water|glass\s*stirr?ing\s*rod|measuring\s*cylinder/i;
+    // Select only the four core items to mirror the provided UI: Test Tube, Ethanoic Acid, Sodium Ethanoate, pH Meter/Paper
+    const isEthanoic = (n: string) => /ethanoic|acetic/i.test(n);
+    const isSodiumEthanoate = (n: string) => /sodium\s*ethanoate|sodium\s*acetate/i.test(n);
+    const isPhItem = (n: string) => /ph\s*(meter|paper)|universal\s*indicator/i.test(n);
 
-  const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
-  const ethanoic = raw.find(i => isEthanoic(i.name));
-  const sodium = raw.find(i => isSodiumEthanoate(i.name));
-  const others = raw.filter(i => i !== testTube && i !== ethanoic && i !== sodium && !excludedRe.test(i.name));
+    const testTube = raw.find(i => i.id === 'test-tube' || /test\s*tube/i.test(i.name));
+    const ethanoic = raw.find(i => isEthanoic(i.name));
+    const sodium = raw.find(i => isSodiumEthanoate(i.name));
+    const ph = raw.find(i => isPhItem(i.name));
 
-  return [testTube, ethanoic, sodium, ...others].filter(Boolean) as typeof raw;
+    return [testTube, ethanoic, sodium, ph].filter(Boolean) as typeof raw;
   }, [experiment.equipment]);
 
   const getPosition = (id: string) => {
     const idx = items.findIndex(i => i.id === id);
-    const baseX = 220; // center column
+    const baseX = 220;
     const baseY = 160;
     if (id === 'test-tube') {
       return { x: baseX, y: baseY + 140 };
     }
-
-    // place the pH paper / universal indicator directly below the test tube and make it fixed
     if (id === 'universal-indicator' || id.toLowerCase().includes('ph')) {
-      // align horizontally with the test-tube and position slightly further below it (lowered)
       return { x: baseX, y: baseY + 330 };
     }
-
-    return { x: baseX + ((idx % 2) * 160 - 80), y: baseY + Math.floor(idx / 2) * 140 };
+    // Stack the two reagent cards in a right column similar to the screenshot
+    return { x: baseX + 260, y: baseY + (idx === 1 ? 40 : 220) };
   };
 
   const handleDrop = (id: string, x: number, y: number, action: 'new' | 'move' = 'new') => {
@@ -381,12 +375,12 @@ function testPH() {
 }
 
 const stepsProgress = (
-    <div className="mb-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-blue-200 shadow-sm">
+    <div className="mb-4 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Experiment Progress</h3>
         <span className="text-sm text-blue-600 font-medium">Step {currentStep} of {totalSteps}</span>
       </div>
-      <div className="flex space-x-2 mb-4">
+      <div className="flex space-x-2 mb-3">
         {experiment.stepDetails.map((step) => (
           <div key={step.id} className={`flex-1 h-2 rounded-full ${completedSteps.includes(step.id) ? 'bg-green-500' : currentStep === step.id ? 'bg-blue-500' : 'bg-gray-200'}`} />
         ))}
@@ -397,7 +391,7 @@ const stepsProgress = (
         </div>
         <div className="flex-1">
           <h4 className="font-semibold text-gray-800 mb-1">{experiment.stepDetails[currentStep-1]?.title}</h4>
-          <p className="text-sm text-gray-600">{experiment.stepDetails[currentStep-1]?.description}</p>
+          <p className="text-xs text-gray-600">{experiment.stepDetails[currentStep-1]?.description}</p>
         </div>
       </div>
     </div>
@@ -515,10 +509,8 @@ const stepsProgress = (
                   <div key="reset-sodium" style={{ position: 'absolute', left: sodiumItem.position.x, top: sodiumItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
                     <Button
                       size="sm"
-                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm ${shouldBlinkReset ? 'blink-until-pressed' : ''}`}
+                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm px-3 ${shouldBlinkReset ? 'blink-until-pressed' : ''}`}
                       onClick={() => {
-                        // Reset sodium ethanoate state but keep the sodium bottle on the bench
-                        // Revert any volume previously added by sodium ethanoate
                         setSodiumMoles(0);
                         setTestTubeVolume(prev => {
                           const newVol = Math.max(0, prev - sodiumVolumeAdded);
@@ -530,10 +522,7 @@ const stepsProgress = (
                         setTimeout(() => setShowToast(null), 1400);
                       }}
                     >
-                      <div className="flex flex-col items-center leading-tight">
-                        <span className="font-semibold">RESET</span>
-                        <span className="text-xs lowercase">sodium ethanoate</span>
-                      </div>
+                      RESET sodium ethanoate
                     </Button>
                   </div>
                 );
@@ -545,7 +534,7 @@ const stepsProgress = (
           <div className="lg:col-span-3 space-y-4">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <Info className="w-5 h-5 mr-2 text-green-600" />
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 mr-2" aria-hidden="true" />
                 Live Analysis
               </h3>
               <div className="mb-4">
