@@ -463,16 +463,23 @@ const stepsProgress = (
                               setMeasureCount(prev => {
                                 const next = prev + 1;
                                 if (next === 3) {
-                                  // clear any existing timeout
-                                  if (measureTimeoutRef.current) {
-                                    clearTimeout(measureTimeoutRef.current as number);
+                                  // only open results if CASE 2 has been recorded and is eligible to be shown
+                                  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
+                                    // clear any existing timeout
+                                    if (measureTimeoutRef.current) {
+                                      clearTimeout(measureTimeoutRef.current as number);
+                                    }
+                                    setShowToast('Opening Results in 5 seconds...');
+                                    measureTimeoutRef.current = window.setTimeout(() => {
+                                      setShowResultsModal(true);
+                                      measureTimeoutRef.current = null;
+                                    }, 5000);
+                                    setTimeout(() => setShowToast(null), 3500);
+                                  } else {
+                                    // Defer opening modal until CASE 2 is available; inform user
+                                    setShowToast('Results not ready yet — complete the sodium additions to generate CASE 2');
+                                    setTimeout(() => setShowToast(null), 2500);
                                   }
-                                  setShowToast('Opening Results in 5 seconds...');
-                                  measureTimeoutRef.current = window.setTimeout(() => {
-                                    setShowResultsModal(true);
-                                    measureTimeoutRef.current = null;
-                                  }, 5000);
-                                  setTimeout(() => setShowToast(null), 3500);
                                 }
                                 return next;
                               });
