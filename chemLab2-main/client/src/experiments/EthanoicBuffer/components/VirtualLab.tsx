@@ -348,6 +348,8 @@ useEffect(() => {
   // If CASE 2 has been recorded, stop any blinking prompt immediately
   if (case2PH != null) {
     setShouldBlinkMeasure(false);
+    // stop blinking "New pH paper" as results are now calculated
+    setNewPaperPressed(true);
   }
 
   if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
