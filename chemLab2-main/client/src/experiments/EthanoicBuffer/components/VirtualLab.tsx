@@ -400,7 +400,6 @@ const stepsProgress = (
   return (
     <TooltipProvider>
       <div className="w-full h-full bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 p-6">
-        {stepsProgress}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
           <div className="lg:col-span-3 space-y-4">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
@@ -427,6 +426,8 @@ const stepsProgress = (
 
           <div className="lg:col-span-6">
             <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} totalSteps={totalSteps}>
+              {stepsProgress}
+
               {equipmentOnBench.map(e => (
                 <PHEquipment
                   key={e.id}
