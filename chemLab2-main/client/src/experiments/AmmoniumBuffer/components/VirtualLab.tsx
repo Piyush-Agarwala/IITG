@@ -127,8 +127,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           else nextColor = COLORS.NEUTRAL;
           animateColorTransition(nextColor);
         } else if (newVol > 0) {
-          // Show a light-blue liquid when volume is added but no pH paper is present
-          nextColor = '#ADD8E6';
+          // Show base blue liquid when volume is added but no pH paper is present (matches reference)
+          nextColor = COLORS.NH4OH_BASE;
         }
         const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added pH paper';
         const observation = contents.includes('IND')
