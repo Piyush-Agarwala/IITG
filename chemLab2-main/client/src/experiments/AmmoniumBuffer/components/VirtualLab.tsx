@@ -61,20 +61,23 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
   const getEquipmentPosition = (equipmentId: string) => {
-    const baseTestTube = { x: 200, y: 250 };
-    const tubeOnBench = equipmentOnBench.find(e => e.id === 'test-tube');
-    const commonBottleIds = ['nh4oh-0-1m', 'nh4cl-0-1m', 'universal-indicator'];
-    if (commonBottleIds.includes(equipmentId)) {
-      const baseX = tubeOnBench ? tubeOnBench.position.x + 260 : 580;
-      const baseY = tubeOnBench ? tubeOnBench.position.y - 80 : 200;
-      const spacing = 160;
-      const index = commonBottleIds.indexOf(equipmentId);
-      return { x: baseX, y: baseY + index * spacing };
+    const baseX = 220;
+    const baseY = 160;
+
+    if (equipmentId === 'test-tube') {
+      return { x: baseX, y: baseY + 140 };
     }
-    const positions: Record<string, { x: number; y: number }> = {
-      'test-tube': baseTestTube,
-    };
-    return positions[equipmentId] || { x: 300, y: 250 };
+
+    // pH paper / meter fixed below the test tube
+    if (equipmentId === 'ph-paper' || equipmentId.toLowerCase().includes('ph')) {
+      return { x: baseX, y: baseY + 330 };
+    }
+
+    // reagent bottles on right column
+    if (equipmentId === 'nh4oh-0-1m') return { x: baseX + 260, y: baseY + 40 };
+    if (equipmentId === 'nh4cl-0-1m') return { x: baseX + 260, y: baseY + 220 };
+
+    return { x: baseX + 260, y: baseY + 40 };
   };
 
   useEffect(() => {
@@ -123,8 +126,11 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           else if (contents.includes('NH4OH')) nextColor = COLORS.NH4OH_BASE; // basic
           else nextColor = COLORS.NEUTRAL;
           animateColorTransition(nextColor);
+        } else if (newVol > 0) {
+          // Show base blue liquid when volume is added but no pH paper is present (matches reference)
+          nextColor = COLORS.NH4OH_BASE;
         }
-        const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added Universal Indicator';
+        const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added pH paper';
         const observation = contents.includes('IND')
           ? (contents.includes('NH4Cl') ? 'Indicator shifted toward green → lower pH (buffered)' : contents.includes('NH4OH') ? 'Indicator turned blue/green → basic (~pH > 7)' : 'Indicator added to neutral solution')
           : 'Solution color unchanged (no indicator)';
@@ -132,7 +138,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         return { ...prev, volume: newVol, contents };
       });
       setActiveEquipment("");
-      if (reagent === 'IND') setShowToast('Indicator added');
+      if (reagent === 'IND') setShowToast('pH paper added');
       else setShowToast(`${reagent === 'NH4OH' ? 'NH4OH' : 'NH4Cl'} added`);
       setTimeout(() => setShowToast(""), 1500);
     }, ANIMATION.DROPPER_DURATION);
@@ -163,10 +169,23 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     }
 
     const pos = getEquipmentPosition(equipmentId);
+    // decide if this is a fixed reagent / paper
+    const isFixedReagent = ['nh4oh-0-1m','nh4cl-0-1m','ph-paper'].includes(equipmentId) || equipmentId.toLowerCase().includes('ph');
     setEquipmentOnBench(prev => {
-      if (!prev.find(e => e.id === equipmentId)) return [...prev, { id: equipmentId, position: pos, isActive: false }];
+      if (!prev.find(e => e.id === equipmentId)) return [...prev, { id: equipmentId, position: { x: pos.x, y: pos.y, fixed: isFixedReagent }, isActive: false }];
       return prev;
     });
+
+    // if pH paper placed, also add it logically to the test tube (contents) so measurement works immediately
+    if (equipmentId === 'ph-paper') {
+      addToTube('IND', 0);
+      if (currentStep === 3 || currentStep === 5) onStepComplete(currentStep);
+    }
+
+    // mark step complete only for interactive (non-fixed) placements
+    if (!['nh4oh-0-1m','nh4cl-0-1m','ph-paper'].includes(equipmentId)) {
+      if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+    }
   };
 
   const handleUndo = () => {
@@ -232,18 +251,20 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const handleInteract = (id: string) => {
     if (id === 'nh4oh-0-1m') setShowNh4ohDialog(true);
     if (id === 'nh4cl-0-1m') setShowNh4clDialog(true);
-    if (id === 'universal-indicator') { setShowIndicatorDialog(true); return; }
+    if (id === 'ph-paper') { addToTube('IND', 0); if (currentStep === 3 || currentStep === 5) onStepComplete(currentStep); return; }
   };
 
   const handleRemove = (id: string) => { setEquipmentOnBench(prev => prev.filter(e => e.id !== id)); if (id === 'test-tube') setTestTube(INITIAL_TESTTUBE); };
 
   const testPH = () => {
     if (!testTube || (testTube.volume ?? 0) <= 0) { setShowToast('No solution in test tube'); setTimeout(() => setShowToast(''), 1400); return; }
-    if (!testTube.contents.includes('IND')) { setShowToast('No indicator present. Add universal indicator or pH paper'); setTimeout(() => setShowToast(''), 1800); return; }
+    if (!testTube.contents.includes('IND')) { setShowToast('No indicator present. Add pH paper'); setTimeout(() => setShowToast(''), 1800); return; }
 
     if (testTube.contents.includes('NH4Cl')) {
       const ph = 9.0;
       setLastMeasuredPH(ph);
+      // color pH paper to buffered color
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
       setTimeout(() => setShowToast(''), 2000);
       return;
@@ -251,6 +272,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.contents.includes('NH4OH')) {
       const ph = 11.0;
       setLastMeasuredPH(ph);
+      // color pH paper to basic color
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4OH_BASE } : item));
       setShowToast('Measured pH ≈ 11 (basic NH4OH)');
       setTimeout(() => setShowToast(''), 2000);
       return;
@@ -258,11 +281,14 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.colorHex === COLORS.NEUTRAL) {
       const ph = 7.0;
       setLastMeasuredPH(ph);
+      setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NEUTRAL } : item));
       setShowToast('Measured pH ≈ 7 (neutral)');
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
     setLastMeasuredPH(null);
+    // set pH paper to clear/inconclusive
+    setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item));
     setShowToast('pH measurement inconclusive');
     setTimeout(() => setShowToast(''), 1600);
   };
@@ -333,7 +359,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   {/* Show RESET button below the test tube when universal indicator has been added */}
                   {testTube.contents.includes('IND') && (
                     <div style={{ position: 'absolute', left: getEquipmentPosition('test-tube').x, top: getEquipmentPosition('test-tube').y + 220, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm animate-pulse" onClick={() => {
+                      <Button size="sm" className="hidden" onClick={() => {
                         // Restore test tube to empty/clear state
                         setHistory([]);
                         setTestTube(prev => ({ ...prev, volume: 0, contents: [], colorHex: COLORS.CLEAR }));
@@ -356,24 +382,34 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   position={e.position}
                   onRemove={handleRemove}
                   onInteract={handleInteract}
+                  color={(e as any).color}
                 />
               ))}
+
+              {/* Contextual MEASURE action near pH paper when present */}
+              {equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph')) && (
+                (() => {
+                  const phItem = equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph'))!;
+                  return (
+                    <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
+                    </div>
+                  );
+                })()
+              )}
             </WorkBench>
           </div>
 
           <div className="lg:col-span-3 space-y-4">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <Info className="w-5 h-5 mr-2 text-green-600" />
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 mr-2" aria-hidden="true" />
                 Live Analysis
               </h3>
+
               <div className="mb-4">
-                <h4 className="font-semibold text-sm text-gray-700 mb-2">Current Solution</h4>
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: testTube.colorHex }}></div>
-                  <span className="text-sm">{testTube.colorHex === COLORS.CLEAR ? 'Clear (no indicator)' : 'With indicator'}</span>
-                </div>
-                <p className="text-xs text-gray-600">Contents: {testTube.contents.join(', ') || 'None'}</p>
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Current Step</h4>
+                <p className="text-xs text-gray-600">{GUIDED_STEPS[(mode.currentGuidedStep || 0)]?.title || GUIDED_STEPS[currentStep-1]?.title}</p>
               </div>
 
               <div className="mb-4">
@@ -401,12 +437,27 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                     );
                   })()}
                 </div>
+
+                <div className="mt-6">
+                  <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">A</span> pH of Ammonium hydroxide</h5>
+                  <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                </div>
+
+                <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
+                <div className="mt-3 grid grid-cols-1 gap-2">
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 1</div>
+                    <div className="text-lg text-black font-semibold">{bufferedSample != null ? `${bufferedSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                  </div>
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 2</div>
+                    <div className="text-lg text-black font-semibold">No result yet</div>
+                  </div>
+                </div>
+
+                {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
             </div>
-
-            {showToast && (
-              <div className="p-3 rounded bg-blue-50 border border-blue-200 text-blue-700 text-sm">{showToast}</div>
-            )}
           </div>
         </div>
       </div>
