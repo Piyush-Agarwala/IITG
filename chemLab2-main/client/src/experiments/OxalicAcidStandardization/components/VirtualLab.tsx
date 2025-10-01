@@ -332,6 +332,7 @@ function OxalicAcidVirtualLab({
     const hasBalance = equipmentPositions.some(pos => (pos.typeId ?? pos.id).toLowerCase().includes("analytical_balance"));
     const hasBoat = equipmentPositions.some(pos => (pos.typeId ?? pos.id).toLowerCase().includes("weighing_boat"));
     if (!hasBalance || !hasBoat) {
+      stepTwoAlignedRef.current = false;
       return;
     }
 
