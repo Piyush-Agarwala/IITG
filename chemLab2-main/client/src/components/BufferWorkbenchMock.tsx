@@ -40,6 +40,7 @@ export default function BufferWorkbenchMock() {
 
                   <div className="space-y-2">
                     <Button variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center"><Undo2 className="w-4 h-4 mr-2" />UNDO</Button>
+                    <Button className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center"><CheckCircle className="w-4 h-4 mr-2 text-green-600" />View Results & Analysis</Button>
                     <Button variant="destructive" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
                   </div>
                 </aside>
