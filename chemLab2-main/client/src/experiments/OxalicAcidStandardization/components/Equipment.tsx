@@ -345,6 +345,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
   return (
     <div
       ref={equipmentRef}
+      data-equipment-type={equipmentIdentifier}
+      data-equipment-id={id}
       className={containerClass}
       style={{
         left: position.x,
