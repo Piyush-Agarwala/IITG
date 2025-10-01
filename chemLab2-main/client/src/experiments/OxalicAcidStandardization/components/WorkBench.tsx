@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +68,28 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [temperature, setTemperature] = useState(25);
   const [showCalculator, setShowCalculator] = useState(false);
+  const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
+  const messageTimeoutRef = useRef<number | null>(null);
+
+  const showMessage = useCallback((text: string) => {
+    setWorkbenchMessage(text);
+    if (messageTimeoutRef.current) {
+      window.clearTimeout(messageTimeoutRef.current);
+    }
+    messageTimeoutRef.current = window.setTimeout(() => {
+      setWorkbenchMessage(null);
+      messageTimeoutRef.current = null;
+    }, 2500);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (messageTimeoutRef.current) {
+        window.clearTimeout(messageTimeoutRef.current);
+        messageTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isRunning) {
@@ -106,6 +128,20 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     const y = e.clientY - rect.top;
 
     const raw = e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list") || "";
+    const isStepOne = step.id === 1;
+    const allowedStepOneEquipment = new Set(["analytical_balance", "weighing_boat"]);
+    const normalizeId = (value?: string) => (value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
+    const notThisStepMessage = "These equipments not necessary in this current step.";
+
+    const enforceStepOneRestriction = (incomingId?: string) => {
+      if (!isStepOne) return false;
+      const normalized = normalizeId(incomingId);
+      if (!incomingId || !allowedStepOneEquipment.has(normalized)) {
+        showMessage(notThisStepMessage);
+        return true;
+      }
+      return false;
+    };
 
     let data: any = null;
     try {
@@ -119,6 +155,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     // Helper to add a bottle (chemical)
     const addBottle = (payload: any) => {
+      if (enforceStepOneRestriction(payload?.id)) {
+        return;
+      }
       setEquipmentPositions(prev => [
         ...prev,
         {
@@ -147,6 +186,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       }
 
       if (data.id && data.name) {
+        if (enforceStepOneRestriction(data.id)) {
+          return;
+        }
         setEquipmentPositions(prev => [
         ...prev,
         {
@@ -167,6 +209,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     // If raw is a URL (user dragged an image), create a generic equipment that displays the image
     if (raw && raw.startsWith("http")) {
+      if (isStepOne) {
+        showMessage(notThisStepMessage);
+        return;
+      }
       setEquipmentPositions(prev => [
         ...prev,
         {
@@ -188,6 +234,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       // Try equipment list first
       const eq = equipment.find(eqp => eqp.id === trimmed);
       if (eq) {
+        if (enforceStepOneRestriction(eq.id)) {
+          return;
+        }
         setEquipmentPositions(prev => [
         ...prev,
         {
@@ -213,8 +262,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       }
     }
 
-    // Fallback: log and ignore
-    console.warn('Unrecognized drop data:', raw);
+    // Fallback: notify user or log
+    if (isStepOne) {
+      showMessage(notThisStepMessage);
+    } else {
+      console.warn('Unrecognized drop data:', raw);
+    }
   };
 
   const handleEquipmentDrag = (id: string, x: number, y: number) => {
@@ -303,6 +356,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             <p className="text-sm text-gray-600 mt-1">
               {getCurrentStepGuidance()}
             </p>
+            {step.id === 1 && (
+              <p className="text-sm text-blue-700 font-medium mt-2">
+                Drag the analytical balance and weighing boat into the workbench.
+              </p>
+            )}
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -351,6 +409,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             {stepNumber}/{totalSteps}
           </span>
         </div>
+
+        {workbenchMessage && (
+          <div className="mt-3 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-3 py-2 rounded-md">
+            {workbenchMessage}
+          </div>
+        )}
       </div>
 
       {/* Main Content */}

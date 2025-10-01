@@ -101,11 +101,22 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
   const getEquipmentPosition = (equipmentId: string) => {
+    const baseTestTube = { x: 200, y: 250 };
+
+    // If a test tube is already placed on the bench, anchor certain reagents relative to it
+    const tubeOnBench = equipmentOnBench.find(e => e.id === 'test-tube');
+
+    // Place ammonium hydroxide to the right and slightly above the test tube (matches requested screenshot position)
+    if ((equipmentId === 'nh4oh-0-1m' || equipmentId.toLowerCase().includes('nh4oh') || equipmentId.toLowerCase().includes('ammonium hydroxide')) && tubeOnBench) {
+      return { x: tubeOnBench.position.x + 160, y: tubeOnBench.position.y - 60 };
+    }
+
     const positions: Record<string, { x: number; y: number }> = {
-      'test-tube': { x: 200, y: 250 },
+      'test-tube': baseTestTube,
       'hcl-0-01m': { x: 500, y: 200 },
-      'nh4oh-0-1m': { x: 540, y: 200 },
-      'nh4cl-0-1m': { x: 540, y: 320 },
+      // Default fallback positions below the bench if no tube is present
+      'nh4oh-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 420 },
+      'nh4cl-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 540 },
       'acetic-0-01m': { x: 500, y: 360 },
       'universal-indicator': { x: 500, y: 580 },
     };
