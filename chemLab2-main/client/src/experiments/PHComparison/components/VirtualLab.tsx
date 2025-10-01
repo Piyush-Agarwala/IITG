@@ -502,7 +502,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <Button onClick={() => {
                   setShowResultsModal(true);
                 }} className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 mt-2 flex items-center justify-center">
-                  <span>View RESULTS</span>
+                  <span>View Results & Analysis</span>
                 </Button>
               )}
             </div>
