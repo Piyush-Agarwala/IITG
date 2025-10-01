@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 
-import React, { useState } from "react";
-
 interface WorkBenchProps {
   // action will be 'new' when dragging from toolbar, 'move' when repositioning an existing item
   onDrop: (id: string, x: number, y: number, action?: "new" | "move") => void;
