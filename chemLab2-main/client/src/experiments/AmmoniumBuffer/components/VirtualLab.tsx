@@ -51,6 +51,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [previewIndicatorVolume, setPreviewIndicatorVolume] = useState<number | null>(0.5);
   const [indicatorError, setIndicatorError] = useState<string | null>(null);
   const [measurePressed, setMeasurePressed] = useState(false);
+  const [newPaperPressed, setNewPaperPressed] = useState(false);
 
   const [baseSample, setBaseSample] = useState<TestTubeState | null>(null);
   const [bufferedSample, setBufferedSample] = useState<TestTubeState | null>(null);
@@ -390,9 +391,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               {equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph')) && (
                 (() => {
                   const phItem = equipmentOnBench.find(e => e.id === 'ph-paper' || e.id.toLowerCase().includes('ph'))!;
+                  const paperHasColor = !!(phItem as any).color && (phItem as any).color !== COLORS.CLEAR;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}`} onClick={() => { setMeasurePressed(true); testPH(); }}>MEASURE</Button>
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!(measurePressed || newPaperPressed) ? 'blink-until-pressed' : ''}`} onClick={() => { if (!paperHasColor) { setMeasurePressed(true); testPH(); } else { setNewPaperPressed(true); setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item)); setShowToast('Replace pH paper'); setTimeout(() => setShowToast(''), 1500); } }}>
+                        {!paperHasColor ? 'MEASURE' : 'New pH paper'}
+                      </Button>
                     </div>
                   );
                 })()
