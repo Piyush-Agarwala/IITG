@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { WorkBench } from "./WorkBench";
+import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment as PHEquipment } from "@/experiments/PHComparison/components/Equipment";
 import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle } from "lucide-react";
 import type { Experiment, ExperimentStep } from "@shared/schema";
@@ -425,8 +425,7 @@ const stepsProgress = (
           </div>
 
           <div className="lg:col-span-6">
-            <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} totalSteps={totalSteps}>
-              {stepsProgress}
+            <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph')) ? testPH : undefined}>
 
               {equipmentOnBench.map(e => (
                 <PHEquipment
