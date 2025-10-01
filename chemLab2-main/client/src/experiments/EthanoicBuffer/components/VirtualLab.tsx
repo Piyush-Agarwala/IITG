@@ -112,6 +112,10 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       return { x: baseX, y: baseY + 330 };
     }
     // Stack the two reagent cards in a right column similar to the screenshot
+    // Ensure sodium ethanoate is slightly lower than ethanoic acid to provide a small gap
+    if (id.toLowerCase().includes('sodium')) {
+      return { x: baseX + 260, y: baseY + 280 };
+    }
     return { x: baseX + 260, y: baseY + (idx === 1 ? 40 : 220) };
   };
 
@@ -141,7 +145,9 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
         const pos = getPosition(id);
         positionObj = { x: pos.x, y: pos.y, fixed: true };
       } else if (isFixedReagent) {
-        positionObj = { x, y, fixed: true };
+        // always place reagents (ethanoic acid / sodium ethanoate) at their canonical workbench positions
+        const pos = getPosition(id);
+        positionObj = { x: pos.x, y: pos.y, fixed: true };
       } else {
         positionObj = { x, y };
       }
@@ -457,22 +463,29 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : '')}`}
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${measureCount < 2 && (paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : ''))}` }
                             onClick={() => {
                               // count presses and schedule results modal after 3rd press
                               setMeasureCount(prev => {
                                 const next = prev + 1;
                                 if (next === 3) {
-                                  // clear any existing timeout
-                                  if (measureTimeoutRef.current) {
-                                    clearTimeout(measureTimeoutRef.current as number);
+                                  // only open results if CASE 2 has been recorded and is eligible to be shown
+                                  if (case2PH != null && case2Version != null && measurementVersion >= case2Version) {
+                                    // clear any existing timeout
+                                    if (measureTimeoutRef.current) {
+                                      clearTimeout(measureTimeoutRef.current as number);
+                                    }
+                                    setShowToast('Opening Results in 5 seconds...');
+                                    measureTimeoutRef.current = window.setTimeout(() => {
+                                      setShowResultsModal(true);
+                                      measureTimeoutRef.current = null;
+                                    }, 5000);
+                                    setTimeout(() => setShowToast(null), 3500);
+                                  } else {
+                                    // Defer opening modal until CASE 2 is available; inform user
+                                    setShowToast('Results not ready yet — complete the sodium additions to generate CASE 2');
+                                    setTimeout(() => setShowToast(null), 2500);
                                   }
-                                  setShowToast('Opening Results in 5 seconds...');
-                                  measureTimeoutRef.current = window.setTimeout(() => {
-                                    setShowResultsModal(true);
-                                    measureTimeoutRef.current = null;
-                                  }, 5000);
-                                  setTimeout(() => setShowToast(null), 3500);
                                 }
                                 return next;
                               });
