@@ -122,19 +122,28 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         const newVol = Math.min(prev.volume + volume, 20);
         const contents = Array.from(new Set([...prev.contents, reagent]));
         let nextColor = prev.colorHex;
-        if (contents.includes('IND')) {
-          if (contents.includes('NH4Cl')) nextColor = COLORS.NH4_BUFFERED; // common ion lowers pH
-          else if (contents.includes('NH4OH')) nextColor = COLORS.NH4OH_BASE; // basic
-          else nextColor = COLORS.NEUTRAL;
-          animateColorTransition(nextColor);
-        } else if (newVol > 0) {
-          // Show base blue liquid when volume is added but no pH paper is present (matches reference)
-          nextColor = COLORS.NH4OH_BASE;
+
+        // When adding pH paper (indicator), do NOT change the liquid color in the test tube.
+        // Only other reagent additions should affect the liquid color.
+        if (reagent === 'IND') {
+          // keep nextColor as previous color
+        } else {
+          if (contents.includes('IND')) {
+            if (contents.includes('NH4Cl')) nextColor = COLORS.NH4_BUFFERED; // common ion lowers pH
+            else if (contents.includes('NH4OH')) nextColor = COLORS.NH4OH_BASE; // basic
+            else nextColor = COLORS.NEUTRAL;
+            animateColorTransition(nextColor);
+          } else if (newVol > 0) {
+            // Show base blue liquid when volume is added but no pH paper is present (matches reference)
+            nextColor = COLORS.NH4OH_BASE;
+          }
         }
+
         const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added pH paper';
-        const observation = contents.includes('IND')
-          ? (contents.includes('NH4Cl') ? 'Indicator shifted toward green → lower pH (buffered)' : contents.includes('NH4OH') ? 'Indicator turned blue/green → basic (~pH > 7)' : 'Indicator added to neutral solution')
-          : 'Solution color unchanged (no indicator)';
+        const observation = reagent === 'IND'
+          ? 'pH paper placed (no change to liquid color)'
+          : (contents.includes('IND') ? (contents.includes('NH4Cl') ? 'Indicator shifted toward green → lower pH (buffered)' : contents.includes('NH4OH') ? 'Indicator turned blue/green �� basic (~pH > 7)' : 'Indicator added to neutral solution') : 'Solution color unchanged (no indicator)');
+
         setAnalysisLog(prevLog => [...prevLog, { id: `${Date.now()}-${Math.random()}`, action: `${label} (${volume.toFixed(1)} mL)`, observation, colorBefore, colorAfter: nextColor }]);
         return { ...prev, volume: newVol, contents };
       });
