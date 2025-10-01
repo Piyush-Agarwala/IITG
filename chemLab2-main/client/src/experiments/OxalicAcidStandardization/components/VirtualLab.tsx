@@ -281,6 +281,43 @@ function OxalicAcidVirtualLab({
     }
   }, [step.id, handleCalculation, handleWeighing, handleDissolving, handleTransfer, handleNearMark, handleFinalVolume, handleFinalMixing]);
 
+  useEffect(() => {
+    if (step.id !== 1) {
+      stepOneAutoProgressedRef.current = false;
+      return;
+    }
+
+    const normalize = (value?: string) =>
+      value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "";
+
+    const required = ["analytical_balance", "weighing_boat"];
+    const placed = new Set(
+      equipmentPositions.map((position) =>
+        normalize(position.typeId ?? position.id?.split("_")[0])
+      )
+    );
+
+    const allPlaced = required.every((req) => placed.has(req));
+
+    if (allPlaced && !stepOneAutoProgressedRef.current) {
+      stepOneAutoProgressedRef.current = true;
+      const TARGET_MASS = 0.1 * 0.25 * 126.07;
+      setMeasurements((prev) =>
+        prev.targetMass > 0
+          ? prev
+          : {
+              ...prev,
+              targetMass: TARGET_MASS,
+            }
+      );
+      onStepComplete();
+    }
+
+    if (!allPlaced) {
+      stepOneAutoProgressedRef.current = false;
+    }
+  }, [equipmentPositions, step.id, onStepComplete, setMeasurements]);
+
   const canProceed = useCallback(() => {
     switch (step.id) {
       case 1:
