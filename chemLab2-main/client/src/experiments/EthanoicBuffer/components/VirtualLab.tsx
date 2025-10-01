@@ -448,6 +448,12 @@ const stepsProgress = (
               <Button onClick={() => { if (equipmentOnBench.length) { handleRemove(equipmentOnBench[equipmentOnBench.length-1].id); } }} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
+
+              {/* Quick access to results when CASE 2 is available */}
+              {(case2PH != null && case2Version != null && measurementVersion >= case2Version) && (
+                <Button onClick={() => setShowResultsModal(true)} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results & Analysis</Button>
+              )}
+
               <Button onClick={() => { setEquipmentOnBench([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
             </div>
           </div>
