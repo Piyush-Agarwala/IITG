@@ -298,3 +298,106 @@
 .blink-until-pressed {
   animation: blink 1s linear infinite;
 }
+
+/* Workbench specific styles (ethanoic buffer experiment)
+   Converted inline background and helper classes to descriptive names
+*/
+.lab-workbench {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px dashed var(--border);
+  background-image:
+    linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%),
+    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 75% 75%, rgba(147, 51, 234, 0.06) 0%, transparent 25%);
+}
+
+.ethanoic-workbench--dragover {
+  border-color: rgba(59, 130, 246, 0.8);
+  background-color: rgba(59, 130, 246, 0.03);
+}
+
+.workbench-header {
+  position: absolute;
+  z-index: 20;
+}
+
+.workbench-step-badge {
+  top: 1rem;
+  left: 1rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  box-shadow: 0 6px 12px rgba(2, 6, 23, 0.06);
+}
+
+.workbench-label {
+  top: 1rem;
+  right: 1rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  box-shadow: 0 6px 12px rgba(2, 6, 23, 0.06);
+}
+
+.workbench-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.06);
+  backdrop-filter: blur(6px);
+  z-index: 40;
+}
+
+.workbench-overlay-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  border: 2px dashed rgba(59, 130, 246, 0.5);
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.08);
+}
+
+.workbench-overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.workbench-overlay-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  background: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.workbench-overlay-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.workbench-overlay-desc {
+  font-size: 0.875rem;
+  color: #475569;
+  text-align: center;
+}
+
+.workbench-children {
+  position: absolute;
+  inset: 0;
+  padding: 2rem;
+  transform: translateY(-2rem);
+}

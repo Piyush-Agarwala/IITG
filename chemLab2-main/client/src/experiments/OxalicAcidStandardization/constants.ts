@@ -117,6 +117,39 @@ export const OXALIC_ACID_EQUIPMENT: Equipment[] = [
     icon: React.createElement(Pipette, { size: 36 }),
   },
   {
+    id: "spatula",
+    name: "Spatula",
+    icon: React.createElement(
+      "svg",
+      {
+        width: "36",
+        height: "36",
+        viewBox: "0 0 36 36",
+        fill: "none",
+        className: "text-gray-700",
+      },
+      [
+        React.createElement("path", {
+          key: "handle",
+          d: "M22 6c0 0-1 6-6 11-5 5-8 6-8 6",
+          stroke: "currentColor",
+          strokeWidth: "1.8",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+        }),
+        React.createElement("path", {
+          key: "blade",
+          d: "M20 4c2 0 4 2 4 4s-1 4-3 6c-2 2-6 3-9 3",
+          stroke: "currentColor",
+          strokeWidth: "1.6",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          fill: "rgba(107, 114, 128, 0.04)",
+        }),
+      ],
+    ),
+  },
+  {
     id: "wash_bottle",
     name: "Wash Bottle",
     icon: React.createElement(
