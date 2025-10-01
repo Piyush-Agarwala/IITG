@@ -373,6 +373,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   position={e.position}
                   onRemove={handleRemove}
                   onInteract={handleInteract}
+                  color={(e as any).color}
                 />
               ))}
 
