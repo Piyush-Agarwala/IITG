@@ -85,6 +85,7 @@ function OxalicAcidVirtualLab({
   const [showMolecular, setShowMolecular] = useState(false);
   const [showErrorAnalysis, setShowErrorAnalysis] = useState(false);
   const stepOneAutoProgressedRef = useRef(false);
+  const stepTwoAlignedRef = useRef(false);
 
   const addResult = useCallback((result: Omit<Result, "id" | "timestamp">) => {
     const newResult: Result = {
