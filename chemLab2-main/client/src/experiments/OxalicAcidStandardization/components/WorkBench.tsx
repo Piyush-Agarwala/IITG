@@ -627,11 +627,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <label className="font-medium">Molarity (M):</label>
-                  <div className="font-mono bg-gray-100 p-2 rounded">0.1 M</div>
+                  <div className="font-mono bg-gray-100 p-2 rounded">0.05 M</div>
                 </div>
                 <div>
                   <label className="font-medium">Volume (L):</label>
-                  <div className="font-mono bg-gray-100 p-2 rounded">0.25 L</div>
+                  <div className="font-mono bg-gray-100 p-2 rounded">0.250 L</div>
                 </div>
                 <div>
                   <label className="font-medium">MW (g/mol):</label>
@@ -640,13 +640,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 <div>
                   <label className="font-medium">Mass (g):</label>
                   <div className="font-mono bg-blue-100 p-2 rounded font-bold">
-                    {(0.1 * 0.25 * 126.07).toFixed(4)}
+                    {(0.05 * 0.25 * 126.07).toFixed(4)}
                   </div>
                 </div>
               </div>
               <div className="text-xs text-gray-600 space-y-1">
                 <p><strong>Formula:</strong> m = M × V × MW</p>
-                <p><strong>Calculation:</strong> {(0.1 * 0.25 * 126.07).toFixed(4)} g = 0.1 M × 0.25 L × 126.07 g/mol</p>
+                <p><strong>Calculation:</strong> {(0.05 * 0.25 * 126.07).toFixed(4)} g = 0.05 M × 0.250 L × 126.07 g/mol</p>
               </div>
             </CardContent>
           </Card>
