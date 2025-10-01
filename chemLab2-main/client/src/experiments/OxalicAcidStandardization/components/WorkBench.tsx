@@ -128,6 +128,20 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     const y = e.clientY - rect.top;
 
     const raw = e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list") || "";
+    const isStepOne = step.id === 1;
+    const allowedStepOneEquipment = new Set(["analytical_balance", "weighing_boat"]);
+    const normalizeId = (value?: string) => (value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
+    const notThisStepMessage = "These equipments are not necessary in this current step.";
+
+    const enforceStepOneRestriction = (incomingId?: string) => {
+      if (!isStepOne) return false;
+      const normalized = normalizeId(incomingId);
+      if (!incomingId || !allowedStepOneEquipment.has(normalized)) {
+        showMessage(notThisStepMessage);
+        return true;
+      }
+      return false;
+    };
 
     let data: any = null;
     try {
