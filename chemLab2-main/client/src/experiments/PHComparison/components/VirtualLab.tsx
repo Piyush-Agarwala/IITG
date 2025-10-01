@@ -103,22 +103,28 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const getEquipmentPosition = (equipmentId: string) => {
     const baseTestTube = { x: 200, y: 250 };
 
-    // If a test tube is already placed on the bench, anchor certain reagents relative to it
+    // If a test tube is already placed on the bench, anchor reagents relative to it
     const tubeOnBench = equipmentOnBench.find(e => e.id === 'test-tube');
 
-    // Place ammonium hydroxide to the right and slightly above the test tube (matches requested screenshot position)
-    if ((equipmentId === 'nh4oh-0-1m' || equipmentId.toLowerCase().includes('nh4oh') || equipmentId.toLowerCase().includes('ammonium hydroxide')) && tubeOnBench) {
-      return { x: tubeOnBench.position.x + 160, y: tubeOnBench.position.y - 60 };
+    // Provide a right-column layout for the three common bottles (HCl, Acetic, Indicator)
+    // with equal vertical spacing. If a test tube exists, base positions off it; otherwise
+    // fall back to fixed coordinates.
+    const commonBottleIds = ['hcl-0-01m', 'acetic-0-01m', 'universal-indicator'];
+    if (commonBottleIds.includes(equipmentId)) {
+      // Move the bottles slightly to the left compared to the previous layout.
+      // Reduce the offset from the test tube when anchored, and lower the fallback x-coordinate.
+      const baseX = tubeOnBench ? tubeOnBench.position.x + 260 : 580;
+      const baseY = tubeOnBench ? tubeOnBench.position.y - 80 : 200;
+      const spacing = 160; // equal vertical spacing between bottles
+      const index = commonBottleIds.indexOf(equipmentId);
+      return { x: baseX, y: baseY + index * spacing };
     }
 
     const positions: Record<string, { x: number; y: number }> = {
       'test-tube': baseTestTube,
-      'hcl-0-01m': { x: 500, y: 200 },
-      // Default fallback positions below the bench if no tube is present
+      // default fallbacks for other items
       'nh4oh-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 420 },
       'nh4cl-0-1m': { x: baseTestTube.x + 120, y: baseTestTube.y + 540 },
-      'acetic-0-01m': { x: 500, y: 360 },
-      'universal-indicator': { x: 500, y: 580 },
     };
     return positions[equipmentId] || { x: 300, y: 250 };
   };
@@ -337,21 +343,10 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (id === 'hcl-0-01m') setShowHclDialog(true);
     if (id === 'acetic-0-01m') setShowAceticDialog(true);
     if (id === 'universal-indicator') {
-      // If a test tube is present on the bench, show a pouring animation from tube to the pH paper
-      const tube = equipmentOnBench.find(e => e.id === 'test-tube');
-      const ph = equipmentOnBench.find(e => e.id === 'universal-indicator' || e.id.toLowerCase().includes('ph'));
-      if (tube && ph) {
-        setPourKey(k => k + 1);
-        setShowPouring(true);
-        setTimeout(() => {
-          setShowPouring(false);
-          testPH();
-        }, 900);
-        return;
-      }
-
-      // fallback: open indicator dialog when no tube present
+      // Always open the indicator volume dialog so the user can enter how much indicator
+      // to add. This applies whether or not the test tube/pH paper is already placed.
       setShowIndicatorDialog(true);
+      return;
     }
   };
 
@@ -367,12 +362,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     setShowToast('Results opening in 10 seconds...');
     setTimeout(() => setShowToast(""), 3000);
     setTimeout(() => {
-      if (case2PH != null) {
-        setShowResultsModal(true);
-      } else {
-        setShowToast('Save a pH to CASE 2 to view full results');
-        setTimeout(() => setShowToast(''), 3000);
-      }
+      setShowResultsModal(true);
     }, 10000);
   };
 
@@ -418,13 +408,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         }
         setShowToast('Opening Results in 5 seconds...');
         measureResultsTimeoutRef.current = window.setTimeout(() => {
-          if (case2PH != null) {
-            setShowResultsModal(true);
-          } else {
-            setShowToast('Save a pH to CASE 2 to view full results');
-            setTimeout(() => setShowToast(''), 3000);
-          }
-          measureResultsTimeoutRef.current = null;
+          setShowResultsModal(true);
+        measureResultsTimeoutRef.current = null;
         }, 5000);
         // clear the short toast message shortly
         setTimeout(() => setShowToast(''), 3500);
@@ -515,12 +500,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
               {(analysisLog.length > 0 || hclSample || aceticSample || compareMode) && (
                 <Button onClick={() => {
-                  if (case2PH != null) {
-                    setShowResultsModal(true);
-                  } else {
-                    setShowToast('Save a pH to CASE 2 to view full results');
-                    setTimeout(() => setShowToast(''), 2500);
-                  }
+                  setShowResultsModal(true);
                 }} className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 mt-2 flex items-center justify-center">
                   <span>View RESULTS</span>
                 </Button>
@@ -562,8 +542,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 />
               ))}
 
-              {/* Contextual actions near pH paper when present */}
-              {phPaperItem && !compareMode && (
+              {/* Contextual actions near pH paper when present (only for pH paper items, not the universal indicator bottle) */}
+              {phPaperItem && !compareMode && phPaperItem.id.toLowerCase().includes('ph') && (
                 <>
                   {/* MEASURE button placed beside the pH paper */}
                   <div style={{ position: 'absolute', left: phPaperItem.position.x + 90, top: phPaperItem.position.y, transform: 'translate(-50%, -50%)' }}>
@@ -675,23 +655,6 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   })()}
                 </div>
 
-                <div className="mt-2 flex space-x-2">
-                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase1PH(lastMeasuredPH); setShowToast('Saved to CASE 1'); setTimeout(() => setShowToast(''), 1500); } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 1</Button>
-                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase2PH(lastMeasuredPH); setShowToast('Saved to CASE 2'); setTimeout(() => setShowToast(''), 1500); // open results when CASE 2 saved
-                    setTimeout(() => setShowResultsModal(true), 200);
-                  } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 2</Button>
-                </div>
-
-                <div className="mt-3 grid grid-cols-1 gap-2">
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 1</div>
-                    <div className="text-xs text-gray-600">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
-                  </div>
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 2</div>
-                    <div className="text-xs text-gray-600">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
-                  </div>
-                </div>
               </div>
             </div>
 
