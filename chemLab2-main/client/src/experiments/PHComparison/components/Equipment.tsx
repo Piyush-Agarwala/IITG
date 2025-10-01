@@ -75,12 +75,16 @@ export const Equipment: React.FC<EquipmentProps> = ({
             draggable={!disabled}
             onDragStart={handleDragStart}
             onClick={() => { if (onInteract) onInteract(id); }}
-            className={`flex flex-col items-center p-4 rounded-lg border-2 ${
+            className={`equipment-toolbar-item flex items-center p-3 rounded-lg border-2 ${
               disabled ? 'border-gray-200 bg-gray-50 opacity-50' : 'border-gray-300 bg-white hover:border-blue-400 hover:shadow-lg'
             }`}
           >
-            <div className="text-3xl mb-2 text-blue-600">{icon}</div>
-            <span className="text-sm font-medium text-gray-700 text-center">{name}</span>
+            <div className="w-12 h-12 flex items-center justify-center bg-blue-50 rounded-md mr-3">
+              <div className="text-2xl text-blue-600">{icon}</div>
+            </div>
+            <div className="flex-1 text-left">
+              <span className="text-sm font-medium text-gray-700 block">{name}</span>
+            </div>
           </div>
         </TooltipTrigger>
         <TooltipContent>
@@ -93,7 +97,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   // Placed item
   const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || name.toLowerCase().includes('ethanoic (acetic) acid') || name.toLowerCase().includes('sodium ethanoate') || name.toLowerCase().includes('sodium acetate');
   const lowerName = name.toLowerCase();
-  const bottleBgColor = (lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? '#e6f0ff' : '#fffacc';
+  const bottleBgClass = (lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? 'bg-bottle-blue' : 'bg-bottle-yellow';
   const dropletColorClass = (lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? 'text-blue-600' : 'text-yellow-700';
   const isPH = name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
 
@@ -145,27 +149,27 @@ export const Equipment: React.FC<EquipmentProps> = ({
             </div>
           ) : (id === 'hcl-0-01m' || id === 'nh4oh-0-1m' || id === 'nh4cl-0-1m' || name.toLowerCase().includes('ammonium hydroxide') || name.toLowerCase().includes('ammonium chloride') || name.toLowerCase().includes('nh4oh') || name.toLowerCase().includes('nh4cl')) ? (
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacc' }}>
-                <Droplets className="w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 text-yellow-700 opacity-70" />
+              <div className={`w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm ${bottleBgClass}`}>
+                <Droplets className={`w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 ${dropletColorClass} opacity-70`} />
               </div>
               {renderNameParts(name)}
             </div>
           ) : isAceticOrSodium ? (
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: bottleBgColor }}>
+              <div className={`w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm ${bottleBgClass}`}>
                 <Droplets className={`w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 ${dropletColorClass} opacity-70`} />
               </div>
               {renderNameParts(name)}
             </div>
           ) : (name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph')) ? (
             <div className="flex flex-col items-center">
-              <div className="w-24 h-8 relative overflow-visible mb-2" style={{ backgroundColor: color || 'transparent', borderRadius: '6px', padding: '4px', transition: 'background-color 2s ease' }}>
+              <div className="w-24 h-8 relative overflow-visible mb-2 ph-paper" style={{ backgroundColor: color || 'transparent' }}>
                 <img src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fa1eea72a49464b2f93611a90f0edd819?format=webp&width=800" alt="pH Paper" className="w-full h-full object-contain transform rotate-0 scale-[5] origin-center max-w-none" style={{ mixBlendMode: 'multiply', opacity: 0.95 }} />
               </div>
             </div>
           ) : id === 'universal-indicator' ? (
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#e1bee7' }}>
+              <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm bg-universal-indicator">
                 <FlaskConical className="w-7 h-7 absolute top-3 left-1/2 -translate-x-1/2 text-purple-700 opacity-70" />
               </div>
               <span className="text-xs font-medium text-center">Universal Indicator</span>
