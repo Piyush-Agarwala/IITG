@@ -59,6 +59,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
   // Count measure button presses and schedule showing results after 3rd press
   const [measureCount, setMeasureCount] = useState(0);
+  // Track whether the MEASURE action has been pressed (used to stop blinking prompts)
+  const [measurePressed, setMeasurePressed] = useState(false);
   const measureTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -70,7 +72,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     };
   }, []);
 
-  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); }, [experiment.id]);
+  useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); setMeasurePressed(false); }, [experiment.id]);
 
   const items = useMemo(() => {
     const iconFor = (name: string) => {
@@ -463,8 +465,8 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${measureCount < 2 && (paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : ''))}` }
-                            onClick={() => {
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed && measureCount < 2 && (paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : ''))}` }
+                            onClick={() => { setMeasurePressed(true);
                               // count presses and schedule results modal after 3rd press
                               setMeasureCount(prev => {
                                 const next = prev + 1;
