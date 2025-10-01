@@ -498,11 +498,11 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               </Button>
               <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
 
-              {(analysisLog.length > 0 || hclSample || aceticSample || compareMode) && (
+              {compareMode && (
                 <Button onClick={() => {
                   setShowResultsModal(true);
-                }} className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 mt-2 flex items-center justify-center">
-                  <span>View RESULTS</span>
+                }} className="w-full bg-blue-500 hover:bg-blue-600 text-white mt-2 flex items-center justify-center">
+                  <span>View Results & Analysis</span>
                 </Button>
               )}
             </div>

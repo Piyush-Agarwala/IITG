@@ -40,7 +40,7 @@ export default function BufferWorkbenchMock() {
 
                   <div className="space-y-2">
                     <Button variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center"><Undo2 className="w-4 h-4 mr-2" />UNDO</Button>
-                    <Button className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center"><CheckCircle className="w-4 h-4 mr-2 text-green-600" />View Results & Analysis</Button>
+                    <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center"><CheckCircle className="w-4 h-4 mr-2 text-white" />View Results & Analysis</Button>
                     <Button variant="destructive" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
                   </div>
                 </aside>
@@ -76,7 +76,10 @@ export default function BufferWorkbenchMock() {
                         </div>
 
                         <div className="mt-4">
-                          <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">RESET sodium ethanoate</Button>
+                          <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">
+                          <span className="block font-semibold">RESET</span>
+                          <span className="block text-xs">(CH₃COONa)</span>
+                        </Button>
                         </div>
                       </div>
 
