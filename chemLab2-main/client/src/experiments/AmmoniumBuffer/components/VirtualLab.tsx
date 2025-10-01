@@ -124,17 +124,19 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         let nextColor = prev.colorHex;
 
         // When adding pH paper (indicator), do NOT change the liquid color in the test tube.
-        // Only other reagent additions should affect the liquid color.
+        // Also, when adding NH4Cl we do not change the visible liquid color (indicator/paper will show change).
         if (reagent === 'IND') {
           // keep nextColor as previous color
+        } else if (reagent === 'NH4Cl') {
+          // intentionally do not alter the visible liquid color when NH4Cl is added
         } else {
           if (contents.includes('IND')) {
-            if (contents.includes('NH4Cl')) nextColor = COLORS.NH4_BUFFERED; // common ion lowers pH
-            else if (contents.includes('NH4OH')) nextColor = COLORS.NH4OH_BASE; // basic
+            // Only changes visible liquid color for NH4OH when indicator present
+            if (contents.includes('NH4OH')) nextColor = COLORS.NH4OH_BASE; // basic
             else nextColor = COLORS.NEUTRAL;
             animateColorTransition(nextColor);
           } else if (newVol > 0) {
-            // Show base blue liquid when volume is added but no pH paper is present (matches reference)
+            // Show base blue liquid when NH4OH volume is added but no pH paper is present
             nextColor = COLORS.NH4OH_BASE;
           }
         }
@@ -142,7 +144,9 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         const label = reagent === 'NH4OH' ? 'Added NH4OH' : reagent === 'NH4Cl' ? 'Added NH4Cl' : 'Added pH paper';
         const observation = reagent === 'IND'
           ? 'pH paper placed (no change to liquid color)'
-          : (contents.includes('IND') ? (contents.includes('NH4Cl') ? 'Indicator shifted toward green → lower pH (buffered)' : contents.includes('NH4OH') ? 'Indicator turned blue/green �� basic (~pH > 7)' : 'Indicator added to neutral solution') : 'Solution color unchanged (no indicator)');
+          : reagent === 'NH4Cl'
+            ? 'NH4Cl added (no visible change to liquid color)'
+            : (contents.includes('IND') ? (contents.includes('NH4OH') ? 'Indicator turned blue/green → basic (~pH > 7)' : 'Indicator added to neutral solution') : 'Solution color unchanged (no indicator)');
 
         setAnalysisLog(prevLog => [...prevLog, { id: `${Date.now()}-${Math.random()}`, action: `${label} (${volume.toFixed(1)} mL)`, observation, colorBefore, colorAfter: nextColor }]);
         return { ...prev, volume: newVol, contents };
