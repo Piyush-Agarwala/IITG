@@ -363,9 +363,9 @@ export default function VirtualLab({
   const getEquipmentPosition = (equipmentId: string) => {
     const positions = {
       'test-tube': { x: 200, y: 250 },           // Left side, center
-      'cobalt-ii-solution': { x: 500, y: 130 },  // Right side, top bottle (moved down for header visibility)
-      'concentrated-hcl': { x: 500, y: 300 },    // Right side, middle bottle
-      'distilled-water': { x: 500, y: 470 }      // Right side, bottom bottle
+      'cobalt-ii-solution': { x: 500, y: 180 },  // Right side, top bottle (moved slightly lower)
+      'concentrated-hcl': { x: 500, y: 350 },    // Right side, middle bottle (moved slightly lower)
+      'distilled-water': { x: 500, y: 520 }      // Right side, bottom bottle (moved slightly lower)
     };
     return positions[equipmentId as keyof typeof positions] || { x: 300, y: 250 };
   };
@@ -1005,7 +1005,7 @@ export default function VirtualLab({
                   <div className="bg-white rounded-lg p-4">
                     <h4 className="font-semibold text-pink-800 mb-2">Adding Water (Stress: ↓ Cl⁻ concentration)</h4>
                     <p className="text-sm text-gray-700">
-                      The system responds by shifting left to counteract the dilution, forming more [Co(H₂O)₆]²⁺ complex (pink color).
+                      The system responds by shifting left to counteract the dilution, forming more [Co(H₂O)₆]²��� complex (pink color).
                     </p>
                   </div>
                 </div>
