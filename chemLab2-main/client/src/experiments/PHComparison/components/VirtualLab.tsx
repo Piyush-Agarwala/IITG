@@ -356,12 +356,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     setShowToast('Results opening in 10 seconds...');
     setTimeout(() => setShowToast(""), 3000);
     setTimeout(() => {
-      if (case2PH != null) {
-        setShowResultsModal(true);
-      } else {
-        setShowToast('Save a pH to CASE 2 to view full results');
-        setTimeout(() => setShowToast(''), 3000);
-      }
+      setShowResultsModal(true);
     }, 10000);
   };
 
@@ -407,13 +402,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         }
         setShowToast('Opening Results in 5 seconds...');
         measureResultsTimeoutRef.current = window.setTimeout(() => {
-          if (case2PH != null) {
-            setShowResultsModal(true);
-          } else {
-            setShowToast('Save a pH to CASE 2 to view full results');
-            setTimeout(() => setShowToast(''), 3000);
-          }
-          measureResultsTimeoutRef.current = null;
+          setShowResultsModal(true);
+        measureResultsTimeoutRef.current = null;
         }, 5000);
         // clear the short toast message shortly
         setTimeout(() => setShowToast(''), 3500);
@@ -504,12 +494,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
               {(analysisLog.length > 0 || hclSample || aceticSample || compareMode) && (
                 <Button onClick={() => {
-                  if (case2PH != null) {
-                    setShowResultsModal(true);
-                  } else {
-                    setShowToast('Save a pH to CASE 2 to view full results');
-                    setTimeout(() => setShowToast(''), 2500);
-                  }
+                  setShowResultsModal(true);
                 }} className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 mt-2 flex items-center justify-center">
                   <span>View RESULTS</span>
                 </Button>
