@@ -457,7 +457,7 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : '')}`}
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${measureCount < 2 && (paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : ''))}` }
                             onClick={() => {
                               // count presses and schedule results modal after 3rd press
                               setMeasureCount(prev => {
