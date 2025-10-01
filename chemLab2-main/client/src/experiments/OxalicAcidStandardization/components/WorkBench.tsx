@@ -155,6 +155,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     // Helper to add a bottle (chemical)
     const addBottle = (payload: any) => {
+      if (enforceStepOneRestriction(payload?.id)) {
+        return;
+      }
       setEquipmentPositions(prev => [
         ...prev,
         {
