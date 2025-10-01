@@ -76,7 +76,10 @@ export default function BufferWorkbenchMock() {
                         </div>
 
                         <div className="mt-4">
-                          <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">RESET  (CH₃COONa)</Button>
+                          <Button size="sm" className="bg-red-500 text-white hover:bg-red-600">
+                          <span className="block font-semibold">RESET</span>
+                          <span className="block text-xs">(CH₃COONa)</span>
+                        </Button>
                         </div>
                       </div>
 
