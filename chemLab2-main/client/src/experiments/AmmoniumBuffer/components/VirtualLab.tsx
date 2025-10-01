@@ -329,6 +329,21 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               {equipmentOnBench.find(e => e.id === 'test-tube') && (
                 <>
                   <Equipment id="test-tube" name="25ml Test Tube" icon={<TestTube className="w-8 h-8" />} position={getEquipmentPosition('test-tube')} onRemove={handleRemove} onInteract={() => {}} color={testTube.colorHex} volume={testTube.volume} displayVolume={showNh4ohDialog && previewNh4ohVolume != null ? previewNh4ohVolume : showNh4clDialog && previewNh4clVolume != null ? previewNh4clVolume : showIndicatorDialog && previewIndicatorVolume != null ? Math.min(20, testTube.volume + previewIndicatorVolume) : testTube.volume} isActive={true} />
+
+                  {/* Show RESET button below the test tube when universal indicator has been added */}
+                  {testTube.contents.includes('IND') && (
+                    <div style={{ position: 'absolute', left: getEquipmentPosition('test-tube').x, top: getEquipmentPosition('test-tube').y + 220, transform: 'translate(-50%, 0)' }}>
+                      <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white shadow-sm animate-pulse" onClick={() => {
+                        // Restore test tube to empty/clear state
+                        setHistory([]);
+                        setTestTube(prev => ({ ...prev, volume: 0, contents: [], colorHex: COLORS.CLEAR }));
+                        setShowToast('Test tube reset');
+                        setTimeout(() => setShowToast(''), 1400);
+                      }}>
+                        RESET
+                      </Button>
+                    </div>
+                  )}
                 </>
               )}
 
