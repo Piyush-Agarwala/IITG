@@ -83,6 +83,15 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   }, []);
 
   useEffect(() => {
+    return () => {
+      if (messageTimeoutRef.current) {
+        window.clearTimeout(messageTimeoutRef.current);
+        messageTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (isRunning) {
       const tempInterval = setInterval(() => {
         setTemperature((prev) => {
