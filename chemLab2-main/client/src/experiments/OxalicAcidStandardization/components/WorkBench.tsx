@@ -68,6 +68,19 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [temperature, setTemperature] = useState(25);
   const [showCalculator, setShowCalculator] = useState(false);
+  const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
+  const messageTimeoutRef = useRef<number | null>(null);
+
+  const showMessage = useCallback((text: string) => {
+    setWorkbenchMessage(text);
+    if (messageTimeoutRef.current) {
+      window.clearTimeout(messageTimeoutRef.current);
+    }
+    messageTimeoutRef.current = window.setTimeout(() => {
+      setWorkbenchMessage(null);
+      messageTimeoutRef.current = null;
+    }, 2500);
+  }, []);
 
   useEffect(() => {
     if (isRunning) {
