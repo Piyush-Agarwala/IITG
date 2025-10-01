@@ -465,7 +465,7 @@ const stepsProgress = (
                         return (
                           <Button
                             size="sm"
-                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed && measureCount < 2 && (paperHasColor ? 'blink-until-pressed' : (!paperHasColor && shouldBlinkMeasure ? 'blink-until-pressed' : ''))}` }
+                            className={`measure-action-btn bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!measurePressed ? 'blink-until-pressed' : ''}` }
                             onClick={() => { setMeasurePressed(true);
                               // count presses and schedule results modal after 3rd press
                               setMeasureCount(prev => {
@@ -720,7 +720,7 @@ const stepsProgress = (
             <div>
               <h4 className="font-semibold mb-2">Action Timeline</h4>
               <ol className="list-decimal list-inside text-sm text-gray-700">
-                <li>Added ethanoic acid — initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
+                <li>Added ethanoic acid �� initial pH recorded {initialAcidPH != null ? `(${initialAcidPH.toFixed(2)})` : ''}</li>
                 <li>Added sodium ethanoate ��� stored CASE values {case1PH != null ? `CASE1: ${case1PH.toFixed(2)}` : ''} {case2PH != null ? `CASE2: ${case2PH.toFixed(2)}` : ''}</li>
               </ol>
             </div>
