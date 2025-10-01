@@ -343,6 +343,27 @@ export const Equipment: React.FC<EquipmentProps> = ({
     "beakers",
   ].includes(id);
 
+  // Compute effective position for certain reagents: anchor ammonium bottles relative to the test tube
+  const effectivePosition: { x: number; y: number } | null = (() => {
+    if (!isOnWorkbench || !currentPosition) return currentPosition;
+    const lowerId = id.toLowerCase();
+    const lowerName = name.toLowerCase();
+    const isAmmoniumBottle = lowerId.includes('nh4oh') || lowerId.includes('nh4cl') || lowerName.includes('ammonium hydroxide') || lowerName.includes('ammonium chloride');
+    if (!isAmmoniumBottle) return currentPosition;
+
+    // Find test tube position by commonly used ids
+    const testTubePos = allEquipmentPositions.find(
+      (p) => p.id === 'test-tube' || p.id === 'test_tubes' || p.id === 'test-tubes',
+    );
+    if (!testTubePos) return currentPosition;
+
+    // Place bottles to the right of the test tube, stacked vertically
+    const offsetX = 90; // horizontal offset from test tube center
+    const offsetY = lowerId.includes('nh4oh') || lowerName.includes('ammonium hydroxide') ? -40 : 40;
+
+    return { x: testTubePos.x + offsetX, y: testTubePos.y + offsetY };
+  })();
+
   // Calculate mixed color from all chemicals
   const getMixedColor = () => {
     if (chemicals.length === 0) return "transparent";
@@ -1804,8 +1825,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
       } ${!isOnWorkbench && isContainer && isDragOver && !disabled ? "border-green-500 bg-green-50 scale-105 drop-zone-active" : ""}`}
       style={{
         position: isOnWorkbench ? "absolute" : "relative",
-        left: isOnWorkbench && currentPosition ? currentPosition.x : "auto",
-        top: isOnWorkbench && currentPosition ? currentPosition.y : "auto",
+        left: isOnWorkbench && effectivePosition ? effectivePosition.x : "auto",
+        top: isOnWorkbench && effectivePosition ? effectivePosition.y : "auto",
         zIndex: isOnWorkbench ? (isDragging ? 50 : 10) : "auto",
         transform: isOnWorkbench
           ? isDragging
