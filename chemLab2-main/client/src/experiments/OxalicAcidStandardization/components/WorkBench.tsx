@@ -209,6 +209,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     // If raw is a URL (user dragged an image), create a generic equipment that displays the image
     if (raw && raw.startsWith("http")) {
+      if (isStepOne) {
+        showMessage(notThisStepMessage);
+        return;
+      }
       setEquipmentPositions(prev => [
         ...prev,
         {
