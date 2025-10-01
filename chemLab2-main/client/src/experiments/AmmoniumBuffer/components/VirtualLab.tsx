@@ -400,16 +400,13 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           <div className="lg:col-span-3 space-y-4">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <Info className="w-5 h-5 mr-2 text-green-600" />
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 mr-2" aria-hidden="true" />
                 Live Analysis
               </h3>
+
               <div className="mb-4">
-                <h4 className="font-semibold text-sm text-gray-700 mb-2">Current Solution</h4>
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: testTube.colorHex }}></div>
-                  <span className="text-sm">{testTube.contents.includes('IND') ? 'With pH paper' : (testTube.colorHex === COLORS.CLEAR ? 'Clear (no indicator)' : 'With indicator')}</span>
-                </div>
-                <p className="text-xs text-gray-600">Contents: {testTube.contents.join(', ') || 'None'}</p>
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Current Step</h4>
+                <p className="text-xs text-gray-600">{GUIDED_STEPS[(mode.currentGuidedStep || 0)]?.title || GUIDED_STEPS[currentStep-1]?.title}</p>
               </div>
 
               <div className="mb-4">
@@ -437,12 +434,27 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                     );
                   })()}
                 </div>
+
+                <div className="mt-6">
+                  <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">A</span> pH of Ammonium hydroxide</h5>
+                  <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                </div>
+
+                <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
+                <div className="mt-3 grid grid-cols-1 gap-2">
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 1</div>
+                    <div className="text-lg text-black font-semibold">{bufferedSample != null ? `${bufferedSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                  </div>
+                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="font-medium">CASE 2</div>
+                    <div className="text-lg text-black font-semibold">No result yet</div>
+                  </div>
+                </div>
+
+                {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
             </div>
-
-            {showToast && (
-              <div className="p-3 rounded bg-blue-50 border border-blue-200 text-blue-700 text-sm">{showToast}</div>
-            )}
           </div>
         </div>
       </div>
