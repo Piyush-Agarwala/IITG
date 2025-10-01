@@ -319,6 +319,78 @@ function OxalicAcidVirtualLab({
     }
   }, [equipmentPositions, step.id, onStepComplete, setMeasurements]);
 
+  useEffect(() => {
+    if (step.id !== 2) {
+      stepTwoAlignedRef.current = false;
+      return;
+    }
+
+    if (stepTwoAlignedRef.current) {
+      return;
+    }
+
+    const hasBalance = equipmentPositions.some(pos => (pos.typeId ?? pos.id).toLowerCase().includes("analytical_balance"));
+    const hasBoat = equipmentPositions.some(pos => (pos.typeId ?? pos.id).toLowerCase().includes("weighing_boat"));
+    if (!hasBalance || !hasBoat) {
+      return;
+    }
+
+    let frame: number | null = null;
+    const attemptAlignment = () => {
+      const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+      if (!surface) {
+        frame = window.requestAnimationFrame(attemptAlignment);
+        return;
+      }
+      const balanceEl = surface.querySelector('[data-equipment-type="analytical_balance"]') as HTMLElement | null;
+      const boatEl = surface.querySelector('[data-equipment-type="weighing_boat"]') as HTMLElement | null;
+      if (!balanceEl || !boatEl) {
+        frame = window.requestAnimationFrame(attemptAlignment);
+        return;
+      }
+
+      const surfaceRect = surface.getBoundingClientRect();
+      const balanceRect = balanceEl.getBoundingClientRect();
+      const boatRect = boatEl.getBoundingClientRect();
+
+      const targetBalanceX = Math.max(0, (surfaceRect.width - balanceRect.width) / 2);
+      const targetBalanceY = Math.max(0, surfaceRect.height * 0.12);
+      const targetBoatX = targetBalanceX + (balanceRect.width - boatRect.width) / 2;
+      const targetBoatY = targetBalanceY + balanceRect.height * 0.42;
+
+      stepTwoAlignedRef.current = true;
+      setEquipmentPositions(prev => {
+        let changed = false;
+        const next = prev.map(pos => {
+          const key = (pos.typeId ?? pos.id).toLowerCase();
+          if (key.includes("analytical_balance")) {
+            if (Math.abs(pos.x - targetBalanceX) > 1 || Math.abs(pos.y - targetBalanceY) > 1) {
+              changed = true;
+              return { ...pos, x: targetBalanceX, y: targetBalanceY };
+            }
+            return pos;
+          }
+          if (key.includes("weighing_boat")) {
+            if (Math.abs(pos.x - targetBoatX) > 1 || Math.abs(pos.y - targetBoatY) > 1) {
+              changed = true;
+              return { ...pos, x: targetBoatX, y: targetBoatY };
+            }
+            return pos;
+          }
+          return pos;
+        });
+        return changed ? next : prev;
+      });
+    };
+
+    frame = window.requestAnimationFrame(attemptAlignment);
+    return () => {
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [equipmentPositions, step.id]);
+
   const canProceed = useCallback(() => {
     switch (step.id) {
       case 1:
