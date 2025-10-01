@@ -340,13 +340,16 @@ function OxalicAcidVirtualLab({
   }, [step.id, measurements.targetMass, preparationState]);
 
   useEffect(() => {
+    if (step.id === 1) {
+      return;
+    }
     if (canProceed() && isActive) {
       const timer = setTimeout(() => {
         onStepComplete();
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [canProceed, isActive, onStepComplete]);
+  }, [canProceed, isActive, onStepComplete, step.id]);
 
   return (
     <TooltipProvider>
