@@ -664,23 +664,6 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   })()}
                 </div>
 
-                <div className="mt-2 flex space-x-2">
-                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase1PH(lastMeasuredPH); setShowToast('Saved to CASE 1'); setTimeout(() => setShowToast(''), 1500); } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 1</Button>
-                  <Button size="sm" className="bg-green-50 border border-green-200 text-green-700" onClick={() => { if (lastMeasuredPH != null) { setCase2PH(lastMeasuredPH); setShowToast('Saved to CASE 2'); setTimeout(() => setShowToast(''), 1500); // open results when CASE 2 saved
-                    setTimeout(() => setShowResultsModal(true), 200);
-                  } else { setShowToast('No pH to save'); setTimeout(() => setShowToast(''), 1500); } }}>Save to CASE 2</Button>
-                </div>
-
-                <div className="mt-3 grid grid-cols-1 gap-2">
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 1</div>
-                    <div className="text-xs text-gray-600">{case1PH != null ? `${case1PH.toFixed(2)} (${case1PH < 7 ? 'Acidic' : case1PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
-                  </div>
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 2</div>
-                    <div className="text-xs text-gray-600">{case2PH != null ? `${case2PH.toFixed(2)} (${case2PH < 7 ? 'Acidic' : case2PH > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
-                  </div>
-                </div>
               </div>
             </div>
 
