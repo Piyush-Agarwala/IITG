@@ -82,6 +82,11 @@ export default function BufferPHApp({ onBack }: Props) {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{experiment.title}</h1>
           <p className="text-gray-600 mb-4">{experiment.description}</p>
+          {experiment.imageUrl ? (
+            <div className="mb-4">
+              <img src={experiment.imageUrl} alt={experiment.title} className="w-full h-48 md:h-56 object-cover rounded" loading="lazy" />
+            </div>
+          ) : null}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">Guided Mode</span>
