@@ -111,10 +111,9 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     // fall back to fixed coordinates.
     const commonBottleIds = ['hcl-0-01m', 'acetic-0-01m', 'universal-indicator'];
     if (commonBottleIds.includes(equipmentId)) {
-      // Move the bottles further to the right side of the workbench.
-      // Use a larger offset from the test tube when anchored, and a larger
-      // fallback x-coordinate when no test tube is present.
-      const baseX = tubeOnBench ? tubeOnBench.position.x + 320 : 640;
+      // Move the bottles slightly to the left compared to the previous layout.
+      // Reduce the offset from the test tube when anchored, and lower the fallback x-coordinate.
+      const baseX = tubeOnBench ? tubeOnBench.position.x + 260 : 580;
       const baseY = tubeOnBench ? tubeOnBench.position.y - 80 : 200;
       const spacing = 160; // equal vertical spacing between bottles
       const index = commonBottleIds.indexOf(equipmentId);
