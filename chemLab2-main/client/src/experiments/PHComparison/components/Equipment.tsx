@@ -75,16 +75,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
             draggable={!disabled}
             onDragStart={handleDragStart}
             onClick={() => { if (onInteract) onInteract(id); }}
-            className={`equipment-toolbar-item flex items-center p-3 rounded-lg border-2 ${
+            className={`flex flex-col items-center p-4 rounded-lg border-2 ${
               disabled ? 'border-gray-200 bg-gray-50 opacity-50' : 'border-gray-300 bg-white hover:border-blue-400 hover:shadow-lg'
             }`}
           >
-            <div className="w-12 h-12 flex items-center justify-center bg-blue-50 rounded-md mr-3">
-              <div className="text-2xl text-blue-600">{icon}</div>
-            </div>
-            <div className="flex-1 text-left">
-              <span className="text-sm font-medium text-gray-700 block">{name}</span>
-            </div>
+            <div className="text-3xl mb-2 text-blue-600">{icon}</div>
+            <span className="text-sm font-medium text-gray-700 text-center">{name}</span>
           </div>
         </TooltipTrigger>
         <TooltipContent>
