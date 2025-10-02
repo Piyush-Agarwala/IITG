@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment as PHEquipment } from "@/experiments/PHComparison/components/Equipment";
-import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle } from "lucide-react";
+import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle, Home } from "lucide-react";
 import type { Experiment, ExperimentStep } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "wouter";
@@ -789,8 +789,15 @@ const stepsProgress = (
           </div>
 
           <DialogFooter>
-            <Link href="/"><Button variant="outline">Return to Experiments</Button></Link>
-            <Button onClick={() => setShowResultsModal(false)}>Close Analysis</Button>
+            <div className="w-full flex justify-between">
+              <Link href="/">
+                <Button className="bg-gray-500 hover:bg-gray-600 text-white flex items-center space-x-2">
+                  <Home className="w-4 h-4" />
+                  <span>Return to Experiments</span>
+                </Button>
+              </Link>
+              <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
