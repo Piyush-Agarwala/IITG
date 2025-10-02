@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Play, Pause, RotateCcw } from "lucide-react";
-import { Link, useRoute } from "wouter";
+import { Link, useRoute, useLocation } from "wouter";
 import VirtualLab from "./VirtualLab";
 import PHComparisonData from "../data";
 import { useUpdateProgress } from "@/hooks/use-experiments";
@@ -34,6 +34,16 @@ export default function PHComparisonApp({ onBack }: Props) {
   const formatTime = (s: number) => `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
 
   const handleStart = () => { setExperimentStarted(true); setIsRunning(true); };
+
+  // Auto-start timer if ?autostart=1 present in URL
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+      if (params.get('autostart') === '1') {
+        handleStart();
+      }
+    } catch (e) {}
+  }, []);
   const handleReset = () => {
     setIsRunning(false);
     setTimer(0);
