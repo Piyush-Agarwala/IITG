@@ -495,9 +495,11 @@ useEffect(() => {
                               compareTimeoutRef.current = null;
                             }
                             setShowToast('Opening results...');
+                            setCompareInitiated(true);
                             compareTimeoutRef.current = window.setTimeout(() => {
                               setShowResultsModal(true);
                               setShowToast('');
+                              setCompareInitiated(false);
                               compareTimeoutRef.current = null;
                             }, 5000) as unknown as number;
                           } else {
