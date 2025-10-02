@@ -454,6 +454,7 @@ useEffect(() => {
                     compareTimeoutRef.current = null;
                   }
                   setCompareInitiated(false);
+                  if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
                   setShowResultsModal(true);
                 }} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results & Analysis</Button>
               )}
