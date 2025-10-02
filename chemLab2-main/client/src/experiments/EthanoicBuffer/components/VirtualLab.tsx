@@ -6,6 +6,7 @@ import { Equipment as PHEquipment } from "@/experiments/PHComparison/components/
 import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle } from "lucide-react";
 import type { Experiment, ExperimentStep } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Link } from "wouter";
 
 interface VirtualLabProps {
   experiment: Experiment;
@@ -788,7 +789,7 @@ const stepsProgress = (
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowResultsModal(false)}>Return to Experiments</Button>
+            <Link href="/"><Button variant="outline">Return to Experiments</Button></Link>
             <Button onClick={() => setShowResultsModal(false)}>Close Analysis</Button>
           </DialogFooter>
         </DialogContent>
