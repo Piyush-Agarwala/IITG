@@ -37,6 +37,16 @@ export default function BufferPHApp({ onBack }: Props) {
   const formatTime = (s: number) => `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
 
   const handleStart = () => { setExperimentStarted(true); setIsRunning(true); };
+
+  // Auto-start timer if ?autostart=1 present in URL
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+      if (params.get('autostart') === '1') {
+        handleStart();
+      }
+    } catch (e) {}
+  }, []);
   const handleReset = () => {
     setIsRunning(false);
     setTimer(0);
