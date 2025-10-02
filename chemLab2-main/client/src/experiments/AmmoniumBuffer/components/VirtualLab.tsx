@@ -368,6 +368,28 @@ useEffect(() => {
     setTimeout(() => setShowToast(''), 1600);
   };
 
+  // Henderson-Hasselbalch calculation helper
+  const computeHenderson = () => {
+    const pKa = 9.25; // pKa of NH4+ at 25°C (approx)
+    const baseVolMl = history.filter(h => h.type === 'NH4OH').reduce((s, h) => s + h.volume, 0);
+    const acidVolMl = history.filter(h => h.type === 'NH4Cl').reduce((s, h) => s + h.volume, 0);
+    const indicatorVolMl = history.filter(h => h.type === 'IND').reduce((s, h) => s + h.volume, 0);
+    const totalVolMl = (testTube.volume ?? 0) || (baseVolMl + acidVolMl + indicatorVolMl);
+    const totalVolL = totalVolMl / 1000;
+    const concM = 0.1; // stock concentration for both reagents (0.1 M)
+
+    const molesBase = (baseVolMl / 1000) * concM;
+    const molesAcid = (acidVolMl / 1000) * concM;
+
+    const baseConc = totalVolL > 0 ? molesBase / totalVolL : 0;
+    const acidConc = totalVolL > 0 ? molesAcid / totalVolL : 0;
+
+    const ratio = acidConc > 0 ? baseConc / acidConc : (molesAcid === 0 && molesBase > 0 ? Infinity : 0);
+    const pH = (molesBase > 0 && molesAcid > 0 && totalVolL > 0) ? (pKa + Math.log10(ratio)) : null;
+
+    return { pKa, baseVolMl, acidVolMl, indicatorVolMl, totalVolMl, totalVolL, molesBase, molesAcid, baseConc, acidConc, ratio, pH };
+  };
+
   const stepsProgress = (
     <div className="mb-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-blue-200 shadow-sm">
       <div className="flex items-center justify-between mb-4">
