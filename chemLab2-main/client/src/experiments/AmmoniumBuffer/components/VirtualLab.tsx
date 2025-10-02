@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,8 @@ import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment } from "./Equipment";
 import { AB_LAB_EQUIPMENT } from "./Equipment";
 import { COLORS, INITIAL_TESTTUBE, GUIDED_STEPS, ANIMATION } from "../constants";
-import { Beaker, Info, Wrench, CheckCircle, ArrowRight, TestTube, Undo2, TrendingUp } from "lucide-react";
+import { Beaker, Info, Wrench, CheckCircle, ArrowRight, TestTube, Undo2, TrendingUp, Clock, Home } from "lucide-react";
+import { Link } from "wouter";
 
 interface ExperimentMode {
   current: 'guided';
@@ -63,10 +64,31 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  // timer ref used to delay opening the results modal when COMPARE is pressed
+  const compareTimeoutRef = useRef<number | null>(null);
+  // whether a compare action has been initiated (used to show the floating View Results button)
+  const [compareInitiated, setCompareInitiated] = useState<boolean>(false);
+
+  // clear any pending timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      if (compareTimeoutRef.current) {
+        clearTimeout(compareTimeoutRef.current as unknown as number);
+        compareTimeoutRef.current = null;
+      }
+    };
+  }, []);
   const [ammoniumInitialPH, setAmmoniumInitialPH] = useState<number | null>(null);
   const [ammoniumAfterPH, setAmmoniumAfterPH] = useState<number | null>(null);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
+
+useEffect(() => {
+  if (showResultsModal) {
+    // pause the simulation when viewing results
+    setIsRunning(false);
+  }
+}, [showResultsModal, setIsRunning]);
 
   const getEquipmentPosition = (equipmentId: string) => {
     const baseX = 220;
@@ -346,6 +368,28 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     setTimeout(() => setShowToast(''), 1600);
   };
 
+  // Henderson-Hasselbalch calculation helper
+  const computeHenderson = () => {
+    const pKa = 9.25; // pKa of NH4+ at 25°C (approx)
+    const baseVolMl = history.filter(h => h.type === 'NH4OH').reduce((s, h) => s + h.volume, 0);
+    const acidVolMl = history.filter(h => h.type === 'NH4Cl').reduce((s, h) => s + h.volume, 0);
+    const indicatorVolMl = history.filter(h => h.type === 'IND').reduce((s, h) => s + h.volume, 0);
+    const totalVolMl = (testTube.volume ?? 0) || (baseVolMl + acidVolMl + indicatorVolMl);
+    const totalVolL = totalVolMl / 1000;
+    const concM = 0.1; // stock concentration for both reagents (0.1 M)
+
+    const molesBase = (baseVolMl / 1000) * concM;
+    const molesAcid = (acidVolMl / 1000) * concM;
+
+    const baseConc = totalVolL > 0 ? molesBase / totalVolL : 0;
+    const acidConc = totalVolL > 0 ? molesAcid / totalVolL : 0;
+
+    const ratio = acidConc > 0 ? baseConc / acidConc : (molesAcid === 0 && molesBase > 0 ? Infinity : 0);
+    const pH = (molesBase > 0 && molesAcid > 0 && totalVolL > 0) ? (pKa + Math.log10(ratio)) : null;
+
+    return { pKa, baseVolMl, acidVolMl, indicatorVolMl, totalVolMl, totalVolL, molesBase, molesAcid, baseConc, acidConc, ratio, pH };
+  };
+
   const stepsProgress = (
     <div className="mb-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-blue-200 shadow-sm">
       <div className="flex items-center justify-between mb-4">
@@ -399,7 +443,21 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               <Button onClick={handleUndo} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
-              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setAmmoniumAfterPH(null); setBaseSample(null); setBufferedSample(null); setAmmoniumAfterSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setAmmoniumAfterPH(null); setBaseSample(null); setBufferedSample(null); setAmmoniumAfterSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); setCompareInitiated(false); if (compareTimeoutRef.current) { clearTimeout(compareTimeoutRef.current as unknown as number); compareTimeoutRef.current = null; } onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+
+              {/* View Results button becomes available immediately when COMPARE is pressed */}
+              {(compareInitiated || ammoniumAfterSample != null) && (
+                <Button onClick={() => {
+                  // open results immediately and cancel any pending auto-open
+                  if (compareTimeoutRef.current) {
+                    clearTimeout(compareTimeoutRef.current as unknown as number);
+                    compareTimeoutRef.current = null;
+                  }
+                  setCompareInitiated(false);
+                  if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
+                  setShowResultsModal(true);
+                }} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results & Analysis</Button>
+              )}
             </div>
           </div>
 
@@ -446,7 +504,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   const paperHasColor = !!(phItem as any).color && (phItem as any).color !== COLORS.CLEAR;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!newPaperPressed && ((paperHasColor || (!paperHasColor && !measurePressed)) || nh4clVolumeAdded > 0)) ? 'blink-until-pressed' : ''}`} onClick={() => {
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!newPaperPressed && !compareInitiated && ((paperHasColor || (!paperHasColor && !measurePressed)) || nh4clVolumeAdded > 0)) ? 'blink-until-pressed' : ''}`} onClick={() => {
                         if (!paperHasColor) {
                           setMeasurePressed(true);
                           setNewPaperPressed(false);
@@ -454,7 +512,20 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                         } else {
                           // when NH4Cl result exists, offer COMPARE action
                           if (ammoniumAfterSample != null) {
-                            setShowResultsModal(true);
+                            // schedule opening the results modal after 5 seconds
+                            if (compareTimeoutRef.current) {
+                              clearTimeout(compareTimeoutRef.current as unknown as number);
+                              compareTimeoutRef.current = null;
+                            }
+                            setShowToast('Opening results...');
+                            setCompareInitiated(true);
+                            if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
+                            compareTimeoutRef.current = window.setTimeout(() => {
+                              setShowResultsModal(true);
+                              setShowToast('');
+                              setCompareInitiated(false);
+                              compareTimeoutRef.current = null;
+                            }, 5000) as unknown as number;
                           } else {
                             setNewPaperPressed(true);
                             setMeasurePressed(false);
@@ -523,7 +594,13 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
                 <div className="mt-3">
                   <div className="p-3 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="text-lg text-black font-semibold">{ammoniumAfterSample != null ? `${ammoniumAfterSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : (lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—')}` : 'No result yet'}</div>
+                    {(() => {
+                      const hh = computeHenderson();
+                      const addedVol = hh.acidVolMl || (ammoniumAfterSample ? ammoniumAfterSample.volume : 0);
+                      const displayedPH = hh.pH !== null ? hh.pH : (ammoniumAfterPH != null ? ammoniumAfterPH : (lastMeasuredPH != null ? lastMeasuredPH : null));
+                      if (!ammoniumAfterSample && addedVol === 0) return <div className="text-lg text-black font-semibold">No result yet</div>;
+                      return <div className="text-lg text-black font-semibold">{`${addedVol.toFixed(1)} mL • pH ≈ ${displayedPH != null ? (Number.isFinite(displayedPH) ? displayedPH.toFixed(2) : '—') : '—'}`}</div>;
+                    })()}
                   </div>
                 </div>
 
@@ -533,6 +610,171 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           </div>
         </div>
       </div>
+
+      {/* Results & Analysis Modal */}
+      <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-green-700 bg-clip-text text-transparent flex items-center">
+              <TrendingUp className="w-6 h-6 mr-2 text-blue-600" />
+              Experiment Results & Analysis
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">Analysis of your ammonium hydroxide / ammonium chloride comparison</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 mt-4">
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
+                    <h4 className="font-semibold text-gray-800">Ammonium hydroxide + Indicator (basic)</h4>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2">Measured pH: {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</p>
+                  <p className="text-sm text-gray-600">Volume: {baseSample ? `${baseSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                </div>
+                <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
+                    <h4 className="font-semibold text-gray-800">After NH4Cl added + Indicator (buffered)</h4>
+                  </div>
+                  {(() => {
+                    const hh = computeHenderson();
+                    const measured = hh.pH !== null ? hh.pH : ammoniumAfterPH;
+                    return (
+                      <>
+                        <p className="text-sm text-gray-600 mb-2">Measured pH: {measured != null ? (Number.isFinite(measured) ? measured.toFixed(2) : '—') : '—'}</p>
+                        <p className="text-sm text-gray-600">Volume: {ammoniumAfterSample ? `${ammoniumAfterSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            </div>
+
+            {/* Henderson–Hasselbalch Calculation */}
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Henderson–Hasselbalch Calculation</h3>
+              <div className="text-sm text-gray-700 space-y-3">
+                {(() => {
+                  const res = computeHenderson();
+                  if (!res.totalVolMl || res.totalVolMl <= 0) {
+                    return <div>No solution volume recorded yet.</div>;
+                  }
+                  if (res.molesBase <= 0 && res.molesAcid <= 0) {
+                    return <div>No reagents added to compute a buffer.</div>;
+                  }
+
+                  if (res.molesBase > 0 && res.molesAcid > 0) {
+                    return (
+                      <div>
+                        <p className="mb-2">Using pH = pKa + log10([base]/[acid]) with pKa = {res.pKa.toFixed(2)}</p>
+                        <ul className="list-disc pl-5 text-xs text-gray-600">
+                          <li>Total solution volume = {res.totalVolMl.toFixed(2)} mL ({res.totalVolL.toFixed(4)} L)</li>
+                          <li>NH4OH added (base) = {res.baseVolMl.toFixed(2)} mL → moles = {res.molesBase.toExponential(3)} mol</li>
+                          <li>NH4Cl added (acid) = {res.acidVolMl.toFixed(2)} mL → moles = {res.molesAcid.toExponential(3)} mol</li>
+                          <li>[base] = {res.baseConc.toExponential(3)} M, [acid] = {res.acidConc.toExponential(3)} M</li>
+                          <li>Ratio [base]/[acid] = {isFinite(res.ratio) ? res.ratio.toFixed(3) : '∞'}</li>
+                          <li className="mt-2 font-medium">Calculated pH = {res.pH !== null ? res.pH.toFixed(2) : '—'}</li>
+                        </ul>
+                      </div>
+                    );
+                  }
+
+                  // cases where one species is missing
+                  if (res.molesAcid <= 0 && res.molesBase > 0) {
+                    return <div>Only base present (no conjugate acid). The solution is basic (measured pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}).</div>;
+                  }
+                  if (res.molesBase <= 0 && res.molesAcid > 0) {
+                    return <div>Only acid (NH4+) present — solution will be acidic/less basic (measured pH ≈ {ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : '—'}).</div>;
+                  }
+                  return null;
+                })()}
+              </div>
+            </div>
+
+            {/* Measurement Summary: show A and B boxes (initial and after NH4Cl) */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              {(() => {
+                const hh = computeHenderson();
+                const baseVol = hh.baseVolMl || (baseSample ? baseSample.volume : 0);
+                const addedVol = hh.acidVolMl || (ammoniumAfterSample ? ammoniumAfterSample.volume : 0);
+                const computedPH = hh.pH !== null ? hh.pH : ammoniumAfterPH ?? ammoniumInitialPH ?? null;
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 border rounded-md bg-gray-50">
+                      <div className="text-sm text-gray-600">A pH of Ammonium hydroxide</div>
+                      <div className="mt-2 text-xl font-bold">{baseVol.toFixed(1)} mL • pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</div>
+                    </div>
+                    <div className="p-3 border rounded-md bg-gray-50">
+                      <div className="text-sm text-gray-600">B When NH4Cl is added</div>
+                      <div className="mt-2 text-xl font-bold">{addedVol.toFixed(1)} mL • pH ≈ {computedPH != null ? Number.isFinite(computedPH) ? computedPH.toFixed(2) : '—' : '—'}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Action Timeline</h3>
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {analysisLog.map((log, index) => (
+                  <div key={log.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">{index + 1}</div>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-800">{log.action}</div>
+                      <div className="text-sm text-gray-600">{log.observation}</div>
+                      <div className="flex items-center space-x-4 mt-2 text-xs">
+                        <span className="flex items-center"><span className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: log.colorBefore }}></span>Before</span>
+                        <span>→</span>
+                        <span className="flex items-center"><span className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: log.colorAfter }}></span>After</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Final Experimental State</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
+                    <h4 className="font-semibold text-gray-800">Ammonium hydroxide + Indicator (≈ basic)</h4>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-gray-700 mb-2">Current Solution</h5>
+                    <p className="text-sm text-gray-600">Contents: {baseSample ? baseSample.contents.join(', ') : 'Not recorded'}</p>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
+                    <h4 className="font-semibold text-gray-800">NH4Cl added + Indicator (≈ buffered)</h4>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-gray-700 mb-2">Current Solution</h5>
+                    <p className="text-sm text-gray-600">Contents: {ammoniumAfterSample ? ammoniumAfterSample.contents.join(', ') : 'Not recorded'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between mt-6">
+            <Link href="/">
+              <Button className="bg-gray-500 hover:bg-gray-600 text-white flex items-center space-x-2">
+                <Home className="w-4 h-4" />
+                <span>Return to Experiments</span>
+              </Button>
+            </Link>
+            <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* NH4OH dialog */}
       <Dialog open={showNh4ohDialog} onOpenChange={setShowNh4ohDialog}>
