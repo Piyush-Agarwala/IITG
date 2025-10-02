@@ -35,7 +35,7 @@
       {
         "id": 3,
         "title": "Add Concentrated HCl",
-        "description": "Click the HCl reagent bottle twice. First click: observe pink to purple transition. Second click: complete the shift from purple to blue as Cl⁻ ions fully shift equilibrium right.",
+        "description": "Click the HCl reagent bottle twice. First click: observe pink to purple transition. Second click: complete the shift from purple to blue as Cl��� ions fully shift equilibrium right.",
         "duration": "4 minutes",
         "safety": "HCl is corrosive - handle with care",
         "completed": false
@@ -554,7 +554,7 @@
     "duration": 25,
     "steps": 6,
     "rating": 4.5,
-    "imageUrl": "https://images.unsplash.com/photo-1581093588401-1c7b6f0b1c8f?auto=format&fit=crop&w=800&q=80",
+    "imageUrl": "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F5327b38ce28c44b4974f04c3fe6e309c?format=webp&width=800",
     "equipment": [
       "Beakers",
       "Test Tubes",
