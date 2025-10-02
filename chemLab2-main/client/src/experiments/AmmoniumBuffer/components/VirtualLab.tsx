@@ -66,6 +66,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
   // timer ref used to delay opening the results modal when COMPARE is pressed
   const compareTimeoutRef = useRef<number | null>(null);
+  // whether a compare action has been initiated (used to show the floating View Results button)
+  const [compareInitiated, setCompareInitiated] = useState<boolean>(false);
 
   // clear any pending timeouts when component unmounts
   useEffect(() => {
