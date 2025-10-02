@@ -518,6 +518,7 @@ useEffect(() => {
                             }
                             setShowToast('Opening results...');
                             setCompareInitiated(true);
+                            if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
                             compareTimeoutRef.current = window.setTimeout(() => {
                               setShowResultsModal(true);
                               setShowToast('');
