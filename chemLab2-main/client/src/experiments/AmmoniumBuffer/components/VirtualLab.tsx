@@ -637,6 +637,47 @@ useEffect(() => {
               </div>
             </div>
 
+            {/* Henderson–Hasselbalch Calculation */}
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Henderson–Hasselbalch Calculation</h3>
+              <div className="text-sm text-gray-700 space-y-3">
+                {(() => {
+                  const res = computeHenderson();
+                  if (!res.totalVolMl || res.totalVolMl <= 0) {
+                    return <div>No solution volume recorded yet.</div>;
+                  }
+                  if (res.molesBase <= 0 && res.molesAcid <= 0) {
+                    return <div>No reagents added to compute a buffer.</div>;
+                  }
+
+                  if (res.molesBase > 0 && res.molesAcid > 0) {
+                    return (
+                      <div>
+                        <p className="mb-2">Using pH = pKa + log10([base]/[acid]) with pKa = {res.pKa.toFixed(2)}</p>
+                        <ul className="list-disc pl-5 text-xs text-gray-600">
+                          <li>Total solution volume = {res.totalVolMl.toFixed(2)} mL ({res.totalVolL.toFixed(4)} L)</li>
+                          <li>NH4OH added (base) = {res.baseVolMl.toFixed(2)} mL → moles = {res.molesBase.toExponential(3)} mol</li>
+                          <li>NH4Cl added (acid) = {res.acidVolMl.toFixed(2)} mL → moles = {res.molesAcid.toExponential(3)} mol</li>
+                          <li>[base] = {res.baseConc.toExponential(3)} M, [acid] = {res.acidConc.toExponential(3)} M</li>
+                          <li>Ratio [base]/[acid] = {isFinite(res.ratio) ? res.ratio.toFixed(3) : '∞'}</li>
+                          <li className="mt-2 font-medium">Calculated pH = {res.pH !== null ? res.pH.toFixed(2) : '—'}</li>
+                        </ul>
+                      </div>
+                    );
+                  }
+
+                  // cases where one species is missing
+                  if (res.molesAcid <= 0 && res.molesBase > 0) {
+                    return <div>Only base present (no conjugate acid). The solution is basic (measured pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}).</div>;
+                  }
+                  if (res.molesBase <= 0 && res.molesAcid > 0) {
+                    return <div>Only acid (NH4+) present — solution will be acidic/less basic (measured pH ≈ {ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : '—'}).</div>;
+                  }
+                  return null;
+                })()}
+              </div>
+            </div>
+
             <div className="bg-white rounded-lg p-6 border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Action Timeline</h3>
               <div className="space-y-3 max-h-64 overflow-y-auto">
