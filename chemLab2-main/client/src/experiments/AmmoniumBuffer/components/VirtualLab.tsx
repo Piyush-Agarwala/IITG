@@ -678,6 +678,28 @@ useEffect(() => {
               </div>
             </div>
 
+            {/* Measurement Summary: show A and B boxes (initial and after NH4Cl) */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              {(() => {
+                const hh = computeHenderson();
+                const baseVol = hh.baseVolMl || (baseSample ? baseSample.volume : 0);
+                const addedVol = hh.acidVolMl || (ammoniumAfterSample ? ammoniumAfterSample.volume : 0);
+                const computedPH = hh.pH !== null ? hh.pH : ammoniumAfterPH ?? ammoniumInitialPH ?? null;
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 border rounded-md bg-gray-50">
+                      <div className="text-sm text-gray-600">A pH of Ammonium hydroxide</div>
+                      <div className="mt-2 text-xl font-bold">{baseVol.toFixed(1)} mL • pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</div>
+                    </div>
+                    <div className="p-3 border rounded-md bg-gray-50">
+                      <div className="text-sm text-gray-600">B When NH4Cl is added</div>
+                      <div className="mt-2 text-xl font-bold">{addedVol.toFixed(1)} mL • pH ≈ {computedPH != null ? Number.isFinite(computedPH) ? computedPH.toFixed(2) : '—' : '—'}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
             <div className="bg-white rounded-lg p-6 border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Action Timeline</h3>
               <div className="space-y-3 max-h-64 overflow-y-auto">
