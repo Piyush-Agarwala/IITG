@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,18 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  // timer ref used to delay opening the results modal when COMPARE is pressed
+  const compareTimeoutRef = useRef<number | null>(null);
+
+  // clear any pending timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      if (compareTimeoutRef.current) {
+        clearTimeout(compareTimeoutRef.current as unknown as number);
+        compareTimeoutRef.current = null;
+      }
+    };
+  }, []);
   const [ammoniumInitialPH, setAmmoniumInitialPH] = useState<number | null>(null);
   const [ammoniumAfterPH, setAmmoniumAfterPH] = useState<number | null>(null);
 
@@ -462,7 +474,17 @@ useEffect(() => {
                         } else {
                           // when NH4Cl result exists, offer COMPARE action
                           if (ammoniumAfterSample != null) {
-                            setShowResultsModal(true);
+                            // schedule opening the results modal after 5 seconds
+                            if (compareTimeoutRef.current) {
+                              clearTimeout(compareTimeoutRef.current as unknown as number);
+                              compareTimeoutRef.current = null;
+                            }
+                            setShowToast('Opening results...');
+                            compareTimeoutRef.current = window.setTimeout(() => {
+                              setShowResultsModal(true);
+                              setShowToast('');
+                              compareTimeoutRef.current = null;
+                            }, 5000) as unknown as number;
                           } else {
                             setNewPaperPressed(true);
                             setMeasurePressed(false);
