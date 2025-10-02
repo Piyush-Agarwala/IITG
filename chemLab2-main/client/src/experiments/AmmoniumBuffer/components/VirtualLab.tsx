@@ -198,6 +198,9 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     // if pH paper placed, also add it logically to the test tube (contents) so measurement works immediately
     if (equipmentId === 'ph-paper') {
       addToTube('IND', 0);
+      // reset measurement prompts when new pH paper is placed
+      setMeasurePressed(false);
+      setNewPaperPressed(false);
       if (currentStep === 3 || currentStep === 5) onStepComplete(currentStep);
     }
 
@@ -422,7 +425,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   const paperHasColor = !!(phItem as any).color && (phItem as any).color !== COLORS.CLEAR;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!paperHasColor && lastMeasuredPH == null) ? 'blink-until-pressed' : ''}`} onClick={() => { if (!paperHasColor) { setMeasurePressed(true); testPH(); } else { setNewPaperPressed(true); setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item)); setShowToast('Replace pH paper'); setTimeout(() => setShowToast(''), 1500); } }}>
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!paperHasColor && !measurePressed) ? 'blink-until-pressed' : ''}`} onClick={() => { if (!paperHasColor) { setMeasurePressed(true); testPH(); } else { setNewPaperPressed(true); setMeasurePressed(false); setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item)); setShowToast('Replace pH paper'); setTimeout(() => setShowToast(''), 1500); } }}>
                         {!paperHasColor ? 'MEASURE' : 'New pH paper'}
                       </Button>
                     </div>
