@@ -455,7 +455,7 @@ useEffect(() => {
                   }
                   setCompareInitiated(false);
                   if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
-                  setShowResultsModal(true);
+                  setIsRunning(false); setShowResultsModal(true);
                 }} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results & Analysis</Button>
               )}
             </div>
@@ -521,7 +521,7 @@ useEffect(() => {
                             setCompareInitiated(true);
                             if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
                             compareTimeoutRef.current = window.setTimeout(() => {
-                              setShowResultsModal(true);
+                              setIsRunning(false); setShowResultsModal(true);
                               setShowToast('');
                               setCompareInitiated(false);
                               compareTimeoutRef.current = null;
@@ -619,33 +619,33 @@ useEffect(() => {
               <TrendingUp className="w-6 h-6 mr-2 text-blue-600" />
               Experiment Results & Analysis
             </DialogTitle>
-            <DialogDescription className="text-gray-600">Analysis of your ammonium hydroxide / ammonium chloride comparison</DialogDescription>
+            <DialogDescription className="text-black">Analysis of your ammonium hydroxide / ammonium chloride comparison</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6 mt-4">
             <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Summary</h3>
+              <h3 className="text-lg font-semibold text-black mb-4">Summary</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
                   <div className="flex items-center mb-3">
                     <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
-                    <h4 className="font-semibold text-gray-800">Ammonium hydroxide + Indicator (basic)</h4>
+                    <h4 className="font-semibold text-black">Ammonium hydroxide + Indicator (basic)</h4>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Measured pH: {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</p>
-                  <p className="text-sm text-gray-600">Volume: {baseSample ? `${baseSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                  <p className="text-sm text-black mb-2">Measured pH: {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</p>
+                  <p className="text-sm text-black">Volume: {baseSample ? `${baseSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
                 </div>
                 <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
                   <div className="flex items-center mb-3">
                     <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
-                    <h4 className="font-semibold text-gray-800">After NH4Cl added + Indicator (buffered)</h4>
+                    <h4 className="font-semibold text-black">After NH4Cl added + Indicator (buffered)</h4>
                   </div>
                   {(() => {
                     const hh = computeHenderson();
                     const measured = hh.pH !== null ? hh.pH : ammoniumAfterPH;
                     return (
                       <>
-                        <p className="text-sm text-gray-600 mb-2">Measured pH: {measured != null ? (Number.isFinite(measured) ? measured.toFixed(2) : '—') : '—'}</p>
-                        <p className="text-sm text-gray-600">Volume: {ammoniumAfterSample ? `${ammoniumAfterSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                        <p className="text-sm text-black mb-2">Measured pH: {measured != null ? (Number.isFinite(measured) ? measured.toFixed(2) : '—') : '—'}</p>
+                        <p className="text-sm text-black">Volume: {ammoniumAfterSample ? `${ammoniumAfterSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
                       </>
                     );
                   })()}
@@ -655,8 +655,8 @@ useEffect(() => {
 
             {/* Henderson–Hasselbalch Calculation */}
             <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Henderson–Hasselbalch Calculation</h3>
-              <div className="text-sm text-gray-700 space-y-3">
+              <h3 className="text-lg font-semibold text-black mb-4">Henderson–Hasselbalch Calculation</h3>
+              <div className="text-sm text-black space-y-3">
                 {(() => {
                   const res = computeHenderson();
                   if (!res.totalVolMl || res.totalVolMl <= 0) {
@@ -670,7 +670,7 @@ useEffect(() => {
                     return (
                       <div>
                         <p className="mb-2">Using pH = pKa + log10([base]/[acid]) with pKa = {res.pKa.toFixed(2)}</p>
-                        <ul className="list-disc pl-5 text-xs text-gray-600">
+                        <ul className="list-disc pl-5 text-xs text-black">
                           <li>Total solution volume = {res.totalVolMl.toFixed(2)} mL ({res.totalVolL.toFixed(4)} L)</li>
                           <li>NH4OH added (base) = {res.baseVolMl.toFixed(2)} mL → moles = {res.molesBase.toExponential(3)} mol</li>
                           <li>NH4Cl added (acid) = {res.acidVolMl.toFixed(2)} mL → moles = {res.molesAcid.toExponential(3)} mol</li>
@@ -704,11 +704,11 @@ useEffect(() => {
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-3 border rounded-md bg-gray-50">
-                      <div className="text-sm text-gray-600">A pH of Ammonium hydroxide</div>
+                      <div className="text-sm text-black">A pH of Ammonium hydroxide</div>
                       <div className="mt-2 text-xl font-bold">{baseVol.toFixed(1)} mL • pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</div>
                     </div>
                     <div className="p-3 border rounded-md bg-gray-50">
-                      <div className="text-sm text-gray-600">B When NH4Cl is added</div>
+                      <div className="text-sm text-black">B When NH4Cl is added</div>
                       <div className="mt-2 text-xl font-bold">{addedVol.toFixed(1)} mL • pH ≈ {computedPH != null ? Number.isFinite(computedPH) ? computedPH.toFixed(2) : '—' : '—'}</div>
                     </div>
                   </div>
@@ -723,8 +723,8 @@ useEffect(() => {
                   <div key={log.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">{index + 1}</div>
                     <div className="flex-1">
-                      <div className="font-medium text-gray-800">{log.action}</div>
-                      <div className="text-sm text-gray-600">{log.observation}</div>
+                      <div className="font-medium text-black">{log.action}</div>
+                      <div className="text-sm text-black">{log.observation}</div>
                       <div className="flex items-center space-x-4 mt-2 text-xs">
                         <span className="flex items-center"><span className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: log.colorBefore }}></span>Before</span>
                         <span>→</span>
@@ -737,27 +737,27 @@ useEffect(() => {
             </div>
 
             <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Final Experimental State</h3>
+              <h3 className="text-lg font-semibold text-black mb-4">Final Experimental State</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
                   <div className="flex items-center mb-3">
                     <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
-                    <h4 className="font-semibold text-gray-800">Ammonium hydroxide + Indicator (≈ basic)</h4>
+                    <h4 className="font-semibold text-black">Ammonium hydroxide + Indicator (≈ basic)</h4>
                   </div>
                   <div>
-                    <h5 className="font-medium text-gray-700 mb-2">Current Solution</h5>
-                    <p className="text-sm text-gray-600">Contents: {baseSample ? baseSample.contents.join(', ') : 'Not recorded'}</p>
+                    <h5 className="font-medium text-black mb-2">Current Solution</h5>
+                    <p className="text-sm text-black">Contents: {baseSample ? baseSample.contents.join(', ') : 'Not recorded'}</p>
                   </div>
                 </div>
 
                 <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
                   <div className="flex items-center mb-3">
                     <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
-                    <h4 className="font-semibold text-gray-800">NH4Cl added + Indicator (≈ buffered)</h4>
+                    <h4 className="font-semibold text-black">NH4Cl added + Indicator (≈ buffered)</h4>
                   </div>
                   <div>
-                    <h5 className="font-medium text-gray-700 mb-2">Current Solution</h5>
-                    <p className="text-sm text-gray-600">Contents: {ammoniumAfterSample ? ammoniumAfterSample.contents.join(', ') : 'Not recorded'}</p>
+                    <h5 className="font-medium text-black mb-2">Current Solution</h5>
+                    <p className="text-sm text-black">Contents: {ammoniumAfterSample ? ammoniumAfterSample.contents.join(', ') : 'Not recorded'}</p>
                   </div>
                 </div>
               </div>

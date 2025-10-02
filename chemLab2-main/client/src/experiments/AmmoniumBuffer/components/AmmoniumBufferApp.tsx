@@ -31,6 +31,22 @@ export default function AmmoniumBufferApp({ onBack }: Props) {
     return () => { if (interval) clearInterval(interval); };
   }, [isRunning, experimentStarted]);
 
+  // Auto-start timer when the page is opened with ?autostart=1
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('autostart') === '1' && !isRunning) {
+        handleStart();
+        // remove query param so refresh won't restart
+        params.delete('autostart');
+        const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
+        window.history.replaceState({}, '', newUrl);
+      }
+    } catch (e) {
+      // ignore in non-browser environments
+    }
+  }, []);
+
   const formatTime = (s: number) => `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
 
   const handleStart = () => { setExperimentStarted(true); setIsRunning(true); };
