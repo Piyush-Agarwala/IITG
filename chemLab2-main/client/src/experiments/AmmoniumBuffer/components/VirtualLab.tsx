@@ -450,29 +450,6 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 })()
               )}
 
-              {(() => {
-                const nh4clItem = equipmentOnBench.find(e => e.id === 'nh4cl-0-1m' || ((e as any).name && (e as any).name.toLowerCase().includes('ammonium chloride')));
-                if (!nh4clItem) return null;
-                return (
-                  <div key="reset-nh4cl" style={{ position: 'absolute', left: nh4clItem.position.x, top: nh4clItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
-                    <Button
-                      size="sm"
-                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm px-3 ${shouldBlinkNh4clReset ? 'blink-until-pressed' : ''}`}
-                      onClick={() => {
-                        setTestTube(prev => ({ ...prev, volume: Math.max(0, Math.min(20, prev.volume - nh4clVolumeAdded)) }));
-                        setNh4clVolumeAdded(0);
-                        setNh4clAdditions(0);
-                        setShouldBlinkNh4clReset(false);
-                        setShowToast('Ammonium chloride reset');
-                        setTimeout(() => setShowToast(''), 1400);
-                      }}
-                    >
-                      <span className="block font-semibold">RESET</span>
-                      <span className="block text-xs">(NH₄Cl)</span>
-                    </Button>
-                  </div>
-                );
-              })()}
 
             </WorkBench>
           </div>
