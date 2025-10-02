@@ -7,7 +7,7 @@ const AmmoniumBufferData = {
   duration: 20,
   steps: 6,
   rating: 4.6,
-  imageUrl: "https://images.unsplash.com/photo-1581090469639-f8a1f0d5c37f?q=80&w=1200&auto=format&fit=crop",
+  imageUrl: "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F5327b38ce28c44b4974f04c3fe6e309c?format=webp&width=800",
   equipment: [
     "25ml Test Tube",
     "0.1 M NH4OH",
