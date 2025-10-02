@@ -296,13 +296,15 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (tube.contents.includes('NH4Cl')) {
       const ph = 9.0;
       setLastMeasuredPH(ph);
-      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
+      // store NH4Cl measurement separately from the initial ammonium pH
+      if (ammoniumAfterPH == null) setAmmoniumAfterPH(ph);
       // store buffered sample snapshot on first buffered measurement
       if (bufferedSample == null) setBufferedSample({ ...tube });
+      // also store a dedicated sample snapshot for the NH4Cl case
+      if (ammoniumAfterSample == null) setAmmoniumAfterSample({ ...tube });
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
-      // start blinking RESET (NH4Cl) since measurement occurred and NH4Cl is present
       setShouldBlinkNh4clReset(nh4clVolumeAdded > 0);
       // advance guided progress: when pH is measured after NH4Cl, mark step 5 complete and move to step 6
       if (currentStep === 5 && onStepComplete && !completedSteps.includes(5)) {
