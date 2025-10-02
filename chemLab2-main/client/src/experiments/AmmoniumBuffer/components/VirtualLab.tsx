@@ -300,8 +300,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
-      // prompt reset button if NH4Cl was added and fewer than 2 additions
-      setShouldBlinkNh4clReset(nh4clVolumeAdded > 0 && nh4clAdditions < 2);
+      // start blinking RESET (NH4Cl) since measurement occurred and NH4Cl is present
+      setShouldBlinkNh4clReset(nh4clVolumeAdded > 0);
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
@@ -314,6 +314,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       // color pH paper to basic color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4OH_BASE } : item));
       setShowToast('Measured pH ≈ 11 (basic NH4OH)');
+      // if NH4Cl was previously added, prompt user to reset it after measuring
+      setShouldBlinkNh4clReset(nh4clVolumeAdded > 0);
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
@@ -325,6 +327,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       if (baseSample == null) setBaseSample({ ...tube });
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NEUTRAL } : item));
       setShowToast('Measured pH ≈ 7 (neutral)');
+      setShouldBlinkNh4clReset(nh4clVolumeAdded > 0);
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
