@@ -39,8 +39,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [activeEquipment, setActiveEquipment] = useState<string>("");
   const [showToast, setShowToast] = useState<string>("");
   const [showNh4ohDialog, setShowNh4ohDialog] = useState(false);
-  const [nh4ohVolume, setNh4ohVolume] = useState<string>("5.0");
-  const [previewNh4ohVolume, setPreviewNh4ohVolume] = useState<number | null>(5.0);
+  const [nh4ohVolume, setNh4ohVolume] = useState<string>("10.0");
+  const [previewNh4ohVolume, setPreviewNh4ohVolume] = useState<number | null>(10.0);
   const [nh4ohError, setNh4ohError] = useState<string | null>(null);
   const [showNh4clDialog, setShowNh4clDialog] = useState(false);
   const [nh4clVolume, setNh4clVolume] = useState<string>("3.0");
@@ -244,7 +244,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const confirmAddNh4oh = () => {
     const v = parseFloat(nh4ohVolume);
-    if (Number.isNaN(v) || v < 5.0 || v > 15.0) { setNh4ohError('Please enter a value between 5.0 and 15.0 mL'); return; }
+    if (Number.isNaN(v) || v < 10.0 || v > 15.0) { setNh4ohError('Please enter a value between 10.0 and 15.0 mL'); return; }
     addToTube('NH4OH', v);
     if (currentStep === 2) onStepComplete(2);
     setShowNh4ohDialog(false);
@@ -520,7 +520,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add NH4OH</DialogTitle>
-            <DialogDescription>Enter the volume of ammonium hydroxide to add (5.0–15.0 mL)</DialogDescription>
+            <DialogDescription>Enter the volume of ammonium hydroxide to add (10.0–15.0 mL)</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             <input type="number" step="0.1" value={nh4ohVolume} onChange={(e) => { setNh4ohVolume(e.target.value); setPreviewNh4ohVolume(parseFloat(e.target.value) || null); }} className="w-full border rounded px-3 py-2" />
