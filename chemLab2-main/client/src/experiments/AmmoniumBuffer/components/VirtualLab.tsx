@@ -284,13 +284,16 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const handleRemove = (id: string) => { setEquipmentOnBench(prev => prev.filter(e => e.id !== id)); if (id === 'test-tube') setTestTube(INITIAL_TESTTUBE); };
 
   const testPH = () => {
-    if (!testTube || (testTube.volume ?? 0) <= 0) { setShowToast('No solution in test tube'); setTimeout(() => setShowToast(''), 1400); return; }
-    if (!testTube.contents.includes('IND')) { setShowToast('No indicator present. Add pH paper'); setTimeout(() => setShowToast(''), 1800); return; }
+    const tube = testTube;
+    if (!tube || (tube.volume ?? 0) <= 0) { setShowToast('No solution in test tube'); setTimeout(() => setShowToast(''), 1400); return; }
+    if (!tube.contents.includes('IND')) { setShowToast('No indicator present. Add pH paper'); setTimeout(() => setShowToast(''), 1800); return; }
 
-    if (testTube.contents.includes('NH4Cl')) {
+    if (tube.contents.includes('NH4Cl')) {
       const ph = 9.0;
       setLastMeasuredPH(ph);
       if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
+      // store buffered sample snapshot on first buffered measurement
+      if (bufferedSample == null) setBufferedSample({ ...tube });
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
@@ -299,20 +302,24 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
-    if (testTube.contents.includes('NH4OH')) {
+    if (tube.contents.includes('NH4OH')) {
       const ph = 11.0;
       setLastMeasuredPH(ph);
       if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
+      // store base sample snapshot on first base measurement
+      if (baseSample == null) setBaseSample({ ...tube });
       // color pH paper to basic color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4OH_BASE } : item));
       setShowToast('Measured pH ≈ 11 (basic NH4OH)');
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
-    if (testTube.colorHex === COLORS.NEUTRAL) {
+    if (tube.colorHex === COLORS.NEUTRAL) {
       const ph = 7.0;
       setLastMeasuredPH(ph);
       if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
+      // store base sample for neutral case if none exists
+      if (baseSample == null) setBaseSample({ ...tube });
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NEUTRAL } : item));
       setShowToast('Measured pH ≈ 7 (neutral)');
       setTimeout(() => setShowToast(''), 2000);
