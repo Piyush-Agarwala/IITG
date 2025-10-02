@@ -371,7 +371,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const stepsProgress = (
     <div className="mb-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-blue-200 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Experiment Progress</h3>
+        <h3 className="text-lg font-semibold text-black">Experiment Progress</h3>
         <span className="text-sm text-blue-600 font-medium">Step {currentStep} of {GUIDED_STEPS.length}</span>
       </div>
       <div className="flex space-x-2 mb-4">
@@ -384,7 +384,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           {completedSteps.includes(currentStep) ? <CheckCircle className="w-4 h-4" /> : <span className="text-sm font-bold">{currentStep}</span>}
         </div>
         <div className="flex-1">
-          <h4 className="font-semibold text-gray-800 mb-1">{GUIDED_STEPS[currentStep-1].title}</h4>
+          <h4 className="font-semibold text-black mb-1">{GUIDED_STEPS[currentStep-1].title}</h4>
           <p className="text-sm text-gray-600 mb-2">{GUIDED_STEPS[currentStep-1].description}</p>
           <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
             <ArrowRight className="w-3 h-3 mr-1" />
@@ -480,7 +480,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           {/* Equipment - Left */}
           <div className="lg:col-span-3 space-y-4">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
                 <Wrench className="w-5 h-5 mr-2 text-blue-600" />
                 Equipment
               </h3>
@@ -617,7 +617,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           {/* Analysis - Right */}
           <div className="lg:col-span-3 space-y-4">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
                 <Info className="w-5 h-5 mr-2 text-green-600" />
                 Live Analysis
               </h3>
@@ -697,7 +697,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                     <div className="bg-white rounded-lg p-4 shadow-sm border border-red-200">
                       <div className="flex items-center mb-3">
                         <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS.HCL_PH2 }} />
-                        <h4 className="font-semibold text-gray-800">0.01 M HCl + Indicator</h4>
+                        <h4 className="font-semibold text-black">0.01 M HCl + Indicator</h4>
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-red-50 rounded-md p-3 text-center">
@@ -719,7 +719,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                     <div className="bg-white rounded-lg p-4 shadow-sm border border-amber-200">
                       <div className="flex items-center mb-3">
                         <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: COLORS.ACETIC_PH3 }} />
-                        <h4 className="font-semibold text-gray-800">0.01 M CH3COOH + Indicator</h4>
+                        <h4 className="font-semibold text-black">0.01 M CH3COOH + Indicator</h4>
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-amber-50 rounded-md p-3 text-center">
@@ -766,7 +766,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
             {/* Action Timeline */}
             <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
                 <Clock className="w-5 h-5 mr-2 text-gray-600" />
                 Action Timeline
               </h3>
@@ -796,7 +796,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <div className="rounded-lg border border-red-200 p-4 bg-red-50/40">
                   <div className="flex items-center mb-3">
                     <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.HCL_PH2 }} />
-                    <h4 className="font-semibold text-gray-800">0.01 M HCl + Indicator (≈ pH 2)</h4>
+                    <h4 className="font-semibold text-black">0.01 M HCl + Indicator (≈ pH 2)</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -816,7 +816,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 <div className="rounded-lg border border-amber-200 p-4 bg-amber-50/40">
                   <div className="flex items-center mb-3">
                     <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.ACETIC_PH3 }} />
-                    <h4 className="font-semibold text-gray-800">0.1 M CH3COOH + Indicator (≈ pH 3–4)</h4>
+                    <h4 className="font-semibold text-black">0.1 M CH3COOH + Indicator (≈ pH 3–4)</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
