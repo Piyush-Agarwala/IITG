@@ -522,10 +522,6 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                     <div className="font-medium">CASE 1</div>
                     <div className="text-lg text-black font-semibold">{bufferedSample != null ? `${bufferedSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
                   </div>
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 2</div>
-                    <div className="text-lg text-black font-semibold">No result yet</div>
-                  </div>
                 </div>
 
                 {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
