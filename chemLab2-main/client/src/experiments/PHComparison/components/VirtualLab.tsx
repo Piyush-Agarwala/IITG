@@ -87,7 +87,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     };
   }, []);
 
-  // If results modal opens, clear scheduled timeout and reset counter
+  // If results modal opens, clear scheduled timeout, reset counter, and stop the timer
   useEffect(() => {
     if (showResultsModal) {
       if (measureResultsTimeoutRef.current) {
@@ -95,8 +95,10 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         measureResultsTimeoutRef.current = null;
       }
       setMeasureCount(0);
+      // Stop the parent timer when results are shown
+      try { setIsRunning(false); } catch (e) {}
     }
-  }, [showResultsModal]);
+  }, [showResultsModal, setIsRunning]);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
