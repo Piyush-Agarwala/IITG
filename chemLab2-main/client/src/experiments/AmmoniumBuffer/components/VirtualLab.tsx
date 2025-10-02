@@ -39,12 +39,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [activeEquipment, setActiveEquipment] = useState<string>("");
   const [showToast, setShowToast] = useState<string>("");
   const [showNh4ohDialog, setShowNh4ohDialog] = useState(false);
-  const [nh4ohVolume, setNh4ohVolume] = useState<string>("5.0");
-  const [previewNh4ohVolume, setPreviewNh4ohVolume] = useState<number | null>(5.0);
+  const [nh4ohVolume, setNh4ohVolume] = useState<string>("10.0");
+  const [previewNh4ohVolume, setPreviewNh4ohVolume] = useState<number | null>(10.0);
   const [nh4ohError, setNh4ohError] = useState<string | null>(null);
   const [showNh4clDialog, setShowNh4clDialog] = useState(false);
-  const [nh4clVolume, setNh4clVolume] = useState<string>("3.0");
-  const [previewNh4clVolume, setPreviewNh4clVolume] = useState<number | null>(3.0);
+  const [nh4clVolume, setNh4clVolume] = useState<string>("5.0");
+  const [previewNh4clVolume, setPreviewNh4clVolume] = useState<number | null>(5.0);
   const [nh4clError, setNh4clError] = useState<string | null>(null);
   const [showIndicatorDialog, setShowIndicatorDialog] = useState(false);
   const [indicatorVolume, setIndicatorVolume] = useState<string>("0.5");
@@ -62,6 +62,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [ammoniumInitialPH, setAmmoniumInitialPH] = useState<number | null>(null);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
@@ -244,7 +245,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const confirmAddNh4oh = () => {
     const v = parseFloat(nh4ohVolume);
-    if (Number.isNaN(v) || v < 5.0 || v > 15.0) { setNh4ohError('Please enter a value between 5.0 and 15.0 mL'); return; }
+    if (Number.isNaN(v) || v < 10.0 || v > 15.0) { setNh4ohError('Please enter a value between 10.0 and 15.0 mL'); return; }
     addToTube('NH4OH', v);
     if (currentStep === 2) onStepComplete(2);
     setShowNh4ohDialog(false);
@@ -252,7 +253,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const confirmAddNh4cl = () => {
     const v = parseFloat(nh4clVolume);
-    if (Number.isNaN(v) || v < 2.0 || v > 10.0) { setNh4clError('Please enter a value between 2.0 and 10.0 mL'); return; }
+    if (Number.isNaN(v) || v < 5.0 || v > 10.0) { setNh4clError('Please enter a value between 5.0 and 10.0 mL'); return; }
     addToTube('NH4Cl', v);
     // track cumulative NH4Cl added to enable reset button behaviour
     setNh4clVolumeAdded(prev => Math.max(0, prev + v));
@@ -286,6 +287,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.contents.includes('NH4Cl')) {
       const ph = 9.0;
       setLastMeasuredPH(ph);
+      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
@@ -297,6 +299,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.contents.includes('NH4OH')) {
       const ph = 11.0;
       setLastMeasuredPH(ph);
+      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
       // color pH paper to basic color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4OH_BASE } : item));
       setShowToast('Measured pH ≈ 11 (basic NH4OH)');
@@ -306,6 +309,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.colorHex === COLORS.NEUTRAL) {
       const ph = 7.0;
       setLastMeasuredPH(ph);
+      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NEUTRAL } : item));
       setShowToast('Measured pH ≈ 7 (neutral)');
       setTimeout(() => setShowToast(''), 2000);
@@ -371,7 +375,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               <Button onClick={handleUndo} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
-              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setBaseSample(null); setBufferedSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
             </div>
           </div>
 
@@ -418,7 +422,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   const paperHasColor = !!(phItem as any).color && (phItem as any).color !== COLORS.CLEAR;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${!(measurePressed || newPaperPressed) ? 'blink-until-pressed' : ''}`} onClick={() => { if (!paperHasColor) { setMeasurePressed(true); testPH(); } else { setNewPaperPressed(true); setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item)); setShowToast('Replace pH paper'); setTimeout(() => setShowToast(''), 1500); } }}>
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!paperHasColor && lastMeasuredPH == null) ? 'blink-until-pressed' : ''}`} onClick={() => { if (!paperHasColor) { setMeasurePressed(true); testPH(); } else { setNewPaperPressed(true); setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item)); setShowToast('Replace pH paper'); setTimeout(() => setShowToast(''), 1500); } }}>
                         {!paperHasColor ? 'MEASURE' : 'New pH paper'}
                       </Button>
                     </div>
@@ -493,7 +497,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
                 <div className="mt-6">
                   <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">A</span> pH of Ammonium hydroxide</h5>
-                  <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                  <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}` : 'No result yet'}</div>
                 </div>
 
                 <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
@@ -520,7 +524,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add NH4OH</DialogTitle>
-            <DialogDescription>Enter the volume of ammonium hydroxide to add (5.0–15.0 mL)</DialogDescription>
+            <DialogDescription>Enter the volume of ammonium hydroxide to add (10.0–15.0 mL)</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             <input type="number" step="0.1" value={nh4ohVolume} onChange={(e) => { setNh4ohVolume(e.target.value); setPreviewNh4ohVolume(parseFloat(e.target.value) || null); }} className="w-full border rounded px-3 py-2" />
@@ -538,7 +542,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add NH4Cl</DialogTitle>
-            <DialogDescription>Enter the volume of ammonium chloride solution to add (2.0–10.0 mL)</DialogDescription>
+            <DialogDescription>Enter the volume of ammonium chloride solution to add (5.0–10.0 mL)</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             <input type="number" step="0.1" value={nh4clVolume} onChange={(e) => { setNh4clVolume(e.target.value); setPreviewNh4clVolume(parseFloat(e.target.value) || null); }} className="w-full border rounded px-3 py-2" />
