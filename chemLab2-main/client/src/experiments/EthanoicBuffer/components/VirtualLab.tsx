@@ -717,7 +717,7 @@ const stepsProgress = (
 
       {/* Results modal shown after CASE 2 is available */}
       <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
-        <DialogContent>
+        <DialogContent className="max-w-[90vw] w-[90vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Experiment Results & Analysis</DialogTitle>
             <DialogDescription>Complete analysis of your pH buffer experiment</DialogDescription>
