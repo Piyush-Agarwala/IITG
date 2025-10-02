@@ -75,6 +75,17 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     };
   }, []);
 
+  useEffect(() => {
+    if (showResultsModal) {
+      // stop parent timer when results are shown and clear any scheduled timeouts
+      try { setIsRunning(false); } catch (e) {}
+      if (measureTimeoutRef.current) {
+        clearTimeout(measureTimeoutRef.current as number);
+        measureTimeoutRef.current = null;
+      }
+    }
+  }, [showResultsModal, setIsRunning]);
+
   useEffect(() => { setEquipmentOnBench([]); setAcidMoles(0); setSodiumMoles(0); setLastMeasuredPH(null); setInitialAcidPH(null); setCase1PH(null); setCase2PH(null); setShowToast(null); setMeasurePressed(false); setNewPaperPressed(false); }, [experiment.id]);
 
   const items = useMemo(() => {
