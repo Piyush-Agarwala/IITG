@@ -62,6 +62,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [ammoniumInitialPH, setAmmoniumInitialPH] = useState<number | null>(null);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
@@ -286,6 +287,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.contents.includes('NH4Cl')) {
       const ph = 9.0;
       setLastMeasuredPH(ph);
+      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
@@ -297,6 +299,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.contents.includes('NH4OH')) {
       const ph = 11.0;
       setLastMeasuredPH(ph);
+      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
       // color pH paper to basic color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4OH_BASE } : item));
       setShowToast('Measured pH ≈ 11 (basic NH4OH)');
@@ -306,6 +309,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (testTube.colorHex === COLORS.NEUTRAL) {
       const ph = 7.0;
       setLastMeasuredPH(ph);
+      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NEUTRAL } : item));
       setShowToast('Measured pH ≈ 7 (neutral)');
       setTimeout(() => setShowToast(''), 2000);
@@ -371,7 +375,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               <Button onClick={handleUndo} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
-              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setBaseSample(null); setBufferedSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
             </div>
           </div>
 
@@ -493,7 +497,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
                 <div className="mt-6">
                   <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">A</span> pH of Ammonium hydroxide</h5>
-                  <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                  <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}` : 'No result yet'}</div>
                 </div>
 
                 <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
