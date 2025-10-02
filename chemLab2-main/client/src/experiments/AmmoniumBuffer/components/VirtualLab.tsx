@@ -455,7 +455,7 @@ useEffect(() => {
                   }
                   setCompareInitiated(false);
                   if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
-                  setShowResultsModal(true);
+                  setIsRunning(false); setShowResultsModal(true);
                 }} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results & Analysis</Button>
               )}
             </div>
@@ -521,7 +521,7 @@ useEffect(() => {
                             setCompareInitiated(true);
                             if (onStepComplete && !completedSteps.includes(6)) onStepComplete(6);
                             compareTimeoutRef.current = window.setTimeout(() => {
-                              setShowResultsModal(true);
+                              setIsRunning(false); setShowResultsModal(true);
                               setShowToast('');
                               setCompareInitiated(false);
                               compareTimeoutRef.current = null;
