@@ -59,10 +59,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const [baseSample, setBaseSample] = useState<TestTubeState | null>(null);
   const [bufferedSample, setBufferedSample] = useState<TestTubeState | null>(null);
+  const [ammoniumAfterSample, setAmmoniumAfterSample] = useState<TestTubeState | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
   const [ammoniumInitialPH, setAmmoniumInitialPH] = useState<number | null>(null);
+  const [ammoniumAfterPH, setAmmoniumAfterPH] = useState<number | null>(null);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
@@ -294,14 +296,20 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
     if (tube.contents.includes('NH4Cl')) {
       const ph = 9.0;
       setLastMeasuredPH(ph);
-      if (ammoniumInitialPH == null) setAmmoniumInitialPH(ph);
+      // store NH4Cl measurement separately from the initial ammonium pH
+      if (ammoniumAfterPH == null) setAmmoniumAfterPH(ph);
       // store buffered sample snapshot on first buffered measurement
       if (bufferedSample == null) setBufferedSample({ ...tube });
+      // also store a dedicated sample snapshot for the NH4Cl case
+      if (ammoniumAfterSample == null) setAmmoniumAfterSample({ ...tube });
       // color pH paper to buffered color
       setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.NH4_BUFFERED } : item));
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
-      // start blinking RESET (NH4Cl) since measurement occurred and NH4Cl is present
       setShouldBlinkNh4clReset(nh4clVolumeAdded > 0);
+      // advance guided progress: when pH is measured after NH4Cl, mark step 5 complete and move to step 6
+      if (currentStep === 5 && onStepComplete && !completedSteps.includes(5)) {
+        onStepComplete(5);
+      }
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
@@ -391,7 +399,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               <Button onClick={handleUndo} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
-              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setBaseSample(null); setBufferedSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setAmmoniumAfterPH(null); setBaseSample(null); setBufferedSample(null); setAmmoniumAfterSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
             </div>
           </div>
 
@@ -438,37 +446,31 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   const paperHasColor = !!(phItem as any).color && (phItem as any).color !== COLORS.CLEAR;
                   return (
                     <div key="measure-button" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 60, transform: 'translate(-50%, 0)' }}>
-                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!newPaperPressed && ((paperHasColor || (!paperHasColor && !measurePressed)) || nh4clVolumeAdded > 0)) ? 'blink-until-pressed' : ''}`} onClick={() => { if (!paperHasColor) { setMeasurePressed(true); setNewPaperPressed(false); testPH(); } else { setNewPaperPressed(true); setMeasurePressed(false); setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item)); setShowToast('Replace pH paper'); setTimeout(() => setShowToast(''), 1500); } }}>
-                        {!paperHasColor ? 'MEASURE' : 'New pH paper'}
+                      <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${(!newPaperPressed && ((paperHasColor || (!paperHasColor && !measurePressed)) || nh4clVolumeAdded > 0)) ? 'blink-until-pressed' : ''}`} onClick={() => {
+                        if (!paperHasColor) {
+                          setMeasurePressed(true);
+                          setNewPaperPressed(false);
+                          testPH();
+                        } else {
+                          // when NH4Cl result exists, offer COMPARE action
+                          if (ammoniumAfterSample != null) {
+                            setShowResultsModal(true);
+                          } else {
+                            setNewPaperPressed(true);
+                            setMeasurePressed(false);
+                            setEquipmentOnBench(prev => prev.map(item => (item.id === 'ph-paper' || item.id.toLowerCase().includes('ph')) ? { ...item, color: COLORS.CLEAR } : item));
+                            setShowToast('Replace pH paper');
+                            setTimeout(() => setShowToast(''), 1500);
+                          }
+                        }
+                      }}>
+                        {!paperHasColor ? 'MEASURE' : (ammoniumAfterSample != null ? 'COMPARE' : 'New pH paper')}
                       </Button>
                     </div>
                   );
                 })()
               )}
 
-              {(() => {
-                const nh4clItem = equipmentOnBench.find(e => e.id === 'nh4cl-0-1m' || ((e as any).name && (e as any).name.toLowerCase().includes('ammonium chloride')));
-                if (!nh4clItem) return null;
-                return (
-                  <div key="reset-nh4cl" style={{ position: 'absolute', left: nh4clItem.position.x, top: nh4clItem.position.y + 150, transform: 'translate(-50%, 0)' }}>
-                    <Button
-                      size="sm"
-                      className={`bg-red-500 text-white hover:bg-red-600 shadow-sm px-3 ${shouldBlinkNh4clReset ? 'blink-until-pressed' : ''}`}
-                      onClick={() => {
-                        setTestTube(prev => ({ ...prev, volume: Math.max(0, Math.min(20, prev.volume - nh4clVolumeAdded)) }));
-                        setNh4clVolumeAdded(0);
-                        setNh4clAdditions(0);
-                        setShouldBlinkNh4clReset(false);
-                        setShowToast('Ammonium chloride reset');
-                        setTimeout(() => setShowToast(''), 1400);
-                      }}
-                    >
-                      <span className="block font-semibold">RESET</span>
-                      <span className="block text-xs">(NH₄Cl)</span>
-                    </Button>
-                  </div>
-                );
-              })()}
 
             </WorkBench>
           </div>
@@ -513,18 +515,15 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
                 <div className="mt-6">
                   <h5 className="font-medium text-sm text-black mb-1"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">A</span> pH of Ammonium hydroxide</h5>
-                  <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                  <div className="p-3 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="text-lg text-black font-semibold">{baseSample != null ? `${baseSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                  </div>
                 </div>
 
                 <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
-                <div className="mt-3 grid grid-cols-1 gap-2">
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 1</div>
-                    <div className="text-lg text-black font-semibold">{bufferedSample != null ? `${bufferedSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
-                  </div>
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 2</div>
-                    <div className="text-lg text-black font-semibold">No result yet</div>
+                <div className="mt-3">
+                  <div className="p-3 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="text-lg text-black font-semibold">{ammoniumAfterSample != null ? `${ammoniumAfterSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : (lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—')}` : 'No result yet'}</div>
                   </div>
                 </div>
 
