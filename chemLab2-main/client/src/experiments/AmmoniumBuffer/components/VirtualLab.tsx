@@ -43,8 +43,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [previewNh4ohVolume, setPreviewNh4ohVolume] = useState<number | null>(10.0);
   const [nh4ohError, setNh4ohError] = useState<string | null>(null);
   const [showNh4clDialog, setShowNh4clDialog] = useState(false);
-  const [nh4clVolume, setNh4clVolume] = useState<string>("3.0");
-  const [previewNh4clVolume, setPreviewNh4clVolume] = useState<number | null>(3.0);
+  const [nh4clVolume, setNh4clVolume] = useState<string>("5.0");
+  const [previewNh4clVolume, setPreviewNh4clVolume] = useState<number | null>(5.0);
   const [nh4clError, setNh4clError] = useState<string | null>(null);
   const [showIndicatorDialog, setShowIndicatorDialog] = useState(false);
   const [indicatorVolume, setIndicatorVolume] = useState<string>("0.5");
@@ -253,7 +253,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const confirmAddNh4cl = () => {
     const v = parseFloat(nh4clVolume);
-    if (Number.isNaN(v) || v < 2.0 || v > 10.0) { setNh4clError('Please enter a value between 2.0 and 10.0 mL'); return; }
+    if (Number.isNaN(v) || v < 5.0 || v > 10.0) { setNh4clError('Please enter a value between 5.0 and 10.0 mL'); return; }
     addToTube('NH4Cl', v);
     // track cumulative NH4Cl added to enable reset button behaviour
     setNh4clVolumeAdded(prev => Math.max(0, prev + v));
@@ -542,7 +542,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add NH4Cl</DialogTitle>
-            <DialogDescription>Enter the volume of ammonium chloride solution to add (2.0–10.0 mL)</DialogDescription>
+            <DialogDescription>Enter the volume of ammonium chloride solution to add (5.0–10.0 mL)</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             <input type="number" step="0.1" value={nh4clVolume} onChange={(e) => { setNh4clVolume(e.target.value); setPreviewNh4clVolume(parseFloat(e.target.value) || null); }} className="w-full border rounded px-3 py-2" />
