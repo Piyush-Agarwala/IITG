@@ -594,7 +594,13 @@ useEffect(() => {
                 <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
                 <div className="mt-3">
                   <div className="p-3 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="text-lg text-black font-semibold">{ammoniumAfterSample != null ? `${ammoniumAfterSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : (lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—')}` : 'No result yet'}</div>
+                    {(() => {
+                      const hh = computeHenderson();
+                      const addedVol = hh.acidVolMl || (ammoniumAfterSample ? ammoniumAfterSample.volume : 0);
+                      const displayedPH = hh.pH !== null ? hh.pH : (ammoniumAfterPH != null ? ammoniumAfterPH : (lastMeasuredPH != null ? lastMeasuredPH : null));
+                      if (!ammoniumAfterSample && addedVol === 0) return <div className="text-lg text-black font-semibold">No result yet</div>;
+                      return <div className="text-lg text-black font-semibold">{`${addedVol.toFixed(1)} mL • pH ≈ ${displayedPH != null ? (Number.isFinite(displayedPH) ? displayedPH.toFixed(2) : '—') : '—'}`}</div>;
+                    })()}
                   </div>
                 </div>
 
