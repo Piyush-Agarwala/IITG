@@ -502,10 +502,10 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 </div>
 
                 <div className="text-sm text-black mt-3 mb-2"><span className="inline-block w-2 h-2 rounded-full bg-black mr-2" aria-hidden="true" /> <span className="inline-block mr-2 font-bold">B</span> When NH4Cl is added</div>
-                <div className="mt-3 grid grid-cols-1 gap-2">
-                  <div className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
-                    <div className="font-medium">CASE 1</div>
-                    <div className="text-lg text-black font-semibold">{bufferedSample != null ? `${bufferedSample.volume.toFixed(1)} mL • pH ≈ ${lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—'}` : 'No result yet'}</div>
+                <div className="mt-3">
+                  <div className="text-sm text-gray-700 mb-1 font-medium">When NH4Cl is added</div>
+                  <div className="p-3 rounded border border-gray-200 bg-gray-50 text-sm">
+                    <div className="text-lg text-black font-semibold">{ammoniumAfterSample != null ? `${ammoniumAfterSample.volume.toFixed(1)} mL • pH ≈ ${ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : (lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '—')}` : 'No result yet'}</div>
                   </div>
                 </div>
 
