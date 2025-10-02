@@ -639,8 +639,16 @@ useEffect(() => {
                     <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
                     <h4 className="font-semibold text-gray-800">After NH4Cl added + Indicator (buffered)</h4>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Measured pH: {ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : '—'}</p>
-                  <p className="text-sm text-gray-600">Volume: {ammoniumAfterSample ? `${ammoniumAfterSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                  {(() => {
+                    const hh = computeHenderson();
+                    const measured = hh.pH !== null ? hh.pH : ammoniumAfterPH;
+                    return (
+                      <>
+                        <p className="text-sm text-gray-600 mb-2">Measured pH: {measured != null ? (Number.isFinite(measured) ? measured.toFixed(2) : '—') : '—'}</p>
+                        <p className="text-sm text-gray-600">Volume: {ammoniumAfterSample ? `${ammoniumAfterSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
