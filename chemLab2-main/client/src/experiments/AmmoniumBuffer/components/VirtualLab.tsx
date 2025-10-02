@@ -59,10 +59,12 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
 
   const [baseSample, setBaseSample] = useState<TestTubeState | null>(null);
   const [bufferedSample, setBufferedSample] = useState<TestTubeState | null>(null);
+  const [ammoniumAfterSample, setAmmoniumAfterSample] = useState<TestTubeState | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [analysisLog, setAnalysisLog] = useState<LogEntry[]>([]);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
   const [ammoniumInitialPH, setAmmoniumInitialPH] = useState<number | null>(null);
+  const [ammoniumAfterPH, setAmmoniumAfterPH] = useState<number | null>(null);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
 
