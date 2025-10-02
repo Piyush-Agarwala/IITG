@@ -302,6 +302,10 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
       setShowToast('Measured pH ≈ 9 (buffered, lower than NH4OH)');
       // start blinking RESET (NH4Cl) since measurement occurred and NH4Cl is present
       setShouldBlinkNh4clReset(nh4clVolumeAdded > 0);
+      // advance guided progress: when pH is measured after NH4Cl, mark step 5 complete and move to step 6
+      if (currentStep === 5 && onStepComplete && !completedSteps.includes(5)) {
+        onStepComplete(5);
+      }
       setTimeout(() => setShowToast(''), 2000);
       return;
     }
