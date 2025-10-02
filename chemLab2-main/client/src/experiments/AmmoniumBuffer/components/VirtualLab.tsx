@@ -419,7 +419,20 @@ useEffect(() => {
               <Button onClick={handleUndo} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
-              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setAmmoniumAfterPH(null); setBaseSample(null); setBufferedSample(null); setAmmoniumAfterSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+              <Button onClick={() => { setEquipmentOnBench([]); setTestTube(INITIAL_TESTTUBE); setHistory([]); setAmmoniumInitialPH(null); setAmmoniumAfterPH(null); setBaseSample(null); setBufferedSample(null); setAmmoniumAfterSample(null); setLastMeasuredPH(null); setMeasurePressed(false); setNewPaperPressed(false); setCompareInitiated(false); if (compareTimeoutRef.current) { clearTimeout(compareTimeoutRef.current as unknown as number); compareTimeoutRef.current = null; } onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+
+              {/* View Results button becomes available immediately when COMPARE is pressed */}
+              {(compareInitiated || ammoniumAfterSample != null) && (
+                <Button onClick={() => {
+                  // open results immediately and cancel any pending auto-open
+                  if (compareTimeoutRef.current) {
+                    clearTimeout(compareTimeoutRef.current as unknown as number);
+                    compareTimeoutRef.current = null;
+                  }
+                  setCompareInitiated(false);
+                  setShowResultsModal(true);
+                }} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results & Analysis</Button>
+              )}
             </div>
           </div>
 
