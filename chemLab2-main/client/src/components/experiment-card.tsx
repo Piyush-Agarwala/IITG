@@ -42,7 +42,8 @@ export default function ExperimentCard({ experiment, progress, onViewDetails }: 
   };
 
   const handleStartExperiment = () => {
-    navigate(`/experiment/${experiment.id}`);
+    // navigate and request auto-start of the experiment timer
+    navigate(`/experiment/${experiment.id}?autostart=1`);
   };
 
   return (
