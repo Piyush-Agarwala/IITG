@@ -87,6 +87,10 @@ useEffect(() => {
   if (showResultsModal) {
     // pause the simulation when viewing results
     setIsRunning(false);
+    // ensure compare state/animations stop
+    setCompareInitiated(false);
+    setMeasurePressed(false);
+    setNewPaperPressed(false);
   }
 }, [showResultsModal, setIsRunning]);
 
