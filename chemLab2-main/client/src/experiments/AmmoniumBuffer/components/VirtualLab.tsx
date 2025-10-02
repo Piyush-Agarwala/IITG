@@ -6,7 +6,8 @@ import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment } from "./Equipment";
 import { AB_LAB_EQUIPMENT } from "./Equipment";
 import { COLORS, INITIAL_TESTTUBE, GUIDED_STEPS, ANIMATION } from "../constants";
-import { Beaker, Info, Wrench, CheckCircle, ArrowRight, TestTube, Undo2, TrendingUp } from "lucide-react";
+import { Beaker, Info, Wrench, CheckCircle, ArrowRight, TestTube, Undo2, TrendingUp, Clock, Home } from "lucide-react";
+import { Link } from "wouter";
 
 interface ExperimentMode {
   current: 'guided';
@@ -67,6 +68,13 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [ammoniumAfterPH, setAmmoniumAfterPH] = useState<number | null>(null);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
+
+useEffect(() => {
+  if (showResultsModal) {
+    // pause the simulation when viewing results
+    setIsRunning(false);
+  }
+}, [showResultsModal, setIsRunning]);
 
   const getEquipmentPosition = (equipmentId: string) => {
     const baseX = 220;
@@ -533,6 +541,100 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
           </div>
         </div>
       </div>
+
+      {/* Results & Analysis Modal */}
+      <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-green-700 bg-clip-text text-transparent flex items-center">
+              <TrendingUp className="w-6 h-6 mr-2 text-blue-600" />
+              Experiment Results & Analysis
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">Analysis of your ammonium hydroxide / ammonium chloride comparison</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 mt-4">
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
+                    <h4 className="font-semibold text-gray-800">Ammonium hydroxide + Indicator (basic)</h4>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2">Measured pH: {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</p>
+                  <p className="text-sm text-gray-600">Volume: {baseSample ? `${baseSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                </div>
+                <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
+                    <h4 className="font-semibold text-gray-800">After NH4Cl added + Indicator (buffered)</h4>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2">Measured pH: {ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : '—'}</p>
+                  <p className="text-sm text-gray-600">Volume: {ammoniumAfterSample ? `${ammoniumAfterSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Action Timeline</h3>
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {analysisLog.map((log, index) => (
+                  <div key={log.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">{index + 1}</div>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-800">{log.action}</div>
+                      <div className="text-sm text-gray-600">{log.observation}</div>
+                      <div className="flex items-center space-x-4 mt-2 text-xs">
+                        <span className="flex items-center"><span className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: log.colorBefore }}></span>Before</span>
+                        <span>→</span>
+                        <span className="flex items-center"><span className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: log.colorAfter }}></span>After</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Final Experimental State</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
+                    <h4 className="font-semibold text-gray-800">Ammonium hydroxide + Indicator (≈ basic)</h4>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-gray-700 mb-2">Current Solution</h5>
+                    <p className="text-sm text-gray-600">Contents: {baseSample ? baseSample.contents.join(', ') : 'Not recorded'}</p>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
+                  <div className="flex items-center mb-3">
+                    <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
+                    <h4 className="font-semibold text-gray-800">NH4Cl added + Indicator (≈ buffered)</h4>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-gray-700 mb-2">Current Solution</h5>
+                    <p className="text-sm text-gray-600">Contents: {ammoniumAfterSample ? ammoniumAfterSample.contents.join(', ') : 'Not recorded'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between mt-6">
+            <Link href="/">
+              <Button className="bg-gray-500 hover:bg-gray-600 text-white flex items-center space-x-2">
+                <Home className="w-4 h-4" />
+                <span>Return to Experiments</span>
+              </Button>
+            </Link>
+            <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* NH4OH dialog */}
       <Dialog open={showNh4ohDialog} onOpenChange={setShowNh4ohDialog}>
