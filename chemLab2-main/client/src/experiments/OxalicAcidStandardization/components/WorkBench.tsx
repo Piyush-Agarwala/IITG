@@ -91,6 +91,17 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     };
   }, []);
 
+  // Listen for global reminder events triggered by equipment components
+  useEffect(() => {
+    const handler = () => {
+      showMessage("Before adding the amount of acid into the boat make sure you open the calculator once!");
+    };
+    window.addEventListener("oxalicCalculatorReminder", handler as EventListener);
+    return () => {
+      window.removeEventListener("oxalicCalculatorReminder", handler as EventListener);
+    };
+  }, [showMessage]);
+
   useEffect(() => {
     if (isRunning) {
       const tempInterval = setInterval(() => {
