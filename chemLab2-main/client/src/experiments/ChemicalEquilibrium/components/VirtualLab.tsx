@@ -249,6 +249,13 @@ function ChemicalEquilibriumVirtualLab({
     );
     if (!chemical) return;
 
+    // helper: map known hcl ids to numeric concentrations
+    const HCL_CONC_MAP: Record<string, number> = {
+      hcl_0_1: 0.1,
+      hcl_0_01: 0.01,
+      hcl_0_001: 0.001,
+    };
+
     setEquipmentPositions((prev) =>
       prev.map((pos) => {
         if (pos.id === equipmentId) {
@@ -263,7 +270,62 @@ function ChemicalEquilibriumVirtualLab({
             },
           ];
 
-          // Chemical Equilibrium reaction logic
+          // PH experiment specific interactions
+          if (isPHExperiment) {
+            // If we added pH paper or indicator to a beaker that already contains HCl
+            const containsHCl = newChemicals.some((c) => c.id.startsWith("hcl_")) ||
+              pos.chemicals.some((c) => c.id.startsWith("hcl_"));
+
+            // If pH paper added
+            if (chemicalId === "ph_paper") {
+              setToastMessage("pH paper added. Read the strip to estimate pH.");
+              setTimeout(() => setToastMessage(null), 3000);
+
+              if (containsHCl) {
+                // find first hcl in this beaker
+                const hcl = newChemicals.find((c) => c.id.startsWith("hcl_")) || pos.chemicals.find((c) => c.id.startsWith("hcl_"));
+                if (hcl) {
+                  const conc = HCL_CONC_MAP[hcl.id] ?? 0.01;
+                  const phValue = Number((-(Math.log10(conc))).toFixed(2));
+                  setMeasurements((m) => ({ ...m, ph: phValue }));
+                }
+              }
+
+            } else if (chemicalId === "universal_indicator") {
+              setToastMessage("Universal indicator added. Observe color change and compare to chart.");
+              setTimeout(() => setToastMessage(null), 3000);
+
+              if (containsHCl) {
+                const hcl = newChemicals.find((c) => c.id.startsWith("hcl_")) || pos.chemicals.find((c) => c.id.startsWith("hcl_"));
+                if (hcl) {
+                  const conc = HCL_CONC_MAP[hcl.id] ?? 0.01;
+                  const phValue = Number((-(Math.log10(conc))).toFixed(2));
+                  setMeasurements((m) => ({ ...m, ph: phValue }));
+                }
+              }
+
+            } else if (chemicalId.startsWith("hcl_") && (containsHCl || chemicalId.startsWith("hcl_"))) {
+              // HCl added to beaker - if pH paper or indicator present in same beaker, update ph
+              const hasPaperOrIndicator = newChemicals.some((c) => c.id === "ph_paper" || c.id === "universal_indicator") || pos.chemicals.some((c) => c.id === "ph_paper" || c.id === "universal_indicator");
+              if (hasPaperOrIndicator) {
+                const conc = HCL_CONC_MAP[chemicalId] ?? 0.01;
+                const phValue = Number((-(Math.log10(conc))).toFixed(2));
+                setMeasurements((m) => ({ ...m, ph: phValue }));
+                setToastMessage(`Measured pH: ${phValue}`);
+                setTimeout(() => setToastMessage(null), 3000);
+              }
+            }
+
+            // generic add toast for PH experiment
+            if (!(chemicalId === "ph_paper" || chemicalId === "universal_indicator")) {
+              setToastMessage(`Added ${amount}mL of ${chemical.name} to ${equipmentId}`);
+              setTimeout(() => setToastMessage(null), 3000);
+            }
+
+            return { ...pos, chemicals: newChemicals };
+          }
+
+          // Chemical Equilibrium reaction logic (original behavior)
           if (equipmentId === "test_tubes") {
             if (chemicalId === "cocl2") {
               setCobaltChlorideAdded(true);
