@@ -241,6 +241,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
                 <div
                   role="button"
                   tabIndex={0}
+                  data-open-acid-warning="true"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (stepId === 3) {
