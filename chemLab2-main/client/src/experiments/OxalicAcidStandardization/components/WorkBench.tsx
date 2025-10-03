@@ -69,8 +69,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [temperature, setTemperature] = useState(25);
   const [showCalculator, setShowCalculator] = useState(false);
   // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
+  // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
   // keep this completely under user control (do not auto-sync with calculated targetMass)
-  const [acidAmount, setAcidAmount] = useState<number>(0);
+  const [acidAmount, setAcidAmount] = useState<string>("");
 
   const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
   const messageTimeoutRef = useRef<number | null>(null);
@@ -600,7 +601,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                           min="0"
                           step="0.0001"
                           value={acidAmount}
-                          onChange={(e) => setAcidAmount(Number(e.target.value))}
+                          onChange={(e) => setAcidAmount(e.target.value)}
                           className="w-32 p-2 border rounded text-sm font-mono bg-white"
                         />
                         <Button
@@ -612,8 +613,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                               return;
                             }
 
-                            // Use the user-provided acidAmount as the amount to add
-                            const amountToAdd = Math.max(0, Number(acidAmount) || 0);
+                            // Parse user-provided value; allow clearing the input
+                            const parsedAmount = parseFloat(acidAmount);
+                            if (isNaN(parsedAmount) || parsedAmount <= 0) {
+                              showMessage('Please enter a positive amount to add.');
+                              return;
+                            }
+                            const amountToAdd = parsedAmount;
 
                             setEquipmentPositions(prev => prev.map(pos => {
                               if (pos.id === boat.id) {
