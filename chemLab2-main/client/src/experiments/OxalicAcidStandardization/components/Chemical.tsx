@@ -152,16 +152,16 @@ export const Chemical: React.FC<ChemicalProps> = ({
               <h3 className="text-lg font-semibold text-gray-900">Reminder</h3>
               <p className="text-sm text-gray-700">Before adding the amount of acid into the boat make sure you open the calculator once!</p>
               <div className="flex items-center justify-center space-x-3 pt-2">
-                <button
-                  type="button"
-                  className="px-4 py-2 rounded-md border border-blue-200 text-blue-600 text-sm font-medium hover:bg-blue-50"
+                <Button
+                  variant="outline"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowReminder(false);
                   }}
+                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
                 >
                   Close
-                </button>
+                </Button>
               </div>
             </div>
           </div>
