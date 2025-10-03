@@ -995,10 +995,17 @@ const stepsProgress = (
                       <span>D) 5.7</span>
                     </label>
                   </div>
-                  {quizSubmitted && (<>
-                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q5 === 'A' ? 'A) 4.7' : quizSelections.q5 === 'B' ? 'B) 4.9' : quizSelections.q5 === 'C' ? 'C) 5.0' : quizSelections.q5 === 'D' ? 'D) 5.7' : ''}</div>
-                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) 5.0 (pH ≈ pKa + log([A⁻]/[HA]) = 4.745 + log(0.10/0.05) ≈ 5.05)</div>
-                  </>)}
+                  {quizSubmitted && (() => {
+                    const correct = 'C';
+                    const selected = quizSelections.q5;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) 4.7' : selected === 'B' ? 'B) 4.9' : selected === 'C' ? 'C) 5.0' : selected === 'D' ? 'D) 5.7' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) 5.0 (pH ≈ pKa + log([A⁻]/[HA]) = 4.745 + log(0.10/0.05) ≈ 5.05)</div>
+                      </>
+                    );
+                  })()}
                 </section>
 
                 <div className="flex items-center justify-between space-x-4">
