@@ -1,5 +1,5 @@
 import React from "react";
-import { TestTube, Thermometer, Beaker } from "lucide-react";
+import { TestTube, Thermometer, Beaker, FlaskConical } from "lucide-react";
 import type { Chemical, Equipment } from "./types";
 
 // Chemical reagents specific to Chemical Equilibrium experiment
