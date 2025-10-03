@@ -847,19 +847,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q1. Ethanoic acid alone has a pH ≈ 2.9 at 0.1 M. When sodium ethanoate is added, the pH rises close to 4.7. This is mainly because:</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q1" value="A" className="mt-1" checked={quizSelections.q1 === 'A'} onChange={() => handleSelect('q1', 'A')} />
+                      <input type="radio" name="q1" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'A'} onChange={() => handleSelect('q1', 'A')} />
                       <span>A) Sodium ethanoate is strongly basic and neutralizes all the acid.</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q1" value="B" className="mt-1" checked={quizSelections.q1 === 'B'} onChange={() => handleSelect('q1', 'B')} />
+                      <input type="radio" name="q1" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'B'} onChange={() => handleSelect('q1', 'B')} />
                       <span>B) The common ion effect reduces the dissociation of ethanoic acid.</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q1" value="C" className="mt-1" checked={quizSelections.q1 === 'C'} onChange={() => handleSelect('q1', 'C')} />
+                      <input type="radio" name="q1" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'C'} onChange={() => handleSelect('q1', 'C')} />
                       <span>C) The volume of solution increases, diluting the acid.</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q1" value="D" className="mt-1" checked={quizSelections.q1 === 'D'} onChange={() => handleSelect('q1', 'D')} />
+                      <input type="radio" name="q1" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'D'} onChange={() => handleSelect('q1', 'D')} />
                       <span>D) Sodium ethanoate removes H⁺ ions by precipitation.</span>
                     </label>
                   </div>
@@ -880,19 +880,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q2. At the point where [CH₃COOH] = [CH₃COONa], the pH of the solution equals:</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q2" value="A" className="mt-1" checked={quizSelections.q2 === 'A'} onChange={() => handleSelect('q2', 'A')} />
+                      <input type="radio" name="q2" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'A'} onChange={() => handleSelect('q2', 'A')} />
                       <span>A) 7.0 (neutral point)</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q2" value="B" className="mt-1" checked={quizSelections.q2 === 'B'} onChange={() => handleSelect('q2', 'B')} />
+                      <input type="radio" name="q2" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'B'} onChange={() => handleSelect('q2', 'B')} />
                       <span>B) The pKa of acetic acid</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q2" value="C" className="mt-1" checked={quizSelections.q2 === 'C'} onChange={() => handleSelect('q2', 'C')} />
+                      <input type="radio" name="q2" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'C'} onChange={() => handleSelect('q2', 'C')} />
                       <span>C) The pKb of acetate ion</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q2" value="D" className="mt-1" checked={quizSelections.q2 === 'D'} onChange={() => handleSelect('q2', 'D')} />
+                      <input type="radio" name="q2" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'D'} onChange={() => handleSelect('q2', 'D')} />
                       <span>D) The ionic product of water (Kw)</span>
                     </label>
                   </div>
@@ -913,19 +913,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q3. Why does the solution resist large pH changes upon addition of small amounts of strong acid or base once sodium ethanoate is added?</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q3" value="A" className="mt-1" checked={quizSelections.q3 === 'A'} onChange={() => handleSelect('q3', 'A')} />
+                      <input type="radio" name="q3" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'A'} onChange={() => handleSelect('q3', 'A')} />
                       <span>A) Because sodium ethanoate hydrolyzes completely to form OH⁻</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q3" value="B" className="mt-1" checked={quizSelections.q3 === 'B'} onChange={() => handleSelect('q3', 'B')} />
+                      <input type="radio" name="q3" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'B'} onChange={() => handleSelect('q3', 'B')} />
                       <span>B) Because the weak acid and its conjugate base establish a buffer equilibrium</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q3" value="C" className="mt-1" checked={quizSelections.q3 === 'C'} onChange={() => handleSelect('q3', 'C')} />
+                      <input type="radio" name="q3" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'C'} onChange={() => handleSelect('q3', 'C')} />
                       <span>C) Because sodium ions neutralize all OH⁻ ions</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q3" value="D" className="mt-1" checked={quizSelections.q3 === 'D'} onChange={() => handleSelect('q3', 'D')} />
+                      <input type="radio" name="q3" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'D'} onChange={() => handleSelect('q3', 'D')} />
                       <span>D) Because dilution prevents ionization</span>
                     </label>
                   </div>
@@ -946,19 +946,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q4. Which of the following best explains the shape of the pH vs. added sodium ethanoate volume curve?</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q4" value="A" className="mt-1" checked={quizSelections.q4 === 'A'} onChange={() => handleSelect('q4', 'A')} />
+                      <input type="radio" name="q4" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'A'} onChange={() => handleSelect('q4', 'A')} />
                       <span>A) A linear increase in pH due to direct neutralization</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q4" value="B" className="mt-1" checked={quizSelections.q4 === 'B'} onChange={() => handleSelect('q4', 'B')} />
+                      <input type="radio" name="q4" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'B'} onChange={() => handleSelect('q4', 'B')} />
                       <span>B) A rapid rise initially, then leveling off near pKa due to buffer action</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q4" value="C" className="mt-1" checked={quizSelections.q4 === 'C'} onChange={() => handleSelect('q4', 'C')} />
+                      <input type="radio" name="q4" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'C'} onChange={() => handleSelect('q4', 'C')} />
                       <span>C) A sharp fall in pH due to hydrolysis of sodium acetate</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q4" value="D" className="mt-1" checked={quizSelections.q4 === 'D'} onChange={() => handleSelect('q4', 'D')} />
+                      <input type="radio" name="q4" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'D'} onChange={() => handleSelect('q4', 'D')} />
                       <span>D) A constant pH value because sodium acetate is neutral</span>
                     </label>
                   </div>
@@ -979,19 +979,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q5. If the Ka of ethanoic acid is 1.8 × 10⁻⁵, and you prepare a buffer with [CH₃COOH] = 0.05 M and [CH₃COONa] = 0.10 M, what would be the approximate pH?</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q5" value="A" className="mt-1" checked={quizSelections.q5 === 'A'} onChange={() => handleSelect('q5', 'A')} />
+                      <input type="radio" name="q5" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'A'} onChange={() => handleSelect('q5', 'A')} />
                       <span>A) 4.7</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q5" value="B" className="mt-1" checked={quizSelections.q5 === 'B'} onChange={() => handleSelect('q5', 'B')} />
+                      <input type="radio" name="q5" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'B'} onChange={() => handleSelect('q5', 'B')} />
                       <span>B) 4.9</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q5" value="C" className="mt-1" checked={quizSelections.q5 === 'C'} onChange={() => handleSelect('q5', 'C')} />
+                      <input type="radio" name="q5" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'C'} onChange={() => handleSelect('q5', 'C')} />
                       <span>C) 5.0</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="radio" name="q5" value="D" className="mt-1" checked={quizSelections.q5 === 'D'} onChange={() => handleSelect('q5', 'D')} />
+                      <input type="radio" name="q5" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'D'} onChange={() => handleSelect('q5', 'D')} />
                       <span>D) 5.7</span>
                     </label>
                   </div>
