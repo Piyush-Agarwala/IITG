@@ -79,7 +79,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     messageTimeoutRef.current = window.setTimeout(() => {
       setWorkbenchMessage(null);
       messageTimeoutRef.current = null;
-    }, 2500);
+    }, 8000);
   }, []);
 
   useEffect(() => {
@@ -431,7 +431,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         </div>
 
         {workbenchMessage && (
-          <div className="mt-3 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-3 py-2 rounded-md">
+          <div role="status" aria-live="polite" className="fixed bottom-6 right-6 z-50 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3 rounded-md shadow-lg">
             {workbenchMessage}
           </div>
         )}
