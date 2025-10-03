@@ -529,8 +529,14 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
       {/* Acid added warning modal - rendered at component root so it appears regardless of equipment type */}
       {showAcidWarning && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4" role="dialog" aria-modal="true" aria-label="Acid caution">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 transform transition-all">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Acid caution"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 transform transition-all" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0">
                 <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
@@ -543,12 +549,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
                 <h3 className="text-lg font-semibold text-gray-900">Caution</h3>
                 <p className="mt-2 text-sm text-gray-700">Be careful while you add the acid into the machine to tare. Make sure you open the calculator and verify the required amount before proceeding.</p>
                 <div className="mt-4 flex items-center justify-end space-x-3">
-                  <Button variant="outline" onClick={() => setShowAcidWarning(false)}>Close</Button>
-                  <Button onClick={() => {
-                    setAcidWarningDismissed(true);
-                    persistAcidWarningDismissed(true);
-                    setShowAcidWarning(false);
-                  }}>Got it</Button>
+                  <Button variant="outline" onClick={(e) => { e.stopPropagation(); setShowAcidWarning(false); }}>Close</Button>
+                  <Button onClick={(e) => { e.stopPropagation(); setAcidWarningDismissed(true); persistAcidWarningDismissed(true); setShowAcidWarning(false); }}>Got it</Button>
                 </div>
                 <p className="mt-3 text-xs text-gray-500">This message will not show again after you click "Got it".</p>
               </div>
