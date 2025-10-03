@@ -244,7 +244,7 @@ function ChemicalEquilibriumVirtualLab({
     equipmentId: string,
     amount: number,
   ) => {
-    const chemical = CHEMICAL_EQUILIBRIUM_CHEMICALS.find(
+    const chemical = chemicalsList.find(
       (c) => c.id === chemicalId,
     );
     if (!chemical) return;
