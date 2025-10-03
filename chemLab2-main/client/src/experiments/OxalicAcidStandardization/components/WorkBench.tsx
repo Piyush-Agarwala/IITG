@@ -466,6 +466,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     onRemove={handleEquipmentRemove}
                     preparationState={preparationState}
                     onAction={handleEquipmentAction}
+                    stepId={step.id}
                   />
                 );
               }
