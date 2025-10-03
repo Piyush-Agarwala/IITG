@@ -325,7 +325,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       case 2:
         return "drag the oxalic acid dihydrate and spatula into the workspace";
       case 3:
-        return "Add oxalic acid to a beaker with distilled water and stir";
+        return "drag the oxalic acid dihydrate into the workspace and place it on the balance.";
       case 4:
         return "Transfer the dissolved solution to a volumetric flask";
       case 5:

@@ -412,12 +412,26 @@ function ChemicalEquilibriumVirtualLab({
         <div className="w-full flex gap-6" style={{ minHeight: '75vh' }}>
           <aside className="w-72 bg-white/90 border border-gray-200 rounded-lg p-4">
             <h4 className="text-sm font-semibold mb-3">Equipment</h4>
-            <div className="space-y-3">
+            <div className="grid gap-3">
               {equipmentList.map((equipment) => (
-                <div key={equipment.id} className="flex items-center space-x-3 p-2 border rounded" data-testid={equipment.id}>
-                  <div className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded">{equipment.icon}</div>
-                  <div className="text-sm">{equipment.name}</div>
-                  <div className="ml-auto">
+                <div
+                  key={equipment.id}
+                  data-testid={equipment.id}
+                  className="flex flex-col items-center text-center p-3 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-grab"
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData("equipment", equipment.id);
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDoubleClick={() => handleEquipmentDrop(equipment.id, 200, 200)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="w-12 h-12 flex items-center justify-center bg-slate-50 rounded mb-2 text-blue-600">
+                    {equipment.icon}
+                  </div>
+                  <div className="text-sm font-medium text-gray-700">{equipment.name}</div>
+                  <div className="mt-2">
                     <button
                       onClick={() => handleEquipmentDrop(equipment.id, 200, 200)}
                       className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded"
@@ -428,6 +442,8 @@ function ChemicalEquilibriumVirtualLab({
                 </div>
               ))}
             </div>
+
+            <div className="mt-4 text-xs text-gray-500">Tip: Drag equipment to the workspace or double-click to place.</div>
 
             <div className="mt-6">
               <button onClick={handleReset} className="w-full px-3 py-2 bg-red-50 text-red-600 rounded">Reset Experiment</button>
