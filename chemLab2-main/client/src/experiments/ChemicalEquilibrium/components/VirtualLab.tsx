@@ -8,7 +8,10 @@ import {
   CHEMICAL_EQUILIBRIUM_CHEMICALS,
   CHEMICAL_EQUILIBRIUM_EQUIPMENT,
   DEFAULT_MEASUREMENTS,
+  PH_HCL_CHEMICALS,
+  PH_HCL_EQUIPMENT,
 } from "../constants";
+import { PHHClExperiment } from "../data";
 import type {
   EquipmentPosition,
   CobaltReactionState,
@@ -53,6 +56,11 @@ function ChemicalEquilibriumVirtualLab({
   const [results, setResults] = useState<Result[]>([]);
   const [measurements, setMeasurements] =
     useState<Measurements>(DEFAULT_MEASUREMENTS);
+
+  // Choose chemicals and equipment based on experiment
+  const isPHExperiment = experimentTitle === PHHClExperiment.title;
+  const chemicalsList = isPHExperiment ? PH_HCL_CHEMICALS : CHEMICAL_EQUILIBRIUM_CHEMICALS;
+  const equipmentList = isPHExperiment ? PH_HCL_EQUIPMENT : CHEMICAL_EQUILIBRIUM_EQUIPMENT;
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(stepNumber);
 
@@ -236,10 +244,17 @@ function ChemicalEquilibriumVirtualLab({
     equipmentId: string,
     amount: number,
   ) => {
-    const chemical = CHEMICAL_EQUILIBRIUM_CHEMICALS.find(
+    const chemical = chemicalsList.find(
       (c) => c.id === chemicalId,
     );
     if (!chemical) return;
+
+    // helper: map known hcl ids to numeric concentrations
+    const HCL_CONC_MAP: Record<string, number> = {
+      hcl_0_1: 0.1,
+      hcl_0_01: 0.01,
+      hcl_0_001: 0.001,
+    };
 
     setEquipmentPositions((prev) =>
       prev.map((pos) => {
@@ -255,7 +270,62 @@ function ChemicalEquilibriumVirtualLab({
             },
           ];
 
-          // Chemical Equilibrium reaction logic
+          // PH experiment specific interactions
+          if (isPHExperiment) {
+            // If we added pH paper or indicator to a beaker that already contains HCl
+            const containsHCl = newChemicals.some((c) => c.id.startsWith("hcl_")) ||
+              pos.chemicals.some((c) => c.id.startsWith("hcl_"));
+
+            // If pH paper added
+            if (chemicalId === "ph_paper") {
+              setToastMessage("pH paper added. Read the strip to estimate pH.");
+              setTimeout(() => setToastMessage(null), 3000);
+
+              if (containsHCl) {
+                // find first hcl in this beaker
+                const hcl = newChemicals.find((c) => c.id.startsWith("hcl_")) || pos.chemicals.find((c) => c.id.startsWith("hcl_"));
+                if (hcl) {
+                  const conc = HCL_CONC_MAP[hcl.id] ?? 0.01;
+                  const phValue = Number((-(Math.log10(conc))).toFixed(2));
+                  setMeasurements((m) => ({ ...m, ph: phValue }));
+                }
+              }
+
+            } else if (chemicalId === "universal_indicator") {
+              setToastMessage("Universal indicator added. Observe color change and compare to chart.");
+              setTimeout(() => setToastMessage(null), 3000);
+
+              if (containsHCl) {
+                const hcl = newChemicals.find((c) => c.id.startsWith("hcl_")) || pos.chemicals.find((c) => c.id.startsWith("hcl_"));
+                if (hcl) {
+                  const conc = HCL_CONC_MAP[hcl.id] ?? 0.01;
+                  const phValue = Number((-(Math.log10(conc))).toFixed(2));
+                  setMeasurements((m) => ({ ...m, ph: phValue }));
+                }
+              }
+
+            } else if (chemicalId.startsWith("hcl_") && (containsHCl || chemicalId.startsWith("hcl_"))) {
+              // HCl added to beaker - if pH paper or indicator present in same beaker, update ph
+              const hasPaperOrIndicator = newChemicals.some((c) => c.id === "ph_paper" || c.id === "universal_indicator") || pos.chemicals.some((c) => c.id === "ph_paper" || c.id === "universal_indicator");
+              if (hasPaperOrIndicator) {
+                const conc = HCL_CONC_MAP[chemicalId] ?? 0.01;
+                const phValue = Number((-(Math.log10(conc))).toFixed(2));
+                setMeasurements((m) => ({ ...m, ph: phValue }));
+                setToastMessage(`Measured pH: ${phValue}`);
+                setTimeout(() => setToastMessage(null), 3000);
+              }
+            }
+
+            // generic add toast for PH experiment
+            if (!(chemicalId === "ph_paper" || chemicalId === "universal_indicator")) {
+              setToastMessage(`Added ${amount}mL of ${chemical.name} to ${equipmentId}`);
+              setTimeout(() => setToastMessage(null), 3000);
+            }
+
+            return { ...pos, chemicals: newChemicals };
+          }
+
+          // Chemical Equilibrium reaction logic (original behavior)
           if (equipmentId === "test_tubes") {
             if (chemicalId === "cocl2") {
               setCobaltChlorideAdded(true);
@@ -338,7 +408,106 @@ function ChemicalEquilibriumVirtualLab({
 
   return (
     <TooltipProvider>
-      <div
+      {isPHExperiment ? (
+        <div className="w-full flex gap-6" style={{ minHeight: '75vh' }}>
+          <aside className="w-72 bg-white/90 border border-gray-200 rounded-lg p-4">
+            <h4 className="text-sm font-semibold mb-3">Equipment</h4>
+            <div className="space-y-3">
+              {equipmentList.map((equipment) => (
+                <div key={equipment.id} className="flex items-center space-x-3 p-2 border rounded" data-testid={equipment.id}>
+                  <div className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded">{equipment.icon}</div>
+                  <div className="text-sm">{equipment.name}</div>
+                  <div className="ml-auto">
+                    <button
+                      onClick={() => handleEquipmentDrop(equipment.id, 200, 200)}
+                      className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded"
+                    >
+                      Place
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6">
+              <button onClick={handleReset} className="w-full px-3 py-2 bg-red-50 text-red-600 rounded">Reset Experiment</button>
+            </div>
+          </aside>
+
+          <main className="flex-1 flex flex-col">
+            <div className="mb-4 bg-white p-4 border rounded">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold">Experiment Progress</h3>
+                  <p className="text-xs text-gray-500">Step {currentStep} of {totalSteps}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button onClick={() => setCurrentStep(Math.max(1, currentStep - 1))} className="text-xs px-2 py-1 bg-gray-100 rounded">Undo</button>
+                  <button onClick={handleReset} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded">Reset</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 p-2">
+              <WorkBench
+                onDrop={experimentStarted ? handleEquipmentDrop : () => {}}
+                selectedChemical={experimentStarted ? selectedChemical : null}
+                isRunning={isRunning}
+                experimentTitle={experimentTitle}
+              >
+                {equipmentPositions.map((pos) => {
+                  const equipment = equipmentList.find((eq) => eq.id === pos.id);
+                  return equipment ? (
+                    <Equipment
+                      key={pos.id}
+                      id={pos.id}
+                      name={equipment.name}
+                      icon={equipment.icon}
+                      onDrag={experimentStarted ? handleEquipmentDrop : () => {}}
+                      position={pos}
+                      chemicals={pos.chemicals}
+                      onChemicalDrop={experimentStarted ? handleChemicalDrop : () => {}}
+                      onRemove={experimentStarted ? handleEquipmentRemove : () => {}}
+                      cobaltReactionState={cobaltReactionState}
+                      allEquipmentPositions={equipmentPositions}
+                      currentStep={currentStep}
+                      disabled={!experimentStarted}
+                    />
+                  ) : null;
+                })}
+              </WorkBench>
+            </div>
+
+            <div className="mt-4 bg-white p-3 border rounded">
+              <h4 className="text-sm font-semibold mb-2">Instructions</h4>
+              <p className="text-xs text-gray-600">Follow the numbered steps on the right to complete the experiment. Use pH paper or indicator to measure pH after adding HCl to a beaker.</p>
+            </div>
+          </main>
+
+          <aside className="w-72 bg-white/90 border border-gray-200 rounded-lg p-4">
+            <h4 className="text-sm font-semibold mb-3">Live Analysis</h4>
+            <div className="text-xs text-gray-600 mb-3">
+              <div className="font-medium">Current Step</div>
+              <div>{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
+            </div>
+
+            <div className="text-xs text-gray-600 mb-3">
+              <div className="font-medium">Completed Steps</div>
+              <ul className="list-disc list-inside mt-2">
+                {allSteps.slice(0, Math.max(0, currentStep - 1)).map((s) => (
+                  <li key={s.id}>{s.title}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="text-xs text-gray-600">
+              <div className="font-medium mb-1">Measured pH</div>
+              <div className="text-lg font-bold">{measurements.ph ? measurements.ph : 'No result yet'}</div>
+            </div>
+          </aside>
+        </div>
+      ) : (
+        <div
         className="w-full bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg overflow-hidden flex"
         style={{ minHeight: "75vh" }}
       >
@@ -349,8 +518,8 @@ function ChemicalEquilibriumVirtualLab({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <h4 className="font-semibold text-gray-800 text-sm flex items-center">
-                  <Atom className="w-4 h-4 mr-2 text-blue-600" />
-                  Chemical Equilibrium - Equipment
+                <Atom className="w-4 h-4 mr-2 text-blue-600" />
+                  {experimentTitle} - Equipment
                 </h4>
                 <span className="inline-flex items-center px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
                   <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse mr-1"></div>
@@ -367,7 +536,7 @@ function ChemicalEquilibriumVirtualLab({
               </div>
             </div>
             <div className="flex items-center space-x-3 mt-2 overflow-x-auto pb-2">
-              {CHEMICAL_EQUILIBRIUM_EQUIPMENT.map((equipment) => (
+              {equipmentList.map((equipment) => (
                 <div key={equipment.id} className="flex-shrink-0">
                   <Equipment
                     id={equipment.id}
@@ -398,7 +567,7 @@ function ChemicalEquilibriumVirtualLab({
                 experimentTitle={experimentTitle}
               >
                 {equipmentPositions.map((pos) => {
-                  const equipment = CHEMICAL_EQUILIBRIUM_EQUIPMENT.find(
+                  const equipment = equipmentList.find(
                     (eq) => eq.id === pos.id,
                   );
                   return equipment ? (
@@ -436,7 +605,7 @@ function ChemicalEquilibriumVirtualLab({
               Chemical Reagents
             </h4>
             <div className="flex items-center space-x-3 overflow-x-auto pb-2">
-              {CHEMICAL_EQUILIBRIUM_CHEMICALS.map((chemical) => (
+              {chemicalsList.map((chemical) => (
                 <div key={chemical.id} className="flex-shrink-0">
                   <Chemical
                     id={chemical.id}
@@ -469,6 +638,7 @@ function ChemicalEquilibriumVirtualLab({
           </div>
         )}
       </div>
+      )}
     </TooltipProvider>
   );
 }

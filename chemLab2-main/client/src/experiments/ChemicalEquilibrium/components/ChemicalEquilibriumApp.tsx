@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Play, Pause } from "lucide-react";
 import { Link, useRoute } from "wouter";
 import ChemicalEquilibriumVirtualLab from "./VirtualLab";
-import ChemicalEquilibriumData from "../data";
+import ChemicalEquilibriumData, { PHHClExperiment } from "../data";
 import type { ExperimentStep } from "../types";
 import { useUpdateProgress } from "@/hooks/use-experiments";
 
@@ -21,9 +21,9 @@ export default function ChemicalEquilibriumApp({
   const [timer, setTimer] = useState(0);
   const [experimentStarted, setExperimentStarted] = useState(false);
 
-  const experiment = ChemicalEquilibriumData;
   const [match, params] = useRoute("/experiment/:id");
   const experimentId = Number(params?.id ?? 4);
+  const experiment = experimentId === PHHClExperiment.id ? PHHClExperiment : ChemicalEquilibriumData;
   const updateProgress = useUpdateProgress();
 
   useEffect(() => {
@@ -146,8 +146,7 @@ export default function ChemicalEquilibriumApp({
                   Ready to Start?
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Click on the "Start Experiment" button to begin exploring
-                  chemical equilibrium with cobalt(II) chloride!
+                  Click on the "Start Experiment" button to begin: {experiment.title}
                 </p>
                 <button
                   onClick={handleStartExperiment}
