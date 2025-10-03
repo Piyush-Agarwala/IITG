@@ -27,12 +27,14 @@ export const Chemical: React.FC<ChemicalProps> = ({
 }) => {
   const [dragAmount, setDragAmount] = React.useState(volume || 25);
 
+  const [showReminder, setShowReminder] = React.useState(false);
+
   const handleDragStart = (e: React.DragEvent) => {
     if (disabled) {
       e.preventDefault();
       return;
     }
-    
+
     e.dataTransfer.setData("text/plain", JSON.stringify({
       id,
       name,
@@ -45,6 +47,17 @@ export const Chemical: React.FC<ChemicalProps> = ({
     e.dataTransfer.effectAllowed = "copy";
   };
 
+  const handleCardClick = () => {
+    if (disabled) {
+      return;
+    }
+    onSelect(id);
+
+    if (id === "oxalic_acid") {
+      setShowReminder(true);
+    }
+  };
+
   return (
     <div
       className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
@@ -54,7 +67,7 @@ export const Chemical: React.FC<ChemicalProps> = ({
           ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
           : "border-gray-300 bg-white hover:border-blue-300 hover:shadow-sm"
       }`}
-      onClick={() => !disabled && onSelect(id)}
+      onClick={handleCardClick}
       draggable={!disabled}
       onDragStart={handleDragStart}
     >
