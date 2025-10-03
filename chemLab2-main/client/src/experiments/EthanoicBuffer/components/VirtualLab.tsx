@@ -929,10 +929,17 @@ const stepsProgress = (
                       <span>D) Because dilution prevents ionization</span>
                     </label>
                   </div>
-                  {quizSubmitted && (<>
-                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q3 === 'A' ? 'A) Because sodium ethanoate hydrolyzes completely to form OH⁻' : quizSelections.q3 === 'B' ? 'B) Because the weak acid and its conjugate base establish a buffer equilibrium' : quizSelections.q3 === 'C' ? 'C) Because sodium ions neutralize all OH⁻ ions' : quizSelections.q3 === 'D' ? 'D) Because dilution prevents ionization' : ''}</div>
-                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Because the weak acid and its conjugate base establish a buffer equilibrium</div>
-                  </>)}
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q3;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Because sodium ethanoate hydrolyzes completely to form OH⁻' : selected === 'B' ? 'B) Because the weak acid and its conjugate base establish a buffer equilibrium' : selected === 'C' ? 'C) Because sodium ions neutralize all OH⁻ ions' : selected === 'D' ? 'D) Because dilution prevents ionization' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Because the weak acid and its conjugate base establish a buffer equilibrium</div>
+                      </>
+                    );
+                  })()}
                 </section>
 
                 <section className="quiz-item">
