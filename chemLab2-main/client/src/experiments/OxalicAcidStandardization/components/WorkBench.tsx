@@ -71,6 +71,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
   // keep this completely under user control (do not auto-sync with calculated targetMass)
   const [acidAmount, setAcidAmount] = useState<string>("");
+  // pouring animation state when adding acid into the weighing boat
+  const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
+  const pourTimeoutRef = useRef<number | null>(null);
 
   // show a colorful hint for first-time users; persist dismissal in localStorage
   const [showAcidHint, setShowAcidHint] = useState<boolean>(false);
@@ -563,6 +566,30 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               return null;
             })}
 
+            {pouring && pouring.active && (
+              <div
+                aria-hidden
+                className="pour-animation-wrapper"
+                style={{ left: pouring.x, top: pouring.y, position: 'absolute', zIndex: 70 }}
+              >
+                <div className="pour-bottle">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none">
+                    <path d="M7 2h10v2h1v2l-1 2v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3V8L6 6V4h1V2z" stroke="#374151" strokeWidth="1" fill="#fff" />
+                    <path d="M9 4h6" stroke="#374151" strokeWidth="1" />
+                  </svg>
+                </div>
+                <div className="pour-drops" aria-hidden>
+                  {[0,1,2,3,4].map((i) => (
+                    <span
+                      key={i}
+                      className="pour-drop"
+                      style={{ left: `${50 + (i - 2) * 6}%`, animationDelay: `${i * 0.18}s` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Drop Zone Indicator */}
             {!experimentStarted && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -660,6 +687,23 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                               }
                               return pos;
                             }));
+
+                            // start pouring animation overlay above the boat
+                            try {
+                              setPouring({ boatId: boat.id, x: boat.x + 40, y: boat.y - 60, active: true });
+                              // clear previous timeout if any
+                              if (pourTimeoutRef.current) {
+                                window.clearTimeout(pourTimeoutRef.current);
+                                pourTimeoutRef.current = null;
+                              }
+                              // After ~9 seconds replace the boat image with the provided image and stop the pouring animation
+                              pourTimeoutRef.current = window.setTimeout(() => {
+                                const newBoatImage = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F79b0166ed4e44df0a61c55a7208a94cf?format=webp&width=800";
+                                setEquipmentPositions(prev => prev.map(pos => pos.id === boat.id ? { ...pos, imageSrc: newBoatImage } : pos));
+                                setPouring(null);
+                                if (pourTimeoutRef.current) { window.clearTimeout(pourTimeoutRef.current); pourTimeoutRef.current = null; }
+                              }, 9000);
+                            } catch (e) {}
 
                             showMessage(`Added ${amountToAdd.toFixed(4)} g of oxalic acid to the weighing boat.`);
                           }}
