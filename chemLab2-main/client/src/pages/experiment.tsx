@@ -1,4 +1,3 @@
-import { useParams } from "wouter";
 import React from "react";
 import Header from "@/components/header";
 import ChemicalEquilibriumApp from "@/experiments/ChemicalEquilibrium/components/ChemicalEquilibriumApp";
@@ -9,18 +8,27 @@ import LassaigneApp from "@/experiments/LassaigneTest/components/LassaigneApp";
 import PHComparisonApp from "@/experiments/PHComparison/components/PHComparisonApp";
 import AmmoniumBufferApp from "@/experiments/AmmoniumBuffer/components/AmmoniumBufferApp";
 import BufferPHApp from "@/experiments/EthanoicBuffer/components/BufferPHApp";
+import BufferQuiz from "@/experiments/EthanoicBuffer/components/Quiz";
 import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useRoute, useParams } from "wouter";
 
 export default function Experiment() {
   const { id } = useParams<{ id: string }>();
   const experimentId = parseInt(id || "1");
 
+  // detect quiz route (e.g. /experiment/10/quiz)
+  const [quizMatch] = useRoute("/experiment/:id/quiz");
+  const isQuizRoute = Boolean(quizMatch && Number(quizMatch?.id) === experimentId);
+
   // Support for available experiments
   const getExperimentComponent = () => {
+    if (isQuizRoute && experimentId === 10) {
+      return <BufferQuiz />;
+    }
+
     switch (experimentId) {
       case 1:
         return <EquilibriumShiftApp onBack={() => window.history.back()} />;

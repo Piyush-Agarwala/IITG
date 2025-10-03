@@ -801,12 +801,19 @@ const stepsProgress = (
 
           <DialogFooter>
             <div className="w-full flex justify-between">
-              <Link href="/">
-                <Button className="bg-gray-500 hover:bg-gray-600 text-white flex items-center space-x-2">
-                  <Home className="w-4 h-4" />
-                  <span>Return to Experiments</span>
-                </Button>
-              </Link>
+              <div className="flex items-center space-x-2">
+                <Link href="/">
+                  <Button className="bg-gray-500 hover:bg-gray-600 text-white flex items-center space-x-2">
+                    <Home className="w-4 h-4" />
+                    <span>Return to Experiments</span>
+                  </Button>
+                </Link>
+                {/* QUIZ button opens a dedicated quiz page for this experiment */}
+                <Link href={`/experiment/${experiment.id}/quiz`}>
+                  <Button className="bg-amber-600 hover:bg-amber-700 text-white">QUIZ</Button>
+                </Link>
+              </div>
+
               <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
             </div>
           </DialogFooter>
