@@ -243,9 +243,21 @@ export const Equipment: React.FC<EquipmentProps> = ({
                   tabIndex={0}
                   onClick={(e) => {
                     e.stopPropagation();
-                    try { const dismissed = typeof window !== 'undefined' && localStorage.getItem('oxalicAcidWarningDismissed') === 'true'; if (stepId === 3 && !dismissed) setShowAcidWarning(true); } catch (_) { if (stepId === 3 && !acidWarningDismissed) setShowAcidWarning(true); }
+                    if (stepId === 3) {
+                      const dismissed = acidWarningDismissed || readAcidWarningDismissed();
+                      if (!dismissed) {
+                        setShowAcidWarning(true);
+                      }
+                    }
                   }}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && stepId === 3 && !acidWarningDismissed) setShowAcidWarning(true); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && stepId === 3) {
+                      const dismissed = acidWarningDismissed || readAcidWarningDismissed();
+                      if (!dismissed) {
+                        setShowAcidWarning(true);
+                      }
+                    }
+                  }}
                   className="bg-black text-green-400 px-2 py-1 rounded font-mono inline-block cursor-pointer"
                 >
                   {(oxalicAcid.amount / 1000).toFixed(4)} g
