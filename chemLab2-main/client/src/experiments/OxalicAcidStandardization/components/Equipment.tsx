@@ -117,7 +117,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
     e.stopPropagation();
   }, []);
 
-  const getEquipmentContent = () => {
+  const [showAcidWarning, setShowAcidWarning] = React.useState(false);
+
+    const getEquipmentContent = () => {
     const totalVolume = chemicals.reduce((sum, chemical) => sum + chemical.amount, 0);
 
     switch (equipmentIdentifier) {
@@ -142,11 +144,34 @@ export const Equipment: React.FC<EquipmentProps> = ({
             )}
             {oxalicAcid && (
               <div className="mt-2 text-xs">
-                <div className="bg-black text-green-400 px-2 py-1 rounded font-mono inline-block">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (stepId === 3) setShowAcidWarning(true);
+                  }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && stepId === 3) setShowAcidWarning(true); }}
+                  className="bg-black text-green-400 px-2 py-1 rounded font-mono inline-block cursor-pointer"
+                >
                   {(oxalicAcid.amount / 1000).toFixed(4)} g
                 </div>
               </div>
             )}
+
+            {/* Acid added warning modal */}
+            {showAcidWarning && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Be careful!</h3>
+                  <p className="text-sm text-gray-700 mb-4">Be careful while you add the acid into the machine to tare! Make sure you see the calculator and check the amount of acid required!</p>
+                  <div className="flex justify-end">
+                    <Button variant="default" onClick={() => setShowAcidWarning(false)}>Got it</Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         );
 
