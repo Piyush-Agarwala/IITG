@@ -100,6 +100,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showCalculatorReminder, setShowCalculatorReminder] = useState(false);
   const equipmentRef = useRef<HTMLDivElement>(null);
   const equipmentIdentifier = typeId ?? id;
   const isAnalytical = equipmentIdentifier === "analytical_balance";
@@ -204,6 +205,27 @@ export const Equipment: React.FC<EquipmentProps> = ({
     if (acidWarningDismissed) setShowAcidWarning(false);
   }, [acidWarningDismissed]);
 
+  useEffect(() => {
+    if (equipmentIdentifier !== "oxalic_acid" || stepId !== 3) {
+      setShowCalculatorReminder(false);
+    }
+  }, [equipmentIdentifier, stepId]);
+
+  useEffect(() => {
+    if (!showCalculatorReminder) {
+      return;
+    }
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowCalculatorReminder(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeydown);
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [showCalculatorReminder]);
+
   React.useEffect(() => {
     if (!showAcidWarning) return;
     const onKey = (e: KeyboardEvent) => {
@@ -307,6 +329,27 @@ export const Equipment: React.FC<EquipmentProps> = ({
             ) : (
               icon
             )}
+          </div>
+        );
+
+      case "oxalic_acid":
+        return (
+          <div className="relative flex justify-center">
+            <button
+              type="button"
+              className="flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              data-open-acid-reminder="true"
+              onClick={(event) => {
+                event.stopPropagation();
+                if (stepId === 3) {
+                  setShowCalculatorReminder(true);
+                }
+              }}
+              onMouseDown={(event) => event.stopPropagation()}
+            >
+              {icon}
+              <span className="sr-only">Open calculator reminder</span>
+            </button>
           </div>
         );
 
@@ -428,6 +471,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
           );
         }
         break;
+      case "oxalic_acid":
+        return null;
     }
     return null;
   };
@@ -477,17 +522,18 @@ export const Equipment: React.FC<EquipmentProps> = ({
       }}
       onMouseDown={handleMouseDown}
       onClick={(e) => {
-        // Only open the acid warning when the user explicitly clicked
-        // the weight element (data-open-acid-warning). This prevents
-        // clicks coming from the modal or other children from re-opening it.
-        const opener = (e.target as HTMLElement).closest('[data-open-acid-warning="true"]');
-        if (!opener) return;
-
-        if (chemicals.some((c) => c.id === "oxalic_acid") && stepId === 3) {
+        const acidOpener = (e.target as HTMLElement).closest('[data-open-acid-warning="true"]');
+        if (acidOpener && chemicals.some((c) => c.id === "oxalic_acid") && stepId === 3) {
           const dismissed = acidWarningDismissed || readAcidWarningDismissed();
           if (!dismissed) {
             setShowAcidWarning(true);
           }
+          return;
+        }
+
+        const reminderOpener = (e.target as HTMLElement).closest('[data-open-acid-reminder="true"]');
+        if (reminderOpener && equipmentIdentifier === "oxalic_acid" && stepId === 3) {
+          setShowCalculatorReminder(true);
         }
       }}
       onDrop={handleDrop}
@@ -560,6 +606,43 @@ export const Equipment: React.FC<EquipmentProps> = ({
                 </div>
                 <p className="mt-3 text-xs text-gray-500">This message will not show again after you click "Got it".</p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCalculatorReminder && equipmentIdentifier === "oxalic_acid" && stepId === 3 && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Calculator reminder"
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowCalculatorReminder(false);
+          }}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Reminder</h3>
+            <p className="mt-2 text-sm text-gray-700">Before adding the amount of acid into the boat make sure you open the calculator once!</p>
+            <div className="mt-4 flex items-center justify-center space-x-3">
+              <Button
+                variant="outline"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowCalculatorReminder(false);
+                }}
+              >
+                Close
+              </Button>
             </div>
           </div>
         </div>
