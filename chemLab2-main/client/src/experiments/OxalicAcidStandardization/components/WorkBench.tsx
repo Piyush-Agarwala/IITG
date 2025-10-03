@@ -169,10 +169,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       if (enforceStepOneRestriction(payload?.id)) {
         return;
       }
+      const newPosId = `${payload.id || 'bottle'}_${Date.now()}`;
       setEquipmentPositions(prev => [
         ...prev,
         {
-          id: `${payload.id || 'bottle'}_${Date.now()}`,
+          id: newPosId,
           x: x - 30,
           y: y - 30,
           isBottle: true,
@@ -187,6 +188,14 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           ],
         }
       ]);
+
+      // If oxalic acid bottle was added during quantitative analysis step, show reminder and dispatch event
+      try {
+        if (payload && payload.id === 'oxalic_acid' && step.id === 3) {
+          showMessage('Click the calculator once to see the amount of acid required');
+          try { window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder')); } catch {}
+        }
+      } catch {}
     };
 
     // If data parsed as object, handle as before
