@@ -9,6 +9,8 @@ import StirringAnimation from "./StirringAnimation";
 import DissolutionAnimation from "./DissolutionAnimation";
 import type { EquipmentPosition, SolutionPreparationState } from "../types";
 
+import { Button } from "@/components/ui/button";
+
 interface EquipmentProps {
   id: string;
   name: string;
@@ -32,6 +34,7 @@ interface EquipmentProps {
   onRemove?: (id: string) => void;
   preparationState?: SolutionPreparationState;
   onAction?: (action: string) => void;
+  stepId?: number;
 }
 
 export const Equipment: React.FC<EquipmentProps> = ({
