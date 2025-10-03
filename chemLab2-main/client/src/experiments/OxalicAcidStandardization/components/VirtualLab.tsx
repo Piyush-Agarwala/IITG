@@ -382,7 +382,6 @@ function OxalicAcidVirtualLab({
       const panCenterY = targetBalanceY + balanceRect.height * 0.55;
       const targetBoatY = panCenterY - boatRect.height / 2;
 
-      stepTwoAlignedRef.current = true;
       setEquipmentPositions(prev => {
         let changed = false;
         const next = prev.map(pos => {
@@ -405,6 +404,19 @@ function OxalicAcidVirtualLab({
         });
         return changed ? next : prev;
       });
+
+      const balanceAligned = Math.abs(balanceRect.left - (surfaceRect.left + targetBalanceX)) < 8 &&
+        Math.abs(balanceRect.top - (surfaceRect.top + targetBalanceY)) < 8;
+      const boatAligned = Math.abs(boatRect.left - (surfaceRect.left + targetBoatX)) < 8 &&
+        Math.abs(boatRect.top - (surfaceRect.top + targetBoatY)) < 8;
+
+      if (balanceAligned && boatAligned && !stepTwoAlignedRef.current) {
+        stepTwoAlignedRef.current = true;
+        setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
+        setTimeout(() => {
+          onStepComplete();
+        }, 400);
+      }
     };
 
     frame = window.requestAnimationFrame(attemptAlignment);
