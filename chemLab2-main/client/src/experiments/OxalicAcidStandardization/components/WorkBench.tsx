@@ -69,13 +69,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [temperature, setTemperature] = useState(25);
   const [showCalculator, setShowCalculator] = useState(false);
   // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
-  const [acidAmount, setAcidAmount] = useState<number>(measurements && measurements.targetMass > 0 ? measurements.targetMass : 0.1);
-  useEffect(() => {
-    // keep local acidAmount synced with calculated target mass
-    if (measurements && measurements.targetMass > 0) {
-      setAcidAmount(measurements.targetMass);
-    }
-  }, [measurements.targetMass]);
+  // keep this completely under user control (do not auto-sync with calculated targetMass)
+  const [acidAmount, setAcidAmount] = useState<number>(0);
 
   const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
   const messageTimeoutRef = useRef<number | null>(null);
