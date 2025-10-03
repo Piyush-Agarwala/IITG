@@ -206,7 +206,7 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
 
               <h3 className="text-sm font-semibold text-gray-900 mb-3">Chemicals</h3>
               <div className="space-y-3">
-                {OXALIC_ACID_CHEMICALS.map((chemical) => (
+                {OXALIC_ACID_CHEMICALS.filter(c => !usedEquipment.includes(c.id)).map((chemical) => (
                   <Chemical
                     key={chemical.id}
                     id={chemical.id}
