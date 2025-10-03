@@ -147,16 +147,24 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     try {
       const data = JSON.parse(e.dataTransfer.getData("text/plain"));
       if (onChemicalDrop) {
         onChemicalDrop(data.id, id, data.amount);
       }
+
+      // If oxalic acid is dropped during the quantitative analysis step, show calculator reminder
+      if (data && data.id === "oxalic_acid" && stepId === 3) {
+        setShowCalculatorReminder(true);
+        try {
+          window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder'));
+        } catch {}
+      }
     } catch (error) {
       console.error("Failed to parse drop data:", error);
     }
-  }, [onChemicalDrop, id]);
+  }, [onChemicalDrop, id, stepId]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -615,7 +623,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         </div>
       )}
 
-      {showCalculatorReminder && equipmentIdentifier === "oxalic_acid" && stepId === 3 && (
+      {showCalculatorReminder && stepId === 3 && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4"
           role="dialog"
