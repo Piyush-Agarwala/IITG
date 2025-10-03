@@ -467,6 +467,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
                   <Button onClick={() => {
                     try { localStorage.setItem('oxalicAcidWarningDismissed','true'); } catch (_) {}
                     setAcidWarningDismissed(true);
+                    // notify other instances
+                    try { window.dispatchEvent(new Event('oxalicAcidWarningDismissed')); } catch (_) {}
                     setShowAcidWarning(false);
                   }}>Got it</Button>
                 </div>
