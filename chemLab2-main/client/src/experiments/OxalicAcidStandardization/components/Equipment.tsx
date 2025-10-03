@@ -337,7 +337,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
           <div className="relative flex justify-center">
             <button
               type="button"
-              className="flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="flex items-center justify-center rounded-full bg-transparent p-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               data-open-acid-reminder="true"
               onClick={(event) => {
                 event.stopPropagation();
@@ -350,6 +350,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               {icon}
               <span className="sr-only">Open calculator reminder</span>
             </button>
+            <p className="mt-2 text-xs text-gray-700">{name}</p>
           </div>
         );
 
