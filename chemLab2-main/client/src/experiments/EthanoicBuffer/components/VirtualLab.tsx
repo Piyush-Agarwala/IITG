@@ -866,7 +866,7 @@ const stepsProgress = (
                   {quizSubmitted && (() => {
                     const correct = 'B';
                     const selected = quizSelections.q1;
-                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
                     return (
                       <>
                         <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Sodium ethanoate is strongly basic and neutralizes all the acid.' : selected === 'B' ? 'B) The common ion effect reduces the dissociation of ethanoic acid.' : selected === 'C' ? 'C) The volume of solution increases, diluting the acid.' : selected === 'D' ? 'D) Sodium ethanoate removes H⁺ ions by precipitation.' : ''}</div>
@@ -899,7 +899,7 @@ const stepsProgress = (
                   {quizSubmitted && (() => {
                     const correct = 'B';
                     const selected = quizSelections.q2;
-                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
                     return (
                       <>
                         <div className={yourClass}>Your answer: {selected === 'A' ? 'A) 7.0 (neutral point)' : selected === 'B' ? 'B) The pKa of acetic acid' : selected === 'C' ? 'C) The pKb of acetate ion' : selected === 'D' ? 'D) The ionic product of water (Kw)' : ''}</div>
@@ -932,7 +932,7 @@ const stepsProgress = (
                   {quizSubmitted && (() => {
                     const correct = 'B';
                     const selected = quizSelections.q3;
-                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
                     return (
                       <>
                         <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Because sodium ethanoate hydrolyzes completely to form OH⁻' : selected === 'B' ? 'B) Because the weak acid and its conjugate base establish a buffer equilibrium' : selected === 'C' ? 'C) Because sodium ions neutralize all OH⁻ ions' : selected === 'D' ? 'D) Because dilution prevents ionization' : ''}</div>
@@ -965,7 +965,7 @@ const stepsProgress = (
                   {quizSubmitted && (() => {
                     const correct = 'B';
                     const selected = quizSelections.q4;
-                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
                     return (
                       <>
                         <div className={yourClass}>Your answer: {selected === 'A' ? 'A) A linear increase in pH due to direct neutralization' : selected === 'B' ? 'B) A rapid rise initially, then leveling off near pKa due to buffer action' : selected === 'C' ? 'C) A sharp fall in pH due to hydrolysis of sodium acetate' : selected === 'D' ? 'D) A constant pH value because sodium acetate is neutral' : ''}</div>
@@ -998,7 +998,7 @@ const stepsProgress = (
                   {quizSubmitted && (() => {
                     const correct = 'C';
                     const selected = quizSelections.q5;
-                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
                     return (
                       <>
                         <div className={yourClass}>Your answer: {selected === 'A' ? 'A) 4.7' : selected === 'B' ? 'B) 4.9' : selected === 'C' ? 'C) 5.0' : selected === 'D' ? 'D) 5.7' : ''}</div>
