@@ -119,6 +119,26 @@ export const Equipment: React.FC<EquipmentProps> = ({
   }, []);
 
   const [showAcidWarning, setShowAcidWarning] = React.useState(false);
+  const [acidWarningDismissed, setAcidWarningDismissed] = React.useState<boolean>(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem('oxalicAcidWarningDismissed') === 'true';
+    } catch (_) {
+      return false;
+    }
+  });
+
+  React.useEffect(() => {
+    if (acidWarningDismissed) setShowAcidWarning(false);
+  }, [acidWarningDismissed]);
+
+  React.useEffect(() => {
+    if (!showAcidWarning) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowAcidWarning(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [showAcidWarning]);
 
     const getEquipmentContent = () => {
     const totalVolume = chemicals.reduce((sum, chemical) => sum + chemical.amount, 0);
