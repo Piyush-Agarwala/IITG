@@ -240,7 +240,7 @@ const confirmAddAcetic = () => {
   const initialPH = computePHFrom(newAcidMoles, sodiumMoles, totalVolL);
   if (initialPH != null) {
     setInitialAcidPH(initialPH);
-    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid • pH �� ${initialPH.toFixed(2)}`);
+    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid • pH ≈ ${initialPH.toFixed(2)}`);
   } else {
     setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
   }
@@ -1026,15 +1026,13 @@ const stepsProgress = (
 
                 <div className="flex items-center justify-between space-x-4">
                   <div className="flex items-center space-x-2">
-                    <Link href="/experiment/10">
-                      <Button variant="outline" className="flex items-center">
-                        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
-                      </Button>
-                    </Link>
-                    <Link href="/">
-                      <Button className="bg-gray-700 text-white">Return to Experiments</Button>
-                    </Link>
-                  </div>
+                  <Button variant="outline" className="flex items-center" onClick={() => { setShowQuizModal(false); setShowResultsModal(true); }}>
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                  </Button>
+                  <Link href="/">
+                    <Button className="bg-gray-700 text-white">Return to Experiments</Button>
+                  </Link>
+                </div>
 
                   <div>
                     {!quizSubmitted && allAnswered && (
