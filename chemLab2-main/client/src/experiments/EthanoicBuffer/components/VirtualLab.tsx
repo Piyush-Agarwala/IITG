@@ -962,10 +962,17 @@ const stepsProgress = (
                       <span>D) A constant pH value because sodium acetate is neutral</span>
                     </label>
                   </div>
-                  {quizSubmitted && (<>
-                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q4 === 'A' ? 'A) A linear increase in pH due to direct neutralization' : quizSelections.q4 === 'B' ? 'B) A rapid rise initially, then leveling off near pKa due to buffer action' : quizSelections.q4 === 'C' ? 'C) A sharp fall in pH due to hydrolysis of sodium acetate' : quizSelections.q4 === 'D' ? 'D) A constant pH value because sodium acetate is neutral' : ''}</div>
-                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) A rapid rise initially, then leveling off near pKa due to buffer action</div>
-                  </>)}
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q4;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) A linear increase in pH due to direct neutralization' : selected === 'B' ? 'B) A rapid rise initially, then leveling off near pKa due to buffer action' : selected === 'C' ? 'C) A sharp fall in pH due to hydrolysis of sodium acetate' : selected === 'D' ? 'D) A constant pH value because sodium acetate is neutral' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) A rapid rise initially, then leveling off near pKa due to buffer action</div>
+                      </>
+                    );
+                  })()}
                 </section>
 
                 <section className="quiz-item">
