@@ -896,10 +896,17 @@ const stepsProgress = (
                       <span>D) The ionic product of water (Kw)</span>
                     </label>
                   </div>
-                  {quizSubmitted && (<>
-                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q2 === 'A' ? 'A) 7.0 (neutral point)' : quizSelections.q2 === 'B' ? 'B) The pKa of acetic acid' : quizSelections.q2 === 'C' ? 'C) The pKb of acetate ion' : quizSelections.q2 === 'D' ? 'D) The ionic product of water (Kw)' : ''}</div>
-                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The pKa of acetic acid</div>
-                  </>)}
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q2;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) 7.0 (neutral point)' : selected === 'B' ? 'B) The pKa of acetic acid' : selected === 'C' ? 'C) The pKb of acetate ion' : selected === 'D' ? 'D) The ionic product of water (Kw)' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The pKa of acetic acid</div>
+                      </>
+                    );
+                  })()}
                 </section>
 
                 <section className="quiz-item">
