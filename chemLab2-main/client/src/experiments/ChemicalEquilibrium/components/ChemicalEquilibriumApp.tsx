@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Play, Pause } from "lucide-react";
 import { Link, useRoute } from "wouter";
 import ChemicalEquilibriumVirtualLab from "./VirtualLab";
-import ChemicalEquilibriumData from "../data";
+import ChemicalEquilibriumData, { PHHClExperiment } from "../data";
 import type { ExperimentStep } from "../types";
 import { useUpdateProgress } from "@/hooks/use-experiments";
 
