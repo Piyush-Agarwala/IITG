@@ -476,10 +476,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
       }}
       onMouseDown={handleMouseDown}
       onClick={(e) => {
-        // If user clicks equipment containing oxalic acid during step 3, show warning
-        if (chemicals.some(c => c.id === 'oxalic_acid') && stepId === 3) {
+        if (chemicals.some((c) => c.id === "oxalic_acid") && stepId === 3) {
           e.stopPropagation();
-          try { const dismissed = typeof window !== 'undefined' && localStorage.getItem('oxalicAcidWarningDismissed') === 'true'; if (!dismissed) setShowAcidWarning(true); } catch (_) { if (!acidWarningDismissed) setShowAcidWarning(true); }
+          const dismissed = acidWarningDismissed || readAcidWarningDismissed();
+          if (!dismissed) {
+            setShowAcidWarning(true);
+          }
         }
       }}
       onDrop={handleDrop}
