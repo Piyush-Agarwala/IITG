@@ -343,6 +343,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
                 event.stopPropagation();
                 if (stepId === 3) {
                   setShowCalculatorReminder(true);
+                  try {
+                    window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder'));
+                  } catch {}
                 }
               }}
               onMouseDown={(event) => event.stopPropagation()}
