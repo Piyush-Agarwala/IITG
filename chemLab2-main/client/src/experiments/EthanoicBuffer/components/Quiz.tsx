@@ -13,36 +13,62 @@ export default function BufferQuiz() {
             <CardTitle className="text-2xl">Buffer pH — Quiz</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              <div>
-                <div className="font-semibold">Q1. When sodium ethanoate is added to ethanoic acid solution, the system becomes a:</div>
-                <div className="mt-2">A) Strong acid solution<br/>B) Strong base solution<br/>C) Buffer solution<br/>D) Neutral solution</div>
-                <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) Buffer solution</div>
-              </div>
+            <div className="space-y-6 quiz-content">
 
-              <div>
-                <div className="font-semibold">Q2. The pH of a buffer solution can be calculated using:</div>
-                <div className="mt-2">A) Arrhenius equation<br/>B) Henderson–Hasselbalch equation<br/>C) van’t Hoff equation<br/>D) Nernst equation</div>
-                <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Henderson–Hasselbalch equation</div>
-              </div>
+              <section className="quiz-item">
+                <h3 className="font-semibold">Q1. Ethanoic acid alone has a pH ≈ 2.9 at 0.1 M. When sodium ethanoate is added, the pH rises close to 4.7. This is mainly because:</h3>
+                <div className="mt-2 space-y-1">
+                  <div>A) Sodium ethanoate is strongly basic and neutralizes all the acid.</div>
+                  <div>B) The common ion effect reduces the dissociation of ethanoic acid.</div>
+                  <div>C) The volume of solution increases, diluting the acid.</div>
+                  <div>D) Sodium ethanoate removes H⁺ ions by precipitation.</div>
+                </div>
+                <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The common ion effect reduces the dissociation of ethanoic acid.</div>
+              </section>
 
-              <div>
-                <div className="font-semibold">Q3. If 10 mL of 0.1 M ethanoic acid is mixed with 10 mL of 0.1 M sodium ethanoate, the pH of the resulting solution will be approximately:</div>
-                <div className="mt-2">A) 2.9<br/>B) 4.7<br/>C) 7.0<br/>D) 12.0</div>
-                <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) 4.7</div>
-              </div>
+              <section className="quiz-item">
+                <h3 className="font-semibold">Q2. At the point where [CH₃COOH] = [CH₃COONa], the pH of the solution equals:</h3>
+                <div className="mt-2 space-y-1">
+                  <div>A) 7.0 (neutral point)</div>
+                  <div>B) The pKa of acetic acid</div>
+                  <div>C) The pKb of acetate ion</div>
+                  <div>D) The ionic product of water (Kw)</div>
+                </div>
+                <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The pKa of acetic acid</div>
+              </section>
 
-              <div>
-                <div className="font-semibold">Q4. In the Henderson–Hasselbalch equation: pH = pK_a + log10([A⁻]/[HA]) the term [A⁻] refers to:</div>
-                <div className="mt-2">A) Concentration of ethanoic acid<br/>B) Concentration of sodium ethanoate<br/>C) Concentration of H⁺ ions<br/>D) Concentration of OH⁻ ions</div>
-                <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Concentration of sodium ethanoate</div>
-              </div>
+              <section className="quiz-item">
+                <h3 className="font-semibold">Q3. Why does the solution resist large pH changes upon addition of small amounts of strong acid or base once sodium ethanoate is added?</h3>
+                <div className="mt-2 space-y-1">
+                  <div>A) Because sodium ethanoate hydrolyzes completely to form OH⁻</div>
+                  <div>B) Because the weak acid and its conjugate base establish a buffer equilibrium</div>
+                  <div>C) Because sodium ions neutralize all OH⁻ ions</div>
+                  <div>D) Because dilution prevents ionization</div>
+                </div>
+                <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Because the weak acid and its conjugate base establish a buffer equilibrium</div>
+              </section>
 
-              <div>
-                <div className="font-semibold">Q5. What is the main observation in this experiment?</div>
-                <div className="mt-2">A) pH decreases with addition of sodium ethanoate<br/>B) pH remains constant irrespective of sodium ethanoate<br/>C) pH increases with addition of sodium ethanoate<br/>D) pH becomes strongly basic</div>
-                <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) pH increases with addition of sodium ethanoate</div>
-              </div>
+              <section className="quiz-item">
+                <h3 className="font-semibold">Q4. Which of the following best explains the shape of the pH vs. added sodium ethanoate volume curve?</h3>
+                <div className="mt-2 space-y-1">
+                  <div>A) A linear increase in pH due to direct neutralization</div>
+                  <div>B) A rapid rise initially, then leveling off near pKa due to buffer action</div>
+                  <div>C) A sharp fall in pH due to hydrolysis of sodium acetate</div>
+                  <div>D) A constant pH value because sodium acetate is neutral</div>
+                </div>
+                <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) A rapid rise initially, then leveling off near pKa due to buffer action</div>
+              </section>
+
+              <section className="quiz-item">
+                <h3 className="font-semibold">Q5. If the Ka of ethanoic acid is 1.8 × 10⁻⁵, and you prepare a buffer with [CH₃COOH] = 0.05 M and [CH₃COONa] = 0.10 M, what would be the approximate pH?</h3>
+                <div className="mt-2 space-y-1">
+                  <div>A) 4.7</div>
+                  <div>B) 4.9</div>
+                  <div>C) 5.0</div>
+                  <div>D) 5.7</div>
+                </div>
+                <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) 5.0 (pH ≈ pKa + log([A⁻]/[HA]) = 4.745 + log(0.10/0.05) ≈ 5.05)</div>
+              </section>
 
               <div className="flex items-center space-x-2">
                 <Link href="/experiment/10">

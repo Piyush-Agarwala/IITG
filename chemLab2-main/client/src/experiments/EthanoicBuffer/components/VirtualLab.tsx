@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment as PHEquipment } from "@/experiments/PHComparison/components/Equipment";
-import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle, Home } from "lucide-react";
+import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle, Home, ArrowLeft } from "lucide-react";
 import type { Experiment, ExperimentStep } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "wouter";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface VirtualLabProps {
   experiment: Experiment;
@@ -43,6 +44,31 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [case2Version, setCase2Version] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [quizSelections, setQuizSelections] = useState<{ q1?: string | null; q2?: string | null; q3?: string | null; q4?: string | null; q5?: string | null; }>({ q1: null, q2: null, q3: null, q4: null, q5: null });
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+
+  const handleSelect = (q: string, value: string) => {
+    setQuizSelections((s) => ({ ...s, [q]: value }));
+  };
+
+  const allAnswered = Boolean(quizSelections.q1 && quizSelections.q2 && quizSelections.q3 && quizSelections.q4 && quizSelections.q5);
+
+  const resetQuiz = () => {
+    setQuizSelections({ q1: null, q2: null, q3: null, q4: null, q5: null });
+    setQuizSubmitted(false);
+  };
+
+  const score = React.useMemo(() => {
+    const answers: Record<string, string> = { q1: 'B', q2: 'B', q3: 'B', q4: 'B', q5: 'C' };
+    let s = 0;
+    if (quizSelections.q1 === answers.q1) s++;
+    if (quizSelections.q2 === answers.q2) s++;
+    if (quizSelections.q3 === answers.q3) s++;
+    if (quizSelections.q4 === answers.q4) s++;
+    if (quizSelections.q5 === answers.q5) s++;
+    return s;
+  }, [quizSelections]);
   // Guided UI cues
   const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
   const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
@@ -808,15 +834,220 @@ const stepsProgress = (
                     <span>Return to Experiments</span>
                   </Button>
                 </Link>
-                {/* QUIZ button opens a dedicated quiz page for this experiment */}
-                <Link href={`/experiment/${experiment.id}/quiz`}>
-                  <Button className="bg-amber-600 hover:bg-amber-700 text-white">QUIZ</Button>
-                </Link>
+                {/* QUIZ opens an inline quiz modal */}
+                <Button onClick={() => setShowQuizModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white">QUIZ</Button>
               </div>
 
               <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
             </div>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quiz Modal (inline, mirrors Results & Analysis style) */}
+      <Dialog open={showQuizModal} onOpenChange={setShowQuizModal}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto text-black">
+          <Card className="shadow-md">
+            <CardHeader>
+              <div className="flex items-center justify-between w-full">
+                <CardTitle className="text-2xl">Buffer pH — Quiz</CardTitle>
+                {quizSubmitted && (
+                  <div className="text-blue-600 font-semibold">Marks obtained ({score} / 5)</div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6 quiz-content">
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q1. Ethanoic acid alone has a pH ≈ 2.9 at 0.1 M. When sodium ethanoate is added, the pH rises close to 4.7. This is mainly because:</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'A'} onChange={() => handleSelect('q1', 'A')} />
+                      <span>A) Sodium ethanoate is strongly basic and neutralizes all the acid.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'B'} onChange={() => handleSelect('q1', 'B')} />
+                      <span>B) The common ion effect reduces the dissociation of ethanoic acid.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'C'} onChange={() => handleSelect('q1', 'C')} />
+                      <span>C) The volume of solution increases, diluting the acid.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'D'} onChange={() => handleSelect('q1', 'D')} />
+                      <span>D) Sodium ethanoate removes H⁺ ions by precipitation.</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q1;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Sodium ethanoate is strongly basic and neutralizes all the acid.' : selected === 'B' ? 'B) The common ion effect reduces the dissociation of ethanoic acid.' : selected === 'C' ? 'C) The volume of solution increases, diluting the acid.' : selected === 'D' ? 'D) Sodium ethanoate removes H⁺ ions by precipitation.' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The common ion effect reduces the dissociation of ethanoic acid.</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q2. At the point where [CH₃COOH] = [CH₃COONa], the pH of the solution equals:</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'A'} onChange={() => handleSelect('q2', 'A')} />
+                      <span>A) 7.0 (neutral point)</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'B'} onChange={() => handleSelect('q2', 'B')} />
+                      <span>B) The pKa of acetic acid</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'C'} onChange={() => handleSelect('q2', 'C')} />
+                      <span>C) The pKb of acetate ion</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'D'} onChange={() => handleSelect('q2', 'D')} />
+                      <span>D) The ionic product of water (Kw)</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q2;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) 7.0 (neutral point)' : selected === 'B' ? 'B) The pKa of acetic acid' : selected === 'C' ? 'C) The pKb of acetate ion' : selected === 'D' ? 'D) The ionic product of water (Kw)' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The pKa of acetic acid</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q3. Why does the solution resist large pH changes upon addition of small amounts of strong acid or base once sodium ethanoate is added?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'A'} onChange={() => handleSelect('q3', 'A')} />
+                      <span>A) Because sodium ethanoate hydrolyzes completely to form OH⁻</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'B'} onChange={() => handleSelect('q3', 'B')} />
+                      <span>B) Because the weak acid and its conjugate base establish a buffer equilibrium</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'C'} onChange={() => handleSelect('q3', 'C')} />
+                      <span>C) Because sodium ions neutralize all OH⁻ ions</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'D'} onChange={() => handleSelect('q3', 'D')} />
+                      <span>D) Because dilution prevents ionization</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q3;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Because sodium ethanoate hydrolyzes completely to form OH⁻' : selected === 'B' ? 'B) Because the weak acid and its conjugate base establish a buffer equilibrium' : selected === 'C' ? 'C) Because sodium ions neutralize all OH⁻ ions' : selected === 'D' ? 'D) Because dilution prevents ionization' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Because the weak acid and its conjugate base establish a buffer equilibrium</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q4. Which of the following best explains the shape of the pH vs. added sodium ethanoate volume curve?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'A'} onChange={() => handleSelect('q4', 'A')} />
+                      <span>A) A linear increase in pH due to direct neutralization</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'B'} onChange={() => handleSelect('q4', 'B')} />
+                      <span>B) A rapid rise initially, then leveling off near pKa due to buffer action</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'C'} onChange={() => handleSelect('q4', 'C')} />
+                      <span>C) A sharp fall in pH due to hydrolysis of sodium acetate</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'D'} onChange={() => handleSelect('q4', 'D')} />
+                      <span>D) A constant pH value because sodium acetate is neutral</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q4;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) A linear increase in pH due to direct neutralization' : selected === 'B' ? 'B) A rapid rise initially, then leveling off near pKa due to buffer action' : selected === 'C' ? 'C) A sharp fall in pH due to hydrolysis of sodium acetate' : selected === 'D' ? 'D) A constant pH value because sodium acetate is neutral' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) A rapid rise initially, then leveling off near pKa due to buffer action</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q5. If the Ka of ethanoic acid is 1.8 × 10⁻⁵, and you prepare a buffer with [CH₃COOH] = 0.05 M and [CH₃COONa] = 0.10 M, what would be the approximate pH?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'A'} onChange={() => handleSelect('q5', 'A')} />
+                      <span>A) 4.7</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'B'} onChange={() => handleSelect('q5', 'B')} />
+                      <span>B) 4.9</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'C'} onChange={() => handleSelect('q5', 'C')} />
+                      <span>C) 5.0</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'D'} onChange={() => handleSelect('q5', 'D')} />
+                      <span>D) 5.7</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'C';
+                    const selected = quizSelections.q5;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) 4.7' : selected === 'B' ? 'B) 4.9' : selected === 'C' ? 'C) 5.0' : selected === 'D' ? 'D) 5.7' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) 5.0 (pH ≈ pKa + log([A⁻]/[HA]) = 4.745 + log(0.10/0.05) ≈ 5.05)</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <div className="flex items-center justify-between space-x-4">
+                  <div className="flex items-center space-x-2">
+                  <Button variant="outline" className="flex items-center" onClick={() => { setShowQuizModal(false); setShowResultsModal(true); }}>
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                  </Button>
+                  <Link href="/">
+                    <Button className="bg-gray-700 text-white">Return to Experiments</Button>
+                  </Link>
+                </div>
+
+                  <div>
+                    {!quizSubmitted && allAnswered && (
+                      <Button onClick={() => setQuizSubmitted(true)} className="bg-amber-600 hover:bg-amber-700 text-white mr-2">Submit</Button>
+                    )}
+                    {!quizSubmitted && !allAnswered && (
+                      <Button disabled className="opacity-50 cursor-not-allowed mr-2">Submit</Button>
+                    )}
+                    <Button variant="outline" onClick={resetQuiz}>Reset</Button>
+                  </div>
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
         </DialogContent>
       </Dialog>
 
