@@ -808,7 +808,7 @@ const stepsProgress = (
                 </div>
                 <div className="p-3 border rounded">
                   <div className="text-sm font-medium">Notes</div>
-                  <div className="text-sm mt-1">Buffer formed: CH3COOH/CH3COO���</div>
+                  <div className="text-sm mt-1">Buffer formed: CH3COOH/CH3COO–</div>
                 </div>
               </div>
             </div>
@@ -863,10 +863,17 @@ const stepsProgress = (
                       <span>D) Sodium ethanoate removes H⁺ ions by precipitation.</span>
                     </label>
                   </div>
-                  {quizSubmitted && (<>
-                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q1 === 'A' ? 'A) Sodium ethanoate is strongly basic and neutralizes all the acid.' : quizSelections.q1 === 'B' ? 'B) The common ion effect reduces the dissociation of ethanoic acid.' : quizSelections.q1 === 'C' ? 'C) The volume of solution increases, diluting the acid.' : quizSelections.q1 === 'D' ? 'D) Sodium ethanoate removes H⁺ ions by precipitation.' : ''}</div>
-                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The common ion effect reduces the dissociation of ethanoic acid.</div>
-                  </>)}
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q1;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-gray-700' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Sodium ethanoate is strongly basic and neutralizes all the acid.' : selected === 'B' ? 'B) The common ion effect reduces the dissociation of ethanoic acid.' : selected === 'C' ? 'C) The volume of solution increases, diluting the acid.' : selected === 'D' ? 'D) Sodium ethanoate removes H⁺ ions by precipitation.' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The common ion effect reduces the dissociation of ethanoic acid.</div>
+                      </>
+                    );
+                  })()}
                 </section>
 
                 <section className="quiz-item">
