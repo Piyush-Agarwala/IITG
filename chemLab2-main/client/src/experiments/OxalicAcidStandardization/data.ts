@@ -44,7 +44,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
     },
     {
       id: 3,
-      title: "Initial Dissolution",
+      title: "calculate required amount of oxalic acid dihydrate",
       description:
         "Transfer the weighed oxalic acid to a 100 mL beaker. Add about 50 mL of distilled water and stir with a glass rod until completely dissolved.",
       duration: "5 minutes",
