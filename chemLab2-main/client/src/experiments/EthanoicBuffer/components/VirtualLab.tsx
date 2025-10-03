@@ -849,7 +849,12 @@ const stepsProgress = (
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto text-black">
           <Card className="shadow-md">
             <CardHeader>
-              <CardTitle className="text-2xl">Buffer pH — Quiz</CardTitle>
+              <div className="flex items-center justify-between w-full">
+                <CardTitle className="text-2xl">Buffer pH — Quiz</CardTitle>
+                {quizSubmitted && (
+                  <div className="text-blue-600 font-semibold">{score}/5</div>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-6 quiz-content">
