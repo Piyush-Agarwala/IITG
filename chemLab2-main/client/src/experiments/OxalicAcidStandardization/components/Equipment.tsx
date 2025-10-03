@@ -11,6 +11,50 @@ import type { EquipmentPosition, SolutionPreparationState } from "../types";
 
 import { Button } from "@/components/ui/button";
 
+const ACID_WARNING_STORAGE_KEY = "oxalicAcidWarningDismissed";
+const ACID_WARNING_EVENT = "oxalicAcidWarningDismissed";
+
+let acidWarningMemoryValue = false;
+
+const readAcidWarningDismissed = (): boolean => {
+  if (typeof window === "undefined") {
+    return acidWarningMemoryValue;
+  }
+
+  try {
+    const stored = window.localStorage.getItem(ACID_WARNING_STORAGE_KEY);
+    if (stored !== null) {
+      acidWarningMemoryValue = stored === "true";
+    }
+  } catch {}
+
+  return acidWarningMemoryValue;
+};
+
+const persistAcidWarningDismissed = (dismissed: boolean) => {
+  const previous = acidWarningMemoryValue;
+  acidWarningMemoryValue = dismissed;
+
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    if (dismissed) {
+      window.localStorage.setItem(ACID_WARNING_STORAGE_KEY, "true");
+    } else {
+      window.localStorage.removeItem(ACID_WARNING_STORAGE_KEY);
+    }
+  } catch {}
+
+  if (previous !== dismissed) {
+    try {
+      window.dispatchEvent(new CustomEvent<boolean>(ACID_WARNING_EVENT, { detail: dismissed }));
+    } catch {}
+  }
+};
+
+
 interface EquipmentProps {
   id: string;
   name: string;
