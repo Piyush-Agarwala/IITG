@@ -146,8 +146,7 @@ export default function ChemicalEquilibriumApp({
                   Ready to Start?
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Click on the "Start Experiment" button to begin exploring
-                  chemical equilibrium with cobalt(II) chloride!
+                  Click on the "Start Experiment" button to begin: {experiment.title}
                 </p>
                 <button
                   onClick={handleStartExperiment}
