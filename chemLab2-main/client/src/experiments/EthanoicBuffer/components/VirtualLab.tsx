@@ -808,7 +808,7 @@ const stepsProgress = (
                 </div>
                 <div className="p-3 border rounded">
                   <div className="text-sm font-medium">Notes</div>
-                  <div className="text-sm mt-1">Buffer formed: CH3COOH/CH3COO–</div>
+                  <div className="text-sm mt-1">Buffer formed: CH3COOH/CH3COO���</div>
                 </div>
               </div>
             </div>
@@ -863,7 +863,10 @@ const stepsProgress = (
                       <span>D) Sodium ethanoate removes H⁺ ions by precipitation.</span>
                     </label>
                   </div>
-                  {quizSubmitted && <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The common ion effect reduces the dissociation of ethanoic acid.</div>}
+                  {quizSubmitted && (<>
+                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q1 === 'A' ? 'A) Sodium ethanoate is strongly basic and neutralizes all the acid.' : quizSelections.q1 === 'B' ? 'B) The common ion effect reduces the dissociation of ethanoic acid.' : quizSelections.q1 === 'C' ? 'C) The volume of solution increases, diluting the acid.' : quizSelections.q1 === 'D' ? 'D) Sodium ethanoate removes H⁺ ions by precipitation.' : ''}</div>
+                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The common ion effect reduces the dissociation of ethanoic acid.</div>
+                  </>)}
                 </section>
 
                 <section className="quiz-item">
@@ -886,7 +889,10 @@ const stepsProgress = (
                       <span>D) The ionic product of water (Kw)</span>
                     </label>
                   </div>
-                  {quizSubmitted && <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The pKa of acetic acid</div>}
+                  {quizSubmitted && (<>
+                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q2 === 'A' ? 'A) 7.0 (neutral point)' : quizSelections.q2 === 'B' ? 'B) The pKa of acetic acid' : quizSelections.q2 === 'C' ? 'C) The pKb of acetate ion' : quizSelections.q2 === 'D' ? 'D) The ionic product of water (Kw)' : ''}</div>
+                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The pKa of acetic acid</div>
+                  </>)}
                 </section>
 
                 <section className="quiz-item">
@@ -909,7 +915,10 @@ const stepsProgress = (
                       <span>D) Because dilution prevents ionization</span>
                     </label>
                   </div>
-                  {quizSubmitted && <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Because the weak acid and its conjugate base establish a buffer equilibrium</div>}
+                  {quizSubmitted && (<>
+                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q3 === 'A' ? 'A) Because sodium ethanoate hydrolyzes completely to form OH⁻' : quizSelections.q3 === 'B' ? 'B) Because the weak acid and its conjugate base establish a buffer equilibrium' : quizSelections.q3 === 'C' ? 'C) Because sodium ions neutralize all OH⁻ ions' : quizSelections.q3 === 'D' ? 'D) Because dilution prevents ionization' : ''}</div>
+                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Because the weak acid and its conjugate base establish a buffer equilibrium</div>
+                  </>)}
                 </section>
 
                 <section className="quiz-item">
@@ -932,7 +941,10 @@ const stepsProgress = (
                       <span>D) A constant pH value because sodium acetate is neutral</span>
                     </label>
                   </div>
-                  {quizSubmitted && <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) A rapid rise initially, then leveling off near pKa due to buffer action</div>}
+                  {quizSubmitted && (<>
+                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q4 === 'A' ? 'A) A linear increase in pH due to direct neutralization' : quizSelections.q4 === 'B' ? 'B) A rapid rise initially, then leveling off near pKa due to buffer action' : quizSelections.q4 === 'C' ? 'C) A sharp fall in pH due to hydrolysis of sodium acetate' : quizSelections.q4 === 'D' ? 'D) A constant pH value because sodium acetate is neutral' : ''}</div>
+                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) A rapid rise initially, then leveling off near pKa due to buffer action</div>
+                  </>)}
                 </section>
 
                 <section className="quiz-item">
@@ -955,7 +967,10 @@ const stepsProgress = (
                       <span>D) 5.7</span>
                     </label>
                   </div>
-                  {quizSubmitted && <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) 5.0 (pH ≈ pKa + log([A⁻]/[HA]) = 4.745 + log(0.10/0.05) ≈ 5.05)</div>}
+                  {quizSubmitted && (<>
+                    <div className="mt-2 text-sm text-gray-700">Your answer: {quizSelections.q5 === 'A' ? 'A) 4.7' : quizSelections.q5 === 'B' ? 'B) 4.9' : quizSelections.q5 === 'C' ? 'C) 5.0' : quizSelections.q5 === 'D' ? 'D) 5.7' : ''}</div>
+                    <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) 5.0 (pH ≈ pKa + log([A⁻]/[HA]) = 4.745 + log(0.10/0.05) ≈ 5.05)</div>
+                  </>)}
                 </section>
 
                 <div className="flex items-center justify-between space-x-4">
