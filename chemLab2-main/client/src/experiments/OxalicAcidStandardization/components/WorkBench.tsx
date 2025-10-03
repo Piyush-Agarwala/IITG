@@ -607,9 +607,16 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 {/* Additional controls for Step 3: allow user to set amount of oxalic acid to add to weighing boat */}
                 {step.id === 3 && (
                   <div className="space-y-3">
-                    <div>
+                    <div className="p-3 rounded-lg border-2 border-yellow-200 bg-gradient-to-r from-yellow-50 via-white to-yellow-25 shadow-md overflow-hidden">
+                      {showAcidHint && (
+                        <div className="mb-2 flex items-center justify-between space-x-3 p-2 rounded bg-gradient-to-r from-pink-50 via-yellow-50 to-green-50 border border-yellow-200">
+                          <div className="text-sm font-medium text-yellow-800">New here? Enter the exact mass you want to add and click <span className="font-semibold">Add to Weighing Boat</span>.</div>
+                          <button onClick={(e) => { e.stopPropagation(); dismissAcidHint(); }} className="ml-2 text-xs px-2 py-1 bg-yellow-200 rounded">Got it</button>
+                        </div>
+                      )}
+
                       <label className="block text-xs font-medium text-gray-700 mb-1">Amount to add to weighing boat (g)</label>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <input
                           type="number"
                           min="0"
@@ -656,7 +663,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
                             showMessage(`Added ${amountToAdd.toFixed(4)} g of oxalic acid to the weighing boat.`);
                           }}
-                          className="w-full"
+                          className="w-36 flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900"
                         >
                           Add to Weighing Boat
                         </Button>
