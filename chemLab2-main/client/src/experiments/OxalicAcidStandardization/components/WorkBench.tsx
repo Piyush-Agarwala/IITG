@@ -584,12 +584,93 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     <FlaskConical className="w-4 h-4 mr-2" /> Complete Step {stepNumber}
                   </Button>
                 )}
-                <div className="space-y-2">
-                  <Button onClick={onUndoStep} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100" disabled={stepNumber <= 1}>
-                    Undo Step {currentStepIndex}
-                  </Button>
-                  <Button onClick={onResetExperiment} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
-                </div>
+
+                {/* Additional controls for Step 3: allow user to set amount of oxalic acid to add to weighing boat */}
+                {step.id === 3 && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Amount to add to weighing boat (g)</label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.0001"
+                          value={String((measurements.targetMass && measurements.targetMass > 0) ? measurements.targetMass : 0.1)}
+                          onChange={() => { /* controlled by local state below */ }}
+                          className="w-32 p-2 border rounded text-sm font-mono bg-gray-50"
+                          disabled
+                        />
+                        <Button
+                          onClick={() => {
+                            // Find a weighing boat on the workbench
+                            const boat = equipmentPositions.find(pos => (pos.typeId ?? pos.id).toLowerCase().includes('weighing_boat') || (pos.typeId === 'weighing_boat'));
+                            if (!boat) {
+                              showMessage('Place a weighing boat on the workbench first.');
+                              return;
+                            }
+
+                            // Use the computed targetMass as the amount to add
+                            const amountToAdd = measurements.targetMass > 0 ? measurements.targetMass : 0.1;
+
+                            setEquipmentPositions(prev => prev.map(pos => {
+                              if (pos.id === boat.id) {
+                                return {
+                                  ...pos,
+                                  chemicals: [
+                                    ...pos.chemicals,
+                                    {
+                                      id: 'oxalic_acid',
+                                      name: 'Oxalic acid dihydrate',
+                                      color: '#F0E68C',
+                                      amount: amountToAdd,
+                                      concentration: ''
+                                    }
+                                  ]
+                                };
+                              }
+                              return pos;
+                            }));
+
+                            showMessage(`Added ${amountToAdd.toFixed(4)} g of oxalic acid to the weighing boat.`);
+                          }}
+                          className="w-full"
+                        >
+                          Add to Weighing Boat
+                        </Button>
+
+                        <Button
+                          onClick={() => {
+                            // open calculator as a quick helper
+                            try { window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder')); } catch {}
+                            showMessage('Open the calculator to verify the required amount.');
+                          }}
+                          variant="outline"
+                          className="w-32"
+                        >
+                          Calculator
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Button onClick={onUndoStep} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100" disabled={stepNumber <= 1}>
+                        Undo Step {currentStepIndex}
+                      </Button>
+                      <Button onClick={onResetExperiment} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* default Undo/Reset when not in step 3 */}
+                {step.id !== 3 && (
+                  <div className="space-y-2">
+                    <Button onClick={onUndoStep} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100" disabled={stepNumber <= 1}>
+                      Undo Step {currentStepIndex}
+                    </Button>
+                    <Button onClick={onResetExperiment} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+                  </div>
+                )}
+
               </div>
             </div>
           </div>
