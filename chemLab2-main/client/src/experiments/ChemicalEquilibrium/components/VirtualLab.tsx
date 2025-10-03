@@ -444,7 +444,7 @@ function ChemicalEquilibriumVirtualLab({
               Chemical Reagents
             </h4>
             <div className="flex items-center space-x-3 overflow-x-auto pb-2">
-              {CHEMICAL_EQUILIBRIUM_CHEMICALS.map((chemical) => (
+              {chemicalsList.map((chemical) => (
                 <div key={chemical.id} className="flex-shrink-0">
                   <Chemical
                     id={chemical.id}
