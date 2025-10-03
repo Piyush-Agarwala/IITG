@@ -545,10 +545,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
                 <div className="mt-4 flex items-center justify-end space-x-3">
                   <Button variant="outline" onClick={() => setShowAcidWarning(false)}>Close</Button>
                   <Button onClick={() => {
-                    try { localStorage.setItem('oxalicAcidWarningDismissed','true'); } catch (_) {}
                     setAcidWarningDismissed(true);
-                    // notify other instances
-                    try { window.dispatchEvent(new Event('oxalicAcidWarningDismissed')); } catch (_) {}
+                    persistAcidWarningDismissed(true);
                     setShowAcidWarning(false);
                   }}>Got it</Button>
                 </div>
