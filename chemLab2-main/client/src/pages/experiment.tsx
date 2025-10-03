@@ -1,4 +1,3 @@
-import { useParams } from "wouter";
 import React from "react";
 import Header from "@/components/header";
 import ChemicalEquilibriumApp from "@/experiments/ChemicalEquilibrium/components/ChemicalEquilibriumApp";
