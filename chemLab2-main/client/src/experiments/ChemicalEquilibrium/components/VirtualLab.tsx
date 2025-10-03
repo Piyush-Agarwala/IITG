@@ -357,8 +357,8 @@ function ChemicalEquilibriumVirtualLab({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <h4 className="font-semibold text-gray-800 text-sm flex items-center">
-                  <Atom className="w-4 h-4 mr-2 text-blue-600" />
-                  Chemical Equilibrium - Equipment
+                <Atom className="w-4 h-4 mr-2 text-blue-600" />
+                  {experimentTitle} - Equipment
                 </h4>
                 <span className="inline-flex items-center px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
                   <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse mr-1"></div>
