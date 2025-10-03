@@ -79,7 +79,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     messageTimeoutRef.current = window.setTimeout(() => {
       setWorkbenchMessage(null);
       messageTimeoutRef.current = null;
-    }, 2500);
+    }, 8000);
   }, []);
 
   useEffect(() => {
@@ -169,10 +169,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       if (enforceStepOneRestriction(payload?.id)) {
         return;
       }
+      const newPosId = `${payload.id || 'bottle'}_${Date.now()}`;
       setEquipmentPositions(prev => [
         ...prev,
         {
-          id: `${payload.id || 'bottle'}_${Date.now()}`,
+          id: newPosId,
           x: x - 30,
           y: y - 30,
           isBottle: true,
@@ -187,6 +188,14 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           ],
         }
       ]);
+
+      // If oxalic acid bottle was added during quantitative analysis step, show reminder and dispatch event
+      try {
+        if (payload && payload.id === 'oxalic_acid' && step.id === 3) {
+          showMessage('Click the calculator once to see the amount of acid required');
+          try { window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder')); } catch {}
+        }
+      } catch {}
     };
 
     // If data parsed as object, handle as before
@@ -422,7 +431,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         </div>
 
         {workbenchMessage && (
-          <div className="mt-3 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-3 py-2 rounded-md">
+          <div role="status" aria-live="polite" className="fixed bottom-6 right-6 z-50 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3 rounded-md shadow-lg">
             {workbenchMessage}
           </div>
         )}
