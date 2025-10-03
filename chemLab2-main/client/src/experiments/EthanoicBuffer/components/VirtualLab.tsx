@@ -58,6 +58,17 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setQuizSelections({ q1: null, q2: null, q3: null, q4: null, q5: null });
     setQuizSubmitted(false);
   };
+
+  const score = React.useMemo(() => {
+    const answers: Record<string, string> = { q1: 'B', q2: 'B', q3: 'B', q4: 'B', q5: 'C' };
+    let s = 0;
+    if (quizSelections.q1 === answers.q1) s++;
+    if (quizSelections.q2 === answers.q2) s++;
+    if (quizSelections.q3 === answers.q3) s++;
+    if (quizSelections.q4 === answers.q4) s++;
+    if (quizSelections.q5 === answers.q5) s++;
+    return s;
+  }, [quizSelections]);
   // Guided UI cues
   const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
   const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
