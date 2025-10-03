@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment as PHEquipment } from "@/experiments/PHComparison/components/Equipment";
-import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle, Home } from "lucide-react";
+import { Beaker, Droplets, FlaskConical, Info, TestTube, Undo2, Wrench, CheckCircle, Home, ArrowLeft } from "lucide-react";
 import type { Experiment, ExperimentStep } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "wouter";
