@@ -215,6 +215,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         }
       ]);
 
+      // Notify parent that this chemical bottle was placed so the chemical can be removed from the palette
+      try {
+        if (onEquipmentPlaced && payload && payload.id) {
+          onEquipmentPlaced(payload.id);
+        }
+      } catch {}
+
       // If oxalic acid bottle was added during quantitative analysis step, show reminder and dispatch event
       try {
         if (payload && payload.id === 'oxalic_acid' && step.id === 3) {
@@ -673,27 +680,54 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                             }
                             const amountToAdd = parsedAmount;
 
-                            setEquipmentPositions(prev => prev.map(pos => {
-                              if (pos.id === boat.id) {
-                                return {
-                                  ...pos,
-                                  chemicals: [
-                                    ...pos.chemicals,
-                                    {
-                                      id: 'oxalic_acid',
-                                      name: 'Oxalic acid dihydrate',
-                                      color: '#F0E68C',
-                                      amount: amountToAdd,
-                                      concentration: ''
-                                    }
-                                  ]
-                                };
-                              }
-                              return pos;
-                            }));
+                            // Add oxalic acid to the boat immediately (so the tooltip/details show)
+                            setEquipmentPositions(prev => {
+                              // add the chemical to the selected boat
+                              const withAdded = prev.map(pos => {
+                                if (pos.id === boat.id) {
+                                  return {
+                                    ...pos,
+                                    chemicals: [
+                                      ...pos.chemicals,
+                                      {
+                                        id: 'oxalic_acid',
+                                        name: 'Oxalic acid dihydrate',
+                                        color: '#F0E68C',
+                                        amount: amountToAdd,
+                                        concentration: ''
+                                      }
+                                    ]
+                                  };
+                                }
+                                return pos;
+                              });
 
-                            // start pouring animation overlay above the boat
+                              // remove any standalone oxalic acid bottles from the workbench palette area
+                              const cleaned = withAdded.filter(pos => {
+                                // always keep the target boat
+                                if (pos.id === boat.id) return true;
+
+                                // remove items explicitly marked as bottles containing oxalic_acid
+                                if (pos.isBottle && Array.isArray(pos.chemicals) && pos.chemicals.some(c => c.id === 'oxalic_acid')) return false;
+
+                                // remove any equipment that is itself the oxalic acid item
+                                if ((pos.typeId || '').toString().toLowerCase().includes('oxalic_acid')) return false;
+
+                                // otherwise keep
+                                return true;
+                              });
+
+                              return cleaned;
+                            });
+
+                            // Notify parent to remove oxalic acid from the chemical palette
                             try {
+                              if (onEquipmentPlaced) onEquipmentPlaced('oxalic_acid');
+                            } catch {}
+
+                            // start pouring animation overlay above the boat and show in-progress message
+                            try {
+                              showMessage('Oxalic acid is getting added...');
                               setPouring({ boatId: boat.id, x: boat.x + 40, y: boat.y - 60, active: true });
                               // clear previous timeout if any
                               if (pourTimeoutRef.current) {
@@ -706,10 +740,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                                 setEquipmentPositions(prev => prev.map(pos => pos.id === boat.id ? { ...pos, imageSrc: newBoatImage } : pos));
                                 setPouring(null);
                                 if (pourTimeoutRef.current) { window.clearTimeout(pourTimeoutRef.current); pourTimeoutRef.current = null; }
+
+                                // Show final message after animation completes
+                                showMessage(`${amountToAdd.toFixed(4)} grams of oxalic acid added!`);
                               }, 9000);
                             } catch (e) {}
 
-                            showMessage(`Added ${amountToAdd.toFixed(4)} g of oxalic acid to the weighing boat.`);
                           }}
                           className="w-36 flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900"
                         >
