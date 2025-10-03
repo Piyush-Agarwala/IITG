@@ -20,8 +20,8 @@ export default function Experiment() {
   const experimentId = parseInt(id || "1");
 
   // detect quiz route (e.g. /experiment/10/quiz)
-  const [quizMatch] = useRoute("/experiment/:id/quiz");
-  const isQuizRoute = Boolean(quizMatch && Number(quizMatch?.id) === experimentId);
+  const [quizMatch, quizParams] = useRoute("/experiment/:id/quiz");
+  const isQuizRoute = Boolean(quizMatch && Number(quizParams?.id) === experimentId);
 
   // Support for available experiments
   const getExperimentComponent = () => {
