@@ -604,10 +604,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                           type="number"
                           min="0"
                           step="0.0001"
-                          value={String((measurements.targetMass && measurements.targetMass > 0) ? measurements.targetMass : 0.1)}
-                          onChange={() => { /* controlled by local state below */ }}
-                          className="w-32 p-2 border rounded text-sm font-mono bg-gray-50"
-                          disabled
+                          value={acidAmount}
+                          onChange={(e) => setAcidAmount(Number(e.target.value))}
+                          className="w-32 p-2 border rounded text-sm font-mono bg-white"
                         />
                         <Button
                           onClick={() => {
@@ -618,8 +617,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                               return;
                             }
 
-                            // Use the computed targetMass as the amount to add
-                            const amountToAdd = measurements.targetMass > 0 ? measurements.targetMass : 0.1;
+                            // Use the user-provided acidAmount as the amount to add
+                            const amountToAdd = Math.max(0, Number(acidAmount) || 0);
 
                             setEquipmentPositions(prev => prev.map(pos => {
                               if (pos.id === boat.id) {
