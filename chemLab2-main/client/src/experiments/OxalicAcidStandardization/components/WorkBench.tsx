@@ -69,9 +69,23 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [temperature, setTemperature] = useState(25);
   const [showCalculator, setShowCalculator] = useState(false);
   // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
-  // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
   // keep this completely under user control (do not auto-sync with calculated targetMass)
   const [acidAmount, setAcidAmount] = useState<string>("");
+
+  // show a colorful hint for first-time users; persist dismissal in localStorage
+  const [showAcidHint, setShowAcidHint] = useState<boolean>(false);
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem('seenAcidControl');
+      setShowAcidHint(!seen);
+    } catch (e) {
+      setShowAcidHint(false);
+    }
+  }, []);
+  const dismissAcidHint = () => {
+    try { localStorage.setItem('seenAcidControl', '1'); } catch (e) {}
+    setShowAcidHint(false);
+  };
 
   const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
   const messageTimeoutRef = useRef<number | null>(null);
