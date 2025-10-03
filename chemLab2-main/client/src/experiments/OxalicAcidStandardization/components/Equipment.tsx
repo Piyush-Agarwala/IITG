@@ -127,6 +127,13 @@ export const Equipment: React.FC<EquipmentProps> = ({
     }
   });
 
+  // Listen for global dismissal events so all Equipment components update
+  React.useEffect(() => {
+    const handler = () => setAcidWarningDismissed(true);
+    window.addEventListener('oxalicAcidWarningDismissed', handler);
+    return () => window.removeEventListener('oxalicAcidWarningDismissed', handler);
+  }, []);
+
   React.useEffect(() => {
     if (acidWarningDismissed) setShowAcidWarning(false);
   }, [acidWarningDismissed]);
