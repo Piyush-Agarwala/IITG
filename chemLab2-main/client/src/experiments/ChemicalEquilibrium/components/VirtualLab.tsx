@@ -8,7 +8,10 @@ import {
   CHEMICAL_EQUILIBRIUM_CHEMICALS,
   CHEMICAL_EQUILIBRIUM_EQUIPMENT,
   DEFAULT_MEASUREMENTS,
+  PH_HCL_CHEMICALS,
+  PH_HCL_EQUIPMENT,
 } from "../constants";
+import { PHHClExperiment } from "../data";
 import type {
   EquipmentPosition,
   CobaltReactionState,
