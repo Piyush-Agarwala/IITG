@@ -370,18 +370,25 @@ export const Equipment: React.FC<EquipmentProps> = ({
         zIndex: isDragging ? 1000 : 10,
       }}
       onMouseDown={handleMouseDown}
+      onClick={(e) => {
+        // If user clicks equipment containing oxalic acid during step 3, show warning
+        if (chemicals.some(c => c.id === 'oxalic_acid') && stepId === 3) {
+          e.stopPropagation();
+          setShowAcidWarning(true);
+        }
+      }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onMouseEnter={() => setShowDetails(true)}
       onMouseLeave={() => setShowDetails(false)}
     >
       {getEquipmentContent()}
-      
+
       {/* Action Button */}
       <div className="mt-2">
         {getActionButton()}
       </div>
-      
+
       {/* Remove Button */}
       {onRemove && (
         <button
@@ -394,15 +401,15 @@ export const Equipment: React.FC<EquipmentProps> = ({
           ×
         </button>
       )}
-      
+
       {/* Details Tooltip */}
       {showDetails && chemicals.length > 0 && (
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-black text-white text-xs rounded p-2 whitespace-nowrap z-50">
           <div className="space-y-1">
             {chemicals.map((chemical, idx) => (
               <div key={idx} className="flex items-center space-x-2">
-                <div 
-                  className="w-2 h-2 rounded-full" 
+                <div
+                  className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: chemical.color }}
                 />
                 <span>{chemical.name}: {chemical.amount}g</span>
@@ -410,6 +417,19 @@ export const Equipment: React.FC<EquipmentProps> = ({
             ))}
           </div>
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black" />
+        </div>
+      )}
+
+      {/* Acid added warning modal - rendered at component root so it appears regardless of equipment type */}
+      {showAcidWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Be careful!</h3>
+            <p className="text-sm text-gray-700 mb-4">Be careful while you add the acid into the machine to tare! Make sure you see the calculator and check the amount of acid required!</p>
+            <div className="flex justify-end">
+              <Button variant="default" onClick={() => setShowAcidWarning(false)}>Got it</Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
