@@ -154,6 +154,75 @@ export const CHEMICAL_EQUILIBRIUM_FORMULAS = [
 ];
 
 // Default measurements for Chemical Equilibrium
+export const PH_HCL_CHEMICALS: Chemical[] = [
+  {
+    id: "hcl_0_1",
+    name: "Hydrochloric Acid 0.1 M",
+    formula: "HCl",
+    color: "#FFD2D2",
+    concentration: "0.1 M",
+    volume: 50,
+  },
+  {
+    id: "hcl_0_01",
+    name: "Hydrochloric Acid 0.01 M",
+    formula: "HCl",
+    color: "#FFEBEB",
+    concentration: "0.01 M",
+    volume: 50,
+  },
+  {
+    id: "hcl_0_001",
+    name: "Hydrochloric Acid 0.001 M",
+    formula: "HCl",
+    color: "#FFF5F5",
+    concentration: "0.001 M",
+    volume: 50,
+  },
+  {
+    id: "universal_indicator",
+    name: "Universal Indicator Solution",
+    formula: "mixture",
+    color: "#A7F3D0",
+    concentration: "Indicator",
+    volume: 30,
+  },
+];
+
+export const PH_HCL_EQUIPMENT: Equipment[] = [
+  {
+    id: "beaker_small",
+    name: "Beaker (50 mL)",
+    icon: React.createElement(
+      "svg",
+      { width: "36", height: "36", viewBox: "0 0 36 36", fill: "none", className: "text-slate-600" },
+      [
+        React.createElement("rect", { key: "b1", x: 6, y: 8, width: 24, height: 16, stroke: "currentColor", fill: "rgba(15, 23, 42, 0.04)", strokeWidth: "2" }),
+      ],
+    ),
+  },
+  {
+    id: "volumetric_flask",
+    name: "Volumetric Flask",
+    icon: React.createElement(FlaskConical, { size: 36 }),
+  },
+  {
+    id: "wash_bottle",
+    name: "Wash Bottle",
+    icon: React.createElement("svg", { width: 36, height: 36, viewBox: "0 0 36 36", fill: "none", className: "text-blue-600" }, [React.createElement("path", { key: "w", d: "M6 8h24v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8z", stroke: "currentColor", strokeWidth: "2", fill: "rgba(59,130,246,0.08)" })])
+  },
+  {
+    id: "ph_paper",
+    name: "pH Paper (Strip Pack)",
+    icon: React.createElement("div", { style: { width: 36, height: 36, background: 'linear-gradient(90deg,#ff7a7a,#ffd27a)', borderRadius: 4 } })
+  },
+  {
+    id: "dropper",
+    name: "Dropper/Pipette",
+    icon: React.createElement("svg", { width: 36, height: 36, viewBox: "0 0 36 36", fill: "none", className: "text-gray-700" }, [React.createElement("path", { key: "d", d: "M8 28c4-4 10-10 20-20", stroke: "currentColor", strokeWidth: "2" })])
+  }
+];
+
 export const DEFAULT_MEASUREMENTS = {
   volume: 0,
   concentration: 0,
