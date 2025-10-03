@@ -170,9 +170,9 @@ export const Equipment: React.FC<EquipmentProps> = ({
                   tabIndex={0}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (stepId === 3) setShowAcidWarning(true);
+                    if (stepId === 3 && !acidWarningDismissed) setShowAcidWarning(true);
                   }}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && stepId === 3) setShowAcidWarning(true); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && stepId === 3 && !acidWarningDismissed) setShowAcidWarning(true); }}
                   className="bg-black text-green-400 px-2 py-1 rounded font-mono inline-block cursor-pointer"
                 >
                   {(oxalicAcid.amount / 1000).toFixed(4)} g
