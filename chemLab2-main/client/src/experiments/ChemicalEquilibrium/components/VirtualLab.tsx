@@ -451,15 +451,49 @@ function ChemicalEquilibriumVirtualLab({
           </aside>
 
           <main className="flex-1 flex flex-col">
-            <div className="mb-4 bg-white p-4 border rounded">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold">Experiment Progress</h3>
-                  <p className="text-xs text-gray-500">Step {currentStep} of {totalSteps}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button onClick={() => setCurrentStep(Math.max(1, currentStep - 1))} className="text-xs px-2 py-1 bg-gray-100 rounded">Undo</button>
-                  <button onClick={handleReset} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded">Reset</button>
+            <div className="mb-4">
+              <div className="bg-white p-4 border rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 pr-6">
+                    <h3 className="text-sm font-semibold">Experiment Progress</h3>
+                    <div className="mt-3">
+                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.round(((currentStep - 1) / totalSteps) * 100)}%` }}
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-3 mt-3">
+                        {Array.from({ length: totalSteps }).map((_, i) => {
+                          const stepIndex = i + 1;
+                          const active = stepIndex <= currentStep;
+                          return (
+                            <div
+                              key={stepIndex}
+                              className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium ${active ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-600'}`}
+                              title={`Step ${stepIndex}`}
+                            >
+                              {stepIndex}
+                            </div>
+                          );
+                        })}
+
+                        <div className="ml-4 text-sm text-gray-700">
+                          <div className="font-medium">{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
+                          <div className="text-xs text-gray-500 mt-1">{allSteps[currentStep - 1]?.description ?? ''}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-40 text-right">
+                    <div className="text-xs text-gray-500">Step {currentStep} of {totalSteps}</div>
+                    <div className="mt-2 flex items-center justify-end gap-2">
+                      <button onClick={() => setCurrentStep(Math.max(1, currentStep - 1))} className="text-xs px-2 py-1 bg-gray-100 rounded">Undo</button>
+                      <button onClick={handleReset} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded">Reset</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
