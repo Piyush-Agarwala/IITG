@@ -110,6 +110,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         window.clearTimeout(messageTimeoutRef.current);
         messageTimeoutRef.current = null;
       }
+      if (pourTimeoutRef.current) {
+        window.clearTimeout(pourTimeoutRef.current);
+        pourTimeoutRef.current = null;
+      }
     };
   }, []);
 
