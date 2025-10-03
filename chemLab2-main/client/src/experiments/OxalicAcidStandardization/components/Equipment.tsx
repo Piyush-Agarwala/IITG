@@ -476,8 +476,13 @@ export const Equipment: React.FC<EquipmentProps> = ({
       }}
       onMouseDown={handleMouseDown}
       onClick={(e) => {
+        // Only open the acid warning when the user explicitly clicked
+        // the weight element (data-open-acid-warning). This prevents
+        // clicks coming from the modal or other children from re-opening it.
+        const opener = (e.target as HTMLElement).closest('[data-open-acid-warning="true"]');
+        if (!opener) return;
+
         if (chemicals.some((c) => c.id === "oxalic_acid") && stepId === 3) {
-          e.stopPropagation();
           const dismissed = acidWarningDismissed || readAcidWarningDismissed();
           if (!dismissed) {
             setShowAcidWarning(true);
