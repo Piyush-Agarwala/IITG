@@ -834,19 +834,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q1. Ethanoic acid alone has a pH ≈ 2.9 at 0.1 M. When sodium ethanoate is added, the pH rises close to 4.7. This is mainly because:</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q1" className="mt-1" />
                       <span>A) Sodium ethanoate is strongly basic and neutralizes all the acid.</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q1" className="mt-1" />
                       <span>B) The common ion effect reduces the dissociation of ethanoic acid.</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q1" className="mt-1" />
                       <span>C) The volume of solution increases, diluting the acid.</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q1" className="mt-1" />
                       <span>D) Sodium ethanoate removes H⁺ ions by precipitation.</span>
                     </label>
                   </div>
@@ -857,19 +857,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q2. At the point where [CH₃COOH] = [CH₃COONa], the pH of the solution equals:</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q2" className="mt-1" />
                       <span>A) 7.0 (neutral point)</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q2" className="mt-1" />
                       <span>B) The pKa of acetic acid</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q2" className="mt-1" />
                       <span>C) The pKb of acetate ion</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q2" className="mt-1" />
                       <span>D) The ionic product of water (Kw)</span>
                     </label>
                   </div>
@@ -880,19 +880,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q3. Why does the solution resist large pH changes upon addition of small amounts of strong acid or base once sodium ethanoate is added?</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q3" className="mt-1" />
                       <span>A) Because sodium ethanoate hydrolyzes completely to form OH⁻</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q3" className="mt-1" />
                       <span>B) Because the weak acid and its conjugate base establish a buffer equilibrium</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q3" className="mt-1" />
                       <span>C) Because sodium ions neutralize all OH⁻ ions</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q3" className="mt-1" />
                       <span>D) Because dilution prevents ionization</span>
                     </label>
                   </div>
@@ -903,19 +903,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q4. Which of the following best explains the shape of the pH vs. added sodium ethanoate volume curve?</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q4" className="mt-1" />
                       <span>A) A linear increase in pH due to direct neutralization</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q4" className="mt-1" />
                       <span>B) A rapid rise initially, then leveling off near pKa due to buffer action</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q4" className="mt-1" />
                       <span>C) A sharp fall in pH due to hydrolysis of sodium acetate</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q4" className="mt-1" />
                       <span>D) A constant pH value because sodium acetate is neutral</span>
                     </label>
                   </div>
@@ -926,19 +926,19 @@ const stepsProgress = (
                   <h3 className="font-semibold">Q5. If the Ka of ethanoic acid is 1.8 × 10⁻⁵, and you prepare a buffer with [CH₃COOH] = 0.05 M and [CH₃COONa] = 0.10 M, what would be the approximate pH?</h3>
                   <div className="mt-2 space-y-2">
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q5" className="mt-1" />
                       <span>A) 4.7</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q5" className="mt-1" />
                       <span>B) 4.9</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q5" className="mt-1" />
                       <span>C) 5.0</span>
                     </label>
                     <label className="quiz-option flex items-start space-x-2">
-                      <input type="checkbox" className="mt-1" />
+                      <input type="radio" name="q5" className="mt-1" />
                       <span>D) 5.7</span>
                     </label>
                   </div>
