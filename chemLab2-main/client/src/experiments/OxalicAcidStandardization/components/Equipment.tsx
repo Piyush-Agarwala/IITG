@@ -163,19 +163,41 @@ export const Equipment: React.FC<EquipmentProps> = ({
   }, []);
 
   const [showAcidWarning, setShowAcidWarning] = React.useState(false);
-  const [acidWarningDismissed, setAcidWarningDismissed] = React.useState<boolean>(() => {
-    try {
-      return typeof window !== 'undefined' && localStorage.getItem('oxalicAcidWarningDismissed') === 'true';
-    } catch (_) {
-      return false;
-    }
-  });
+  const [acidWarningDismissed, setAcidWarningDismissed] = React.useState<boolean>(() => readAcidWarningDismissed());
 
-  // Listen for global dismissal events so all Equipment components update
   React.useEffect(() => {
-    const handler = () => setAcidWarningDismissed(true);
-    window.addEventListener('oxalicAcidWarningDismissed', handler);
-    return () => window.removeEventListener('oxalicAcidWarningDismissed', handler);
+    const stored = readAcidWarningDismissed();
+    setAcidWarningDismissed((current) => (current === stored ? current : stored));
+  }, []);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleDismissed = (event: Event) => {
+      const detail = (event as CustomEvent<boolean | undefined>).detail;
+      const dismissedValue = typeof detail === "boolean" ? detail : true;
+      acidWarningMemoryValue = dismissedValue;
+      setAcidWarningDismissed((current) => (current === dismissedValue ? current : dismissedValue));
+    };
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== ACID_WARNING_STORAGE_KEY) {
+        return;
+      }
+      const dismissedValue = event.newValue === "true";
+      acidWarningMemoryValue = dismissedValue;
+      setAcidWarningDismissed((current) => (current === dismissedValue ? current : dismissedValue));
+    };
+
+    window.addEventListener(ACID_WARNING_EVENT, handleDismissed);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener(ACID_WARNING_EVENT, handleDismissed);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   React.useEffect(() => {
