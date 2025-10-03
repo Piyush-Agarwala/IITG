@@ -681,24 +681,44 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                             const amountToAdd = parsedAmount;
 
                             // Add oxalic acid to the boat immediately (so the tooltip/details show)
-                            setEquipmentPositions(prev => prev.map(pos => {
-                              if (pos.id === boat.id) {
-                                return {
-                                  ...pos,
-                                  chemicals: [
-                                    ...pos.chemicals,
-                                    {
-                                      id: 'oxalic_acid',
-                                      name: 'Oxalic acid dihydrate',
-                                      color: '#F0E68C',
-                                      amount: amountToAdd,
-                                      concentration: ''
-                                    }
-                                  ]
-                                };
-                              }
-                              return pos;
-                            }));
+                            setEquipmentPositions(prev => {
+                              // add the chemical to the selected boat
+                              const withAdded = prev.map(pos => {
+                                if (pos.id === boat.id) {
+                                  return {
+                                    ...pos,
+                                    chemicals: [
+                                      ...pos.chemicals,
+                                      {
+                                        id: 'oxalic_acid',
+                                        name: 'Oxalic acid dihydrate',
+                                        color: '#F0E68C',
+                                        amount: amountToAdd,
+                                        concentration: ''
+                                      }
+                                    ]
+                                  };
+                                }
+                                return pos;
+                              });
+
+                              // remove any standalone oxalic acid bottles from the workbench palette area
+                              const cleaned = withAdded.filter(pos => {
+                                // always keep the target boat
+                                if (pos.id === boat.id) return true;
+
+                                // remove items explicitly marked as bottles containing oxalic_acid
+                                if (pos.isBottle && Array.isArray(pos.chemicals) && pos.chemicals.some(c => c.id === 'oxalic_acid')) return false;
+
+                                // remove any equipment that is itself the oxalic acid item
+                                if ((pos.typeId || '').toString().toLowerCase().includes('oxalic_acid')) return false;
+
+                                // otherwise keep
+                                return true;
+                              });
+
+                              return cleaned;
+                            });
 
                             // Notify parent to remove oxalic acid from the chemical palette
                             try {
