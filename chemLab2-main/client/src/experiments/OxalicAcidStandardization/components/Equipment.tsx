@@ -50,6 +50,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   onRemove,
   preparationState,
   onAction,
+  stepId,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
