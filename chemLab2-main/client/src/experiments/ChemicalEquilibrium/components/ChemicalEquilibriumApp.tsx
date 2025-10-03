@@ -21,9 +21,9 @@ export default function ChemicalEquilibriumApp({
   const [timer, setTimer] = useState(0);
   const [experimentStarted, setExperimentStarted] = useState(false);
 
-  const experiment = ChemicalEquilibriumData;
   const [match, params] = useRoute("/experiment/:id");
   const experimentId = Number(params?.id ?? 4);
+  const experiment = experimentId === PHHClExperiment.id ? PHHClExperiment : ChemicalEquilibriumData;
   const updateProgress = useUpdateProgress();
 
   useEffect(() => {
