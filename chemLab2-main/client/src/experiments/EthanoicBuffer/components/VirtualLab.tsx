@@ -240,7 +240,7 @@ const confirmAddAcetic = () => {
   const initialPH = computePHFrom(newAcidMoles, sodiumMoles, totalVolL);
   if (initialPH != null) {
     setInitialAcidPH(initialPH);
-    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid • pH ≈ ${initialPH.toFixed(2)}`);
+    setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid • pH �� ${initialPH.toFixed(2)}`);
   } else {
     setShowToast(`Added ${v.toFixed(1)} mL of 0.1 M ethanoic acid`);
   }
@@ -852,7 +852,7 @@ const stepsProgress = (
               <div className="flex items-center justify-between w-full">
                 <CardTitle className="text-2xl">Buffer pH — Quiz</CardTitle>
                 {quizSubmitted && (
-                  <div className="text-blue-600 font-semibold">{score}/5</div>
+                  <div className="text-blue-600 font-semibold">Marks obtained ({score} / 5)</div>
                 )}
               </div>
             </CardHeader>
