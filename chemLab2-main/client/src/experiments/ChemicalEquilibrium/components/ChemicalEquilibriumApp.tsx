@@ -26,6 +26,20 @@ export default function ChemicalEquilibriumApp({
   const experiment = experimentId === PHHClExperiment.id ? PHHClExperiment : ChemicalEquilibriumData;
   const updateProgress = useUpdateProgress();
 
+  // Auto-start when URL contains ?autostart=1 for the PH experiment
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const auto = params.get("autostart");
+      if (auto === "1" && experimentId === PHHClExperiment.id) {
+        setExperimentStarted(true);
+        setIsRunning(true);
+      }
+    } catch (e) {
+      // ignore in non-browser env
+    }
+  }, [experimentId]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isRunning && experimentStarted) {
