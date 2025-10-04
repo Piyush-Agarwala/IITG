@@ -54,7 +54,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
       id: 4,
       title: "Transfer to Volumetric Flask",
       description:
-        "Using a funnel, carefully transfer the dissolved solution from the beaker to a 250 mL volumetric flask. Rinse the beaker and funnel with distilled water.",
+        "drag the beaker, wash bottle and volumetric flask into the workspace",
       duration: "7 minutes",
       completed: false,
     },
