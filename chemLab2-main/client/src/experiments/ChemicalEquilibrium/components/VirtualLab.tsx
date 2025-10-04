@@ -3,7 +3,7 @@ import { Equipment } from "./Equipment";
 import { WorkBench } from "./WorkBench";
 import { Chemical } from "./Chemical";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { FlaskConical, Atom, BookOpen, List } from "lucide-react";
+import { FlaskConical, Atom, BookOpen, List, Play, Pause } from "lucide-react";
 import {
   CHEMICAL_EQUILIBRIUM_CHEMICALS,
   CHEMICAL_EQUILIBRIUM_EQUIPMENT,
