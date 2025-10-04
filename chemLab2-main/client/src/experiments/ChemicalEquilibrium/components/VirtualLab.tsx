@@ -49,6 +49,7 @@ function ChemicalEquilibriumVirtualLab({
   isRunning,
   setIsRunning,
   onResetTimer,
+  onResetExperiment,
 }: ChemicalEquilibriumVirtualLabProps) {
   const [equipmentPositions, setEquipmentPositions] = useState<
     EquipmentPosition[]
