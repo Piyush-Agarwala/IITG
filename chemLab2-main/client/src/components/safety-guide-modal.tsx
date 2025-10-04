@@ -435,7 +435,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
             ) : isPHComparison ? (
               <>
                 <section>
-                  <p className="text-sm">Here’s a <em>Safety Guide</em> for the experiment —</p>
+                  <h3 className="text-sm">Here’s a <em>Safety Guide</em> for the experiment —</h3>
                 </section>
 
                 <section>
@@ -462,25 +462,25 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                       </thead>
                       <tbody>
                         <tr>
-                          <td className="py-2">Hydrochloric Acid (0.01 M)</td>
+                          <td className="py-2"><em>Hydrochloric Acid (0.01 M)</em></td>
                           <td className="py-2">Corrosive (dilute form, mild)</td>
                           <td className="py-2">Can irritate skin, eyes, or respiratory tract if mishandled</td>
                           <td className="py-2">Avoid direct contact, wear gloves and goggles</td>
                         </tr>
                         <tr className="bg-gray-50">
-                          <td className="py-2">Ethanoic Acid (0.01 M)</td>
+                          <td className="py-2"><em>Ethanoic Acid (0.01 M)</em></td>
                           <td className="py-2">Irritant</td>
                           <td className="py-2">Has a pungent smell; may irritate eyes and skin</td>
                           <td className="py-2">Handle in a well-ventilated area, wear gloves</td>
                         </tr>
                         <tr>
-                          <td className="py-2">Universal Indicator Solution</td>
+                          <td className="py-2"><em>Universal Indicator Solution</em></td>
                           <td className="py-2">Slightly acidic/alkaline (depending on brand)</td>
                           <td className="py-2">May stain skin or clothing</td>
                           <td className="py-2">Handle carefully, avoid spills</td>
                         </tr>
                         <tr className="bg-gray-50">
-                          <td className="py-2">Glassware</td>
+                          <td className="py-2"><em>Glassware</em></td>
                           <td className="py-2">Physical hazard</td>
                           <td className="py-2">May break and cause injury</td>
                           <td className="py-2">Handle carefully and inspect for cracks</td>
