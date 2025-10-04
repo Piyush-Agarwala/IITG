@@ -505,7 +505,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
           // Attach beaker image so when a beaker is dropped into the workbench it shows the provided image
           if (id === 'beaker' || name.toLowerCase().includes('beaker')) {
-            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Feedcdd4c2aa14b9f8222c4bea5a57b98?format=webp&width=800";
+            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb6b73e8095744be2be1856494b3399cb?format=webp&width=800";
           }
 
           e.dataTransfer.setData("text/plain", JSON.stringify(payload));
