@@ -79,6 +79,26 @@ export default function VirtualLab({
   const [observePulse, setObservePulse] = useState<boolean>(true);
   const [finalVolumeUsed, setFinalVolumeUsed] = useState<number | null>(null);
 
+  // Quiz modal state
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [quizSelections, setQuizSelections] = useState<{ q1?: string; q2?: string; q3?: string; q4?: string; q5?: string }>({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
+
+  const handleSelect = (q: 'q1'|'q2'|'q3'|'q4'|'q5', val: string) => {
+    setQuizSelections(prev => ({ ...prev, [q]: val }));
+  };
+
+  const submitQuiz = () => {
+    const correct: Record<string,string> = { q1: 'B', q2: 'B', q3: 'B', q4: 'C', q5: 'C' };
+    let score = 0;
+    (['q1','q2','q3','q4','q5'] as Array<'q1'|'q2'|'q3'|'q4'|'q5'>).forEach(k => { if (quizSelections[k] === correct[k]) score++; });
+    setQuizScore(score);
+    setQuizSubmitted(true);
+  };
+
+  const allAnswered = !!(quizSelections.q1 && quizSelections.q2 && quizSelections.q3 && quizSelections.q4 && quizSelections.q5);
+
   useEffect(() => {
     const handler = (e: any) => {
       const v = e?.detail?.volumeUsed;
