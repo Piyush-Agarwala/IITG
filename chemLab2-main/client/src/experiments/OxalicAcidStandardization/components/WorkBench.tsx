@@ -164,7 +164,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const raw = e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list") || "";
+    // support multiple drag data formats for robustness
+    const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("equipment") || e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list") || "";
     const isStepOne = step.id === 1;
     const allowedStepOneEquipment = new Set(["analytical_balance", "weighing_boat"]);
     const normalizeId = (value?: string) => (value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
