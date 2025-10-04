@@ -84,6 +84,9 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizScore, setQuizScore] = useState<number | null>(null);
 
+  // Helper: ensure all questions have an answer before enabling Submit
+  const allAnswered = !!(quizSelections.q1 && quizSelections.q2 && quizSelections.q3 && quizSelections.q4 && quizSelections.q5);
+
   // Clean up any scheduled timeouts on unmount
   useEffect(() => {
     return () => {
@@ -1058,8 +1061,8 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                   <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
                 </Button>
                 <Link href="/">
-                  <Button variant="outline" className="flex items-center">
-                    <ArrowLeft className="w-4 h-4 mr-2 rotate-180" /> Return to Experiments
+                  <Button className="bg-gray-700 hover:bg-gray-800 text-white flex items-center px-4 py-2">
+                    Return to Experiments
                   </Button>
                 </Link>
               </div>
@@ -1068,7 +1071,7 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
                 {!quizSubmitted ? (
                   <>
                     <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); }}>Reset</Button>
-                    <Button onClick={() => { submitQuiz(); }}>Submit</Button>
+                    <Button onClick={() => { submitQuiz(); }} disabled={!allAnswered}>Submit</Button>
                   </>
                 ) : (
                   <>
