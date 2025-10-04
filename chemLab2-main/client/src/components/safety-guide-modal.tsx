@@ -435,12 +435,17 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
             ) : isPHComparison ? (
               <>
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🔒 Safety Guide</h3>
+                  <h3 className="text-lg font-semibold mb-3">🔒 <em>Safety Guide</em></h3>
                   <p className="text-sm">Experiment: <em>To determine and compare the pH of 0.01 M HCl and 0.01 M CH₃COOH solution using universal indicator.</em></p>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">⚠ Hazards Identification</h3>
+                  <h3 className="text-lg font-semibold mb-3">⚗ <em>1. Purpose of Safety Guide</em></h3>
+                  <p className="text-sm">To ensure safe laboratory practices while handling dilute acids and universal indicators during the pH determination experiment.</p>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">⚠ <em>2. Hazards Identification</em></h3>
                   <div className="overflow-auto">
                     <table className="w-full text-sm border-collapse">
                       <thead>
@@ -482,7 +487,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🧤 Personal Protective Equipment (PPE)</h3>
+                  <h3 className="text-lg font-semibold mb-3">🧤 <em>3. Personal Protective Equipment (PPE)</em></h3>
                   <ul className="space-y-2 text-sm">
                     <li>• Laboratory coat or apron</li>
                     <li>• Protective goggles</li>
@@ -492,7 +497,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🧪 Safe Handling Practices</h3>
+                  <h3 className="text-lg font-semibold mb-3">🧪 <em>4. Safe Handling Practices</em></h3>
                   <ol className="list-decimal list-inside text-sm space-y-2">
                     <li>Use droppers or pipettes for transferring solutions—never pour directly from stock bottles.</li>
                     <li>Label all glassware before use to avoid confusion between HCl and CH₃COOH.</li>
@@ -505,7 +510,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🚿 First Aid Measures</h3>
+                  <h3 className="text-lg font-semibold mb-3">🚿 <em>5. First Aid Measures</em></h3>
                   <div className="overflow-auto">
                     <table className="w-full text-sm border-collapse">
                       <thead>
@@ -537,17 +542,17 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🧹 Waste Disposal Guidelines</h3>
+                  <h3 className="text-lg font-semibold mb-3">🧹 <em>6. Waste Disposal Guidelines</em></h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Neutralize used acidic solutions with a small amount of dilute sodium bicarbonate solution before disposal when appropriate.</li>
-                    <li>• Dispose of neutralized solutions in the designated laboratory sink if permitted by local rules.</li>
-                    <li>• Do not mix HCl and CH₃COOH waste together in the same container.</li>
-                    <li>• Dispose of used indicator paper or contaminated tissues in the solid waste bin.</li>
+                    <li>• Neutralize used acidic solutions with a small amount of <strong>dilute sodium bicarbonate solution</strong> before disposal.</li>
+                    <li>• Dispose of neutralized solutions in the <strong>designated laboratory sink</strong> when permitted by local rules.</li>
+                    <li>• <strong>Do not mix</strong> HCl and CH₃COOH waste together in the same container.</li>
+                    <li>• Dispose of used indicator paper or contaminated tissues in the <strong>solid waste bin</strong>.</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🔄 Post-Experiment Safety</h3>
+                  <h3 className="text-lg font-semibold mb-3">🔄 <em>7. Post-Experiment Safety</em></h3>
                   <ol className="list-decimal list-inside text-sm space-y-2">
                     <li>Wash all glassware with water and place them back in the rack.</li>
                     <li>Clean your work area thoroughly.</li>
@@ -557,7 +562,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🧭 Emergency Equipment Checklist</h3>
+                  <h3 className="text-lg font-semibold mb-3">🧭 <em>8. Emergency Equipment Checklist</em></h3>
                   <ul className="space-y-2 text-sm">
                     <li>• Eye wash station</li>
                     <li>• Safety shower</li>
@@ -568,7 +573,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">✅ Safety Summary</h3>
+                  <h3 className="text-lg font-semibold mb-3">✅ <em>Safety Summary</em></h3>
                   <ul className="space-y-2 text-sm">
                     <li>• Handle acids carefully and always wear protective gear.</li>
                     <li>• Work methodically—avoid rushing.</li>
