@@ -240,6 +240,12 @@ export default function ChemicalEquilibriumApp({
                 isRunning={isRunning}
                 setIsRunning={setIsRunning}
                 onResetTimer={() => setTimer(0)}
+                onResetExperiment={() => {
+                  setExperimentStarted(false);
+                  setIsRunning(false);
+                  setTimer(0);
+                  setCurrentStep(0);
+                }}
               />
             </CardContent>
           </Card>
