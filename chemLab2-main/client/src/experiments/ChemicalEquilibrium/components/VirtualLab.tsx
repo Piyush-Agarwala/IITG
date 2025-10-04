@@ -405,6 +405,7 @@ function ChemicalEquilibriumVirtualLab({
     setColorTransition("pink");
     setStep3WaterAdded(false);
     onResetTimer();
+    if (onResetExperiment) onResetExperiment();
   };
 
   return (
