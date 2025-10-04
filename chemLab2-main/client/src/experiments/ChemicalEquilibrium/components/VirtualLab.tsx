@@ -457,18 +457,50 @@ function ChemicalEquilibriumVirtualLab({
           <main className="flex-1 flex flex-col">
             <div className="mb-4">
               <div className="rounded-lg bg-gradient-to-b from-yellow-50 to-white border p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 font-medium">Step</div>
-                    <div>
-                      <div className="text-sm font-semibold">Laboratory Workbench</div>
-                      <div className="text-xs text-gray-500">Interactive Workbench</div>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-800">{experimentTitle} - Interactive Workbench</h3>
+                    <p className="text-xs text-gray-500 mt-1">Follow the guided steps below to complete the experiment and record observations.</p>
+
+                    <div className="mt-4">
+                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.round((currentStep / totalSteps) * 100)}%` }}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center space-x-3">
+                          {Array.from({ length: totalSteps }).map((_, i) => {
+                            const stepIndex = i + 1;
+                            const active = stepIndex <= currentStep;
+                            return (
+                              <div key={stepIndex} className="flex flex-col items-center mr-2">
+                                <div className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium ${active ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-600'}`}>
+                                  {stepIndex}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="text-xs text-gray-600">Step {currentStep} of {totalSteps}</div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-3">
-                    <div className="text-xs text-gray-500">Step {currentStep} of {totalSteps}</div>
-                    <div className="inline-flex items-center px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">Step {currentStep}</div>
+                  <div className="w-full md:w-64">
+                    <div className="bg-white p-3 rounded border">
+                      <div className="text-xs font-medium text-gray-600">Current Step</div>
+                      <div className="font-semibold text-sm mt-1">{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
+                      <div className="text-xs text-gray-500 mt-1">{allSteps[currentStep - 1]?.description ?? ''}</div>
+
+                      <div className="mt-3 flex items-center justify-between">
+                        <button onClick={() => setCurrentStep(Math.max(1, currentStep - 1))} className="text-xs px-2 py-1 bg-gray-100 rounded">Undo</button>
+                        <button onClick={handleReset} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded">Reset</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
