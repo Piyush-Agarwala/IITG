@@ -435,8 +435,12 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
             ) : isPHComparison ? (
               <>
                 <section>
+                  <p className="text-sm">Here’s a <em>Safety Guide</em> for the experiment —</p>
+                </section>
+
+                <section>
                   <h3 className="text-lg font-semibold mb-3">🔒 <em>Safety Guide</em></h3>
-                  <p className="text-sm">Experiment: <em>To determine and compare the pH of 0.01 M HCl and 0.01 M CH₃COOH solution using universal indicator.</em></p>
+                  <p className="text-sm">Experiment: <em>To determine and compare the pH of 0.01 M HCl and 0.01 M CH₃COOH solution using a universal indicator.</em></p>
                 </section>
 
                 <section>
@@ -488,6 +492,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
 
                 <section>
                   <h3 className="text-lg font-semibold mb-3">🧤 <em>3. Personal Protective Equipment (PPE)</em></h3>
+                  <p className="text-sm">Before beginning the experiment, <em>ensure you are wearing:</em></p>
                   <ul className="space-y-2 text-sm">
                     <li>• Laboratory coat or apron</li>
                     <li>• Protective goggles</li>
@@ -499,13 +504,13 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 <section>
                   <h3 className="text-lg font-semibold mb-3">🧪 <em>4. Safe Handling Practices</em></h3>
                   <ol className="list-decimal list-inside text-sm space-y-2">
-                    <li>Use droppers or pipettes for transferring solutions—never pour directly from stock bottles.</li>
-                    <li>Label all glassware before use to avoid confusion between HCl and CH₃COOH.</li>
-                    <li>Always work on a clean and dry lab bench.</li>
+                    <li>Use <em>droppers or pipettes</em> for transferring solutions—never pour directly from stock bottles.</li>
+                    <li><em>Label</em> all glassware before use to avoid confusion between HCl and CH₃COOH.</li>
+                    <li>Always work on a <em>clean and dry lab bench</em>.</li>
                     <li>Keep acids away from bases and organic solvents.</li>
-                    <li>Do not inhale vapors from ethanoic acid—its smell can cause discomfort.</li>
-                    <li>Do not taste or touch any chemical used in the experiment.</li>
-                    <li>Add only a few drops of universal indicator; excess may cause staining or spillage.</li>
+                    <li><em>Do not inhale</em> vapors from ethanoic acid—its smell can cause discomfort.</li>
+                    <li><em>Do not taste or touch</em> any chemical used in the experiment.</li>
+                    <li>Add <em>only a few drops</em> of universal indicator; excess may cause staining or spillage.</li>
                   </ol>
                 </section>
 
@@ -544,10 +549,10 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 <section>
                   <h3 className="text-lg font-semibold mb-3">🧹 <em>6. Waste Disposal Guidelines</em></h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Neutralize used acidic solutions with a small amount of <strong>dilute sodium bicarbonate solution</strong> before disposal.</li>
-                    <li>• Dispose of neutralized solutions in the <strong>designated laboratory sink</strong> when permitted by local rules.</li>
-                    <li>• <strong>Do not mix</strong> HCl and CH₃COOH waste together in the same container.</li>
-                    <li>• Dispose of used indicator paper or contaminated tissues in the <strong>solid waste bin</strong>.</li>
+                    <li>• Neutralize used acidic solutions with a small amount of <em>dilute sodium bicarbonate solution</em> before disposal.</li>
+                    <li>• Dispose of neutralized solutions in the <em>designated laboratory sink</em>.</li>
+                    <li>• <em>Do not mix</em> HCl and CH₃COOH waste together in the same container.</li>
+                    <li>• Dispose of used indicator paper or contaminated tissues in the <em>solid waste bin</em>.</li>
                   </ul>
                 </section>
 
