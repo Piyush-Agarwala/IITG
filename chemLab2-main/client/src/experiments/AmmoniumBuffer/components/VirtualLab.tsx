@@ -6,8 +6,9 @@ import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment } from "./Equipment";
 import { AB_LAB_EQUIPMENT } from "./Equipment";
 import { COLORS, INITIAL_TESTTUBE, GUIDED_STEPS, ANIMATION } from "../constants";
-import { Beaker, Info, Wrench, CheckCircle, ArrowRight, TestTube, Undo2, TrendingUp, Clock, Home } from "lucide-react";
+import { Beaker, Info, Wrench, CheckCircle, ArrowRight, ArrowLeft, TestTube, Undo2, TrendingUp, Clock, Home } from "lucide-react";
 import { Link } from "wouter";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ExperimentMode {
   current: 'guided';
@@ -80,8 +81,27 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
   }, []);
   const [ammoniumInitialPH, setAmmoniumInitialPH] = useState<number | null>(null);
   const [ammoniumAfterPH, setAmmoniumAfterPH] = useState<number | null>(null);
+  // Quiz modal state
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [quizSelections, setQuizSelections] = useState<{ q1?: string; q2?: string; q3?: string; q4?: string; q5?: string }>({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
 
   useEffect(() => { setCurrentStep((mode.currentGuidedStep || 0) + 1); }, [mode.currentGuidedStep]);
+
+  const handleSelect = (q: 'q1'|'q2'|'q3'|'q4'|'q5', val: string) => {
+    setQuizSelections(prev => ({ ...prev, [q]: val }));
+  };
+
+  const submitQuiz = () => {
+    const correct: Record<string,string> = { q1: 'B', q2: 'B', q3: 'A', q4: 'B', q5: 'B' };
+    let score = 0;
+    (['q1','q2','q3','q4','q5'] as Array<'q1'|'q2'|'q3'|'q4'|'q5'>).forEach(k => { if (quizSelections[k] === correct[k]) score++; });
+    setQuizScore(score);
+    setQuizSubmitted(true);
+  };
+
+  const allAnswered = !!(quizSelections.q1 && quizSelections.q2 && quizSelections.q3 && quizSelections.q4 && quizSelections.q5);
 
 useEffect(() => {
   if (showResultsModal) {
@@ -775,8 +795,223 @@ useEffect(() => {
                 <span>Return to Experiments</span>
               </Button>
             </Link>
-            <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
+            <div className="flex items-center space-x-2">
+              <Button onClick={() => setShowQuizModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white">QUIZ</Button>
+              <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
+            </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quiz Modal */}
+      <Dialog open={showQuizModal} onOpenChange={setShowQuizModal}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto text-black">
+          <Card className="shadow-md">
+            <CardHeader>
+              <div className="flex items-center justify-between w-full">
+                <CardTitle className="text-2xl">NH4OH / NH4Cl — Quiz</CardTitle>
+                {quizSubmitted && (
+                  <div className="text-blue-600 font-semibold">Marks obtained ({quizScore} / 5)</div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6 quiz-content">
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q1. Why does the addition of NH₄Cl lower the pH of NH₄OH solution?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'A'} onChange={() => handleSelect('q1','A')} />
+                      <span>A) NH₄Cl reacts with water to produce OH⁻ ions</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'B'} onChange={() => handleSelect('q1','B')} />
+                      <span>B) NH₄⁺ ions increase, shifting NH₄⁺/NH₃ equilibrium toward NH₃ formation, reducing OH⁻ concentration</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'C'} onChange={() => handleSelect('q1','C')} />
+                      <span>C) NH₄Cl directly neutralizes NH₄OH</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'D'} onChange={() => handleSelect('q1','D')} />
+                      <span>D) NH₄Cl hydrolyzes to form HCl</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q1;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) NH₄Cl reacts with water to produce OH⁻ ions' : selected === 'B' ? 'B) NH₄⁺ ions increase, shifting NH₄⁺/NH₃ equilibrium toward NH₃ formation, reducing OH⁻ concentration' : selected === 'C' ? 'C) NH₄Cl directly neutralizes NH₄OH' : selected === 'D' ? 'D) NH₄Cl hydrolyzes to form HCl' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) NH₄⁺ ions increase, shifting NH₄⁺/NH₃ equilibrium toward NH₃ formation, reducing OH⁻ concentration</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q2. The NH₄⁺/NH₃ system acts as a buffer because:</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'A'} onChange={() => handleSelect('q2','A')} />
+                      <span>A) Both NH₄⁺ and NH�� are strong acids and bases</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'B'} onChange={() => handleSelect('q2','B')} />
+                      <span>B) The conjugate acid–base pair resists pH changes on addition of small amounts of acids or bases</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'C'} onChange={() => handleSelect('q2','C')} />
+                      <span>C) NH₄OH is a strong base</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'D'} onChange={() => handleSelect('q2','D')} />
+                      <span>D) NH₄Cl is a strong electrolyte</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q2;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Both NH₄⁺ and NH₃ are strong acids and bases' : selected === 'B' ? 'B) The conjugate acid–base pair resists pH changes on addition of small amounts of acids or bases' : selected === 'C' ? 'C) NH₄OH is a strong base' : selected === 'D' ? 'D) NH₄Cl is a strong electrolyte' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The conjugate acid–base pair resists pH changes on addition of small amounts of acids or bases</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q3. In the Henderson–Hasselbalch equation for this system, which statement is true?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'A'} onChange={() => handleSelect('q3','A')} />
+                      <span>A) Increasing [NH₄⁺] lowers the pH</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'B'} onChange={() => handleSelect('q3','B')} />
+                      <span>B) Increasing [NH₄⁺] raises the pH</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'C'} onChange={() => handleSelect('q3','C')} />
+                      <span>C) pH is independent of [NH₄⁺] and [NH₃]</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'D'} onChange={() => handleSelect('q3','D')} />
+                      <span>D) It is only valid for strong acids and bases</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'A';
+                    const selected = quizSelections.q3;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Increasing [NH₄⁺] lowers the pH' : selected === 'B' ? 'B) Increasing [NH₄⁺] raises the pH' : selected === 'C' ? 'C) pH is independent of [NH₄⁺] and [NH₃]' : selected === 'D' ? 'D) It is only valid for strong acids and bases' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: A) Increasing [NH₄⁺] lowers the pH</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q4. Which factor primarily limits the buffering capacity of the NH₄⁺/NH₃ system?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'A'} onChange={() => handleSelect('q4','A')} />
+                      <span>A) The initial pH of NH₄OH</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'B'} onChange={() => handleSelect('q4','B')} />
+                      <span>B) The ratio [NH₃]/[NH₄⁺] approaching extreme values (&lt;0.1 or &gt;10)</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'C'} onChange={() => handleSelect('q4','C')} />
+                      <span>C) The temperature of the solution</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'D'} onChange={() => handleSelect('q4','D')} />
+                      <span>D) The solubility of NH₄Cl in water</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q4;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) The initial pH of NH₄OH' : selected === 'B' ? 'B) The ratio [NH₃]/[NH₄⁺] approaching extreme values (<0.1 or >10)' : selected === 'C' ? 'C) The temperature of the solution' : selected === 'D' ? 'D) The solubility of NH₄Cl in water' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The ratio [NH₃]/[NH₄⁺] approaching extreme values (&lt;0.1 or &gt;10)</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">Q5. What happens to the pH if an excess amount of NH₄Cl is added beyond the buffer range?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'A'} onChange={() => handleSelect('q5','A')} />
+                      <span>A) pH remains constant</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'B'} onChange={() => handleSelect('q5','B')} />
+                      <span>B) pH decreases significantly toward acidic values</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'C'} onChange={() => handleSelect('q5','C')} />
+                      <span>C) pH increases</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'D'} onChange={() => handleSelect('q5','D')} />
+                      <span>D) Solution becomes strongly basic</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q5;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected === 'A' ? 'A) pH remains constant' : selected === 'B' ? 'B) pH decreases significantly toward acidic values' : selected === 'C' ? 'C) pH increases' : selected === 'D' ? 'D) Solution becomes strongly basic' : ''}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) pH decreases significantly toward acidic values</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+              </div>
+            </CardContent>
+
+            <div className="p-4 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" className="flex items-center" onClick={() => { setShowQuizModal(false); setShowResultsModal(true); }}>
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                </Button>
+                <Link href="/">
+                  <Button className="bg-gray-700 hover:bg-gray-800 text-white flex items-center px-4 py-2">
+                    Return to Experiments
+                  </Button>
+                </Link>
+              </div>
+
+              <div>
+                {!quizSubmitted ? (
+                  <>
+                    <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); }}>Reset</Button>
+                    <Button onClick={() => { submitQuiz(); }} disabled={!allAnswered}>Submit</Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); }}>Reset</Button>
+                    <Button onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Close</Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </Card>
         </DialogContent>
       </Dialog>
 
