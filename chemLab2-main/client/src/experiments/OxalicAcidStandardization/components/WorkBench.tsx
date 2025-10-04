@@ -743,6 +743,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
                                 // Show final message after animation completes
                                 showMessage(`${amountToAdd.toFixed(4)} grams of oxalic acid added!`);
+                                try { window.dispatchEvent(new CustomEvent('oxalic_image_shown')); } catch (e) {}
                               }, 9000);
                             } catch (e) {}
 
