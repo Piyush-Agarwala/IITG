@@ -61,6 +61,14 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                   </p>
                   <p className="mt-2 text-sm text-gray-600">It includes laboratory safety measures, chemical handling guidelines, first-aid steps, waste disposal, and general precautions.</p>
                 </div>
+              ) : isPHComparison
+              ? (
+                <div>
+                  <p>
+                    Here’s a <strong>Safety Guide</strong> for the experiment: <em>“To determine and compare the pH of 0.01 M HCl and 0.01 M CH₃COOH solution using a universal indicator.”</em>
+                  </p>
+                  <p className="mt-2 text-sm text-gray-600">This guide provides experiment‑specific hazards, PPE, handling, first‑aid, and disposal instructions for this pH comparison experiment.</p>
+                </div>
               ) : isEquilibriumShift
               ? "Safety guidance specific to cobalt(II) chloride / hydrochloric acid equilibrium shift demonstration."
               : isTitration1
@@ -452,7 +460,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 <section>
                   <h3 className="text-lg font-semibold mb-3">Safer choices (if permitted by your protocol)</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Prefer dilute HCl (≤3–6 M) for routine demos; only use concentrated HCl to drive the blue complex if required���then hood only.</li>
+                    <li>��� Prefer dilute HCl (≤3–6 M) for routine demos; only use concentrated HCl to drive the blue complex if required���then hood only.</li>
                     <li>• Use small volumes (1–5 mL scale) to minimize risk and waste.</li>
                   </ul>
                 </section>
