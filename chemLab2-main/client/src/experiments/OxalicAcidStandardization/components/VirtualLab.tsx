@@ -555,6 +555,20 @@ function OxalicAcidVirtualLab({
     };
   }, [equipmentPositions, step.id, preparationState.oxalicAcidAdded, onStepComplete]);
 
+  // Listen for the workbench image shown event and auto-complete step 3
+  useEffect(() => {
+    const handler = () => {
+      if (step.id === 3) {
+        setPreparationState(prev => ({ ...prev, dissolved: true }));
+        setTimeout(() => {
+          try { onStepComplete(); } catch (e) {}
+        }, 300);
+      }
+    };
+    window.addEventListener('oxalic_image_shown', handler);
+    return () => window.removeEventListener('oxalic_image_shown', handler);
+  }, [step.id, onStepComplete]);
+
   useEffect(() => {
     if (step.id === 1) {
       return;
