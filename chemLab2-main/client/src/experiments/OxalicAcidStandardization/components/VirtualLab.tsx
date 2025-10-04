@@ -447,6 +447,126 @@ function OxalicAcidVirtualLab({
     };
   }, [equipmentPositions, step.id, preparationState.oxalicAcidAdded, onStepComplete]);
 
+  useEffect(() => {
+    if (step.id !== 2) {
+      stepTwoAlignedRef.current = false;
+      return;
+    }
+
+    // If we've already auto-advanced for this step, skip
+    if (stepTwoAlignedRef.current) {
+      return;
+    }
+
+    const normalize = (value?: string) =>
+      value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "";
+
+    // Detect classic weighing workflow: balance + weighing boat
+    const hasBalance = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("analytical_balance"));
+    const hasBoat = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("weighing_boat"));
+
+    // Also detect alternate workflow requested by user: spatula + oxalic acid bottle
+    const hasSpatula = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("spatula"));
+    const hasOxalicBottle = equipmentPositions.some(pos =>
+      Array.isArray(pos.chemicals) && pos.chemicals.some(c => normalize((c as any).id) === "oxalic_acid")
+    );
+
+    // If the alternate flow is satisfied, mark the oxalic acid as added and advance the step
+    if (hasSpatula && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
+      stepTwoAlignedRef.current = true;
+      setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
+      // small delay so UI updates (e.g., placement) are visible before advancing
+      setTimeout(() => onStepComplete(), 400);
+      return;
+    }
+
+    // Otherwise continue with original alignment flow for balance + boat
+    if (!hasBalance || !hasBoat) {
+      stepTwoAlignedRef.current = false;
+      return;
+    }
+
+    let frame: number | null = null;
+    const attemptAlignment = () => {
+      const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+      if (!surface) {
+        frame = window.requestAnimationFrame(attemptAlignment);
+        return;
+      }
+      const balanceEl = surface.querySelector('[data-equipment-type="analytical_balance"]') as HTMLElement | null;
+      const boatEl = surface.querySelector('[data-equipment-type="weighing_boat"]') as HTMLElement | null;
+      if (!balanceEl || !boatEl) {
+        frame = window.requestAnimationFrame(attemptAlignment);
+        return;
+      }
+
+      const surfaceRect = surface.getBoundingClientRect();
+      const balanceRect = balanceEl.getBoundingClientRect();
+      const boatRect = boatEl.getBoundingClientRect();
+
+      const targetBalanceX = Math.max(0, (surfaceRect.width - balanceRect.width) / 2);
+      const targetBalanceY = Math.max(0, surfaceRect.height * 0.12);
+      const targetBoatX = targetBalanceX + (balanceRect.width - boatRect.width) / 2;
+      const panCenterY = targetBalanceY + balanceRect.height * 0.55;
+      const targetBoatY = panCenterY - boatRect.height / 2;
+
+      setEquipmentPositions(prev => {
+        let changed = false;
+        const next = prev.map(pos => {
+          const key = (pos.typeId ?? pos.id).toLowerCase();
+          if (key.includes("analytical_balance")) {
+            if (Math.abs(pos.x - targetBalanceX) > 1 || Math.abs(pos.y - targetBalanceY) > 1) {
+              changed = true;
+              return { ...pos, x: targetBalanceX, y: targetBalanceY };
+            }
+            return pos;
+          }
+          if (key.includes("weighing_boat")) {
+            if (Math.abs(pos.x - targetBoatX) > 1 || Math.abs(pos.y - targetBoatY) > 1) {
+              changed = true;
+              return { ...pos, x: targetBoatX, y: targetBoatY };
+            }
+            return pos;
+          }
+          return pos;
+        });
+        return changed ? next : prev;
+      });
+
+      const balanceAligned = Math.abs(balanceRect.left - (surfaceRect.left + targetBalanceX)) < 8 &&
+        Math.abs(balanceRect.top - (surfaceRect.top + targetBalanceY)) < 8;
+      const boatAligned = Math.abs(boatRect.left - (surfaceRect.left + targetBoatX)) < 8 &&
+        Math.abs(boatRect.top - (surfaceRect.top + targetBoatY)) < 8;
+
+      if (balanceAligned && boatAligned && !stepTwoAlignedRef.current) {
+        stepTwoAlignedRef.current = true;
+        setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
+        setTimeout(() => {
+          onStepComplete();
+        }, 400);
+      }
+    };
+
+    frame = window.requestAnimationFrame(attemptAlignment);
+    return () => {
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [equipmentPositions, step.id, preparationState.oxalicAcidAdded, onStepComplete]);
+
+  useEffect(() => {
+    if (step.id === 1) {
+      return;
+    }
+    if (canProceed() && isActive) {
+      const timer = setTimeout(() => {
+        onStepComplete();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [canProceed, isActive, onStepComplete, step.id]);
+
   const canProceed = useCallback(() => {
     switch (step.id) {
       case 1:
