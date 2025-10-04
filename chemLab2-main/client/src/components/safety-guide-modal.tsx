@@ -432,6 +432,151 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                   </div>
                 </section>
               </>
+            ) : isPHComparison ? (
+              <>
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🔒 Safety Guide</h3>
+                  <p className="text-sm">Experiment: <em>To determine and compare the pH of 0.01 M HCl and 0.01 M CH₃COOH solution using universal indicator.</em></p>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">⚠ Hazards Identification</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Substance</th>
+                          <th className="pb-2">Type</th>
+                          <th className="pb-2">Hazard Description</th>
+                          <th className="pb-2">Precaution</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="py-2">Hydrochloric Acid (0.01 M)</td>
+                          <td className="py-2">Corrosive (dilute form, mild)</td>
+                          <td className="py-2">Can irritate skin, eyes, or respiratory tract if mishandled</td>
+                          <td className="py-2">Avoid direct contact, wear gloves and goggles</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Ethanoic Acid (0.01 M)</td>
+                          <td className="py-2">Irritant</td>
+                          <td className="py-2">Has a pungent smell; may irritate eyes and skin</td>
+                          <td className="py-2">Handle in a well-ventilated area, wear gloves</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Universal Indicator Solution</td>
+                          <td className="py-2">Slightly acidic/alkaline (depending on brand)</td>
+                          <td className="py-2">May stain skin or clothing</td>
+                          <td className="py-2">Handle carefully, avoid spills</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Glassware</td>
+                          <td className="py-2">Physical hazard</td>
+                          <td className="py-2">May break and cause injury</td>
+                          <td className="py-2">Handle carefully and inspect for cracks</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧤 Personal Protective Equipment (PPE)</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Laboratory coat or apron</li>
+                    <li>• Protective goggles</li>
+                    <li>• Gloves (nitrile or latex)</li>
+                    <li>• Closed-toe shoes</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧪 Safe Handling Practices</h3>
+                  <ol className="list-decimal list-inside text-sm space-y-2">
+                    <li>Use droppers or pipettes for transferring solutions—never pour directly from stock bottles.</li>
+                    <li>Label all glassware before use to avoid confusion between HCl and CH₃COOH.</li>
+                    <li>Always work on a clean and dry lab bench.</li>
+                    <li>Keep acids away from bases and organic solvents.</li>
+                    <li>Do not inhale vapors from ethanoic acid—its smell can cause discomfort.</li>
+                    <li>Do not taste or touch any chemical used in the experiment.</li>
+                    <li>Add only a few drops of universal indicator; excess may cause staining or spillage.</li>
+                  </ol>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🚿 First Aid Measures</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Exposure Type</th>
+                          <th className="pb-2">Immediate Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="py-2">Skin contact</td>
+                          <td className="py-2">Rinse affected area with plenty of water for at least 5 minutes.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Eye contact</td>
+                          <td className="py-2">Wash eyes immediately with water; report to instructor or lab technician.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Inhalation of vapors</td>
+                          <td className="py-2">Move to fresh air immediately. If irritation persists, seek medical help.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Ingestion (accidental)</td>
+                          <td className="py-2">Rinse mouth with water; do <strong>not</strong> induce vomiting; inform supervisor.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧹 Waste Disposal Guidelines</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Neutralize used acidic solutions with a small amount of dilute sodium bicarbonate solution before disposal when appropriate.</li>
+                    <li>• Dispose of neutralized solutions in the designated laboratory sink if permitted by local rules.</li>
+                    <li>• Do not mix HCl and CH₃COOH waste together in the same container.</li>
+                    <li>• Dispose of used indicator paper or contaminated tissues in the solid waste bin.</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🔄 Post-Experiment Safety</h3>
+                  <ol className="list-decimal list-inside text-sm space-y-2">
+                    <li>Wash all glassware with water and place them back in the rack.</li>
+                    <li>Clean your work area thoroughly.</li>
+                    <li>Wash hands with soap and water even if gloves were used.</li>
+                    <li>Record observations only after completing all cleanup steps.</li>
+                  </ol>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧭 Emergency Equipment Checklist</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Eye wash station</li>
+                    <li>• Safety shower</li>
+                    <li>• Fire extinguisher</li>
+                    <li>• First-aid box</li>
+                    <li>• Spill neutralization kit</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">✅ Safety Summary</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Handle acids carefully and always wear protective gear.</li>
+                    <li>• Work methodically—avoid rushing.</li>
+                    <li>• Maintain cleanliness and caution throughout the experiment.</li>
+                    <li>• Dispose of all chemicals safely.</li>
+                  </ul>
+                </section>
+              </>
             ) : isEquilibriumShift ? (
               <>
                 <section>
