@@ -252,14 +252,16 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="text-center">
             {imageSrc ? (
-              <img
+              <TransparentImage
                 src={imageSrc}
                 alt={name}
                 className={
                   isAnalytical && position
                     ? "mx-auto block h-[22rem] w-auto object-contain"
-                    : "w-20 h-20 mx-auto mb-2 object-contain"
+                    : "w-28 h-28 mx-auto mb-2 object-contain"
                 }
+                tolerance={245}
+                colorDiff={8}
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
               />
@@ -327,10 +329,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="relative flex justify-center">
             {imageSrc ? (
-              <img
+              <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className={`${position ? "h-32" : "h-24"} w-auto object-contain mix-blend-multiply pointer-events-none select-none`}
+                className={`${position ? "h-40" : "h-24"} w-auto object-contain mix-blend-multiply pointer-events-none select-none`}
+                tolerance={245}
+                colorDiff={8}
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
               />
@@ -373,10 +377,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="text-center relative">
             {showCustomBeakerImage ? (
-              <img
+              <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className="mx-auto mb-2 h-24 w-auto object-contain pointer-events-none select-none"
+                className={`mx-auto mb-2 ${position ? "h-40" : "h-24"} w-auto object-contain pointer-events-none select-none`}
+                tolerance={245}
+                colorDiff={8}
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
               />
@@ -425,10 +431,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="text-center">
             {imageSrc ? (
-              <img
+              <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className="w-24 h-24 mx-auto mb-2 object-contain"
+                className="w-32 h-32 mx-auto mb-2 object-contain"
+                tolerance={245}
+                colorDiff={8}
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
               />
