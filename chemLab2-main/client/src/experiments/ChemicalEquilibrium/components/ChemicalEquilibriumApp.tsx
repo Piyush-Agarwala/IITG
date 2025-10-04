@@ -135,16 +135,16 @@ export default function ChemicalEquilibriumApp({
           </h1>
           <p className="text-gray-600 mb-4">{experiment.description}</p>
 
-          {/* Progress Bar */}
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              Overall Progress
-            </span>
-            <span className="text-sm text-blue-600 font-semibold">
-              {progressPercentage}%
-            </span>
-          </div>
-          <Progress value={progressPercentage} className="h-2" />
+          {/* Progress Bar - hidden for PH HCl experiment (we show per-panel progress) */}
+          {experiment.id !== PHHClExperiment.id && (
+            <>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Overall Progress</span>
+                <span className="text-sm text-blue-600 font-semibold">{progressPercentage}%</span>
+              </div>
+              <Progress value={progressPercentage} className="h-2" />
+            </>
+          )}
         </div>
 
         {/* Main Lab Area */}
