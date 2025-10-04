@@ -142,6 +142,7 @@ function OxalicAcidVirtualLab({
       actualMolarity: actualMass / (126.07 * 0.25), // Calculate actual molarity
     }));
 
+    // mark oxalic acid as added
     setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
 
     addResult({
@@ -155,7 +156,26 @@ function OxalicAcidVirtualLab({
     });
 
     setShowWeighing(false);
-  }, [measurements.targetMass, addResult]);
+
+    // If currently on the weighing step (step 2), auto-advance to step 4
+    // after the weighing animation completes and ensure "dissolved" state
+    // is set so transfer can proceed.
+    try {
+      // step is available from closure; ensure it's the weighing step
+      if (step.id === 2) {
+        // mark dissolved so later steps (transfer) can proceed even if we skip explicit dissolving
+        setPreparationState(prev => ({ ...prev, dissolved: true }));
+
+        // small delay to allow UI updates, then advance twice to skip step 3 and go to step 4
+        setTimeout(() => {
+          onStepComplete();
+          setTimeout(() => onStepComplete(), 300);
+        }, 300);
+      }
+    } catch (e) {
+      // swallow errors — fallback to single-step advance handled elsewhere
+    }
+  }, [measurements.targetMass, addResult, step.id, onStepComplete]);
 
   const handleDissolving = useCallback(() => {
     setPreparationState(prev => ({
