@@ -20,6 +20,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
   const isEquilibriumShift = match && params?.id === "1";
   const isAmmoniumBuffer = match && params?.id === "9";
   const isEthanoicBuffer = match && params?.id === "10";
+  const isPHComparison = match && params?.id === "8";
   const isTitration1 = match && params?.id === "6";
 
   return (
