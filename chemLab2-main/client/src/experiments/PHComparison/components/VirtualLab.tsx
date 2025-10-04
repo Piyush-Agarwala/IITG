@@ -1052,15 +1052,28 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               </div>
             </CardContent>
 
-            <div className="p-4 flex justify-end space-x-2">
-              {!quizSubmitted ? (
-                <>
-                  <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Cancel</Button>
-                  <Button onClick={() => { submitQuiz(); }}>Submit</Button>
-                </>
-              ) : (
-                <Button onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Close</Button>
-              )}
+            <div className="p-4 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" className="flex items-center" onClick={() => { setShowQuizModal(false); setShowResultsModal(true); }}>
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                </Button>
+                <Link href="/">
+                  <Button variant="outline" className="flex items-center">
+                    <ArrowLeft className="w-4 h-4 mr-2 rotate-180" /> Return to Experiments
+                  </Button>
+                </Link>
+              </div>
+
+              <div>
+                {!quizSubmitted ? (
+                  <>
+                    <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Cancel</Button>
+                    <Button onClick={() => { submitQuiz(); }}>Submit</Button>
+                  </>
+                ) : (
+                  <Button onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Close</Button>
+                )}
+              </div>
             </div>
           </Card>
         </DialogContent>
