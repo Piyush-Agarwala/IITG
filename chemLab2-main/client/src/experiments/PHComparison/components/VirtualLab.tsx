@@ -1067,11 +1067,14 @@ export default function VirtualLab({ experimentStarted, onStartExperiment, isRun
               <div>
                 {!quizSubmitted ? (
                   <>
-                    <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Cancel</Button>
+                    <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); }}>Reset</Button>
                     <Button onClick={() => { submitQuiz(); }}>Submit</Button>
                   </>
                 ) : (
-                  <Button onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Close</Button>
+                  <>
+                    <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); }}>Reset</Button>
+                    <Button onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Close</Button>
+                  </>
                 )}
               </div>
             </div>
