@@ -6,6 +6,7 @@ import {
   Droplet,
   Thermometer,
 } from "lucide-react";
+import TransparentImage from "./TransparentImage";
 
 interface EquipmentProps {
   id: string;
