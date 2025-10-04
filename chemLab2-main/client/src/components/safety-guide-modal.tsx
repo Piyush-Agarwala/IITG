@@ -36,6 +36,8 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
               ? "Safety Guide — To study the change in pH of ammonium hydroxide solution on addition of ammonium chloride"
               : isEthanoicBuffer
               ? "Safety Guide — To study the change in pH of ethanoic acid on addition of sodium ethanoate"
+              : isPHComparison
+              ? "Safety Guide — To determine and compare pH of 0.01 M HCl and 0.01 M CH₃COOH solution using universal indicator"
               : isEquilibriumShift
               ? "Equilibrium Shift: [Co(H₂O)₆]²⁺ ⇌ [CoCl₄]²⁻ — Safety Guidelines"
               : isTitration1
