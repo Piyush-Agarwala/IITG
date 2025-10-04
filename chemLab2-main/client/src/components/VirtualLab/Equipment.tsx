@@ -1340,6 +1340,27 @@ export const Equipment: React.FC<EquipmentProps> = ({
       );
     }
 
+    if (id === "beaker" && isOnWorkbench) {
+      return (
+        <div className="relative">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Feedcdd4c2aa14b9f8222c4bea5a57b98?format=webp&width=800"
+            alt="Beaker"
+            className={`w-28 h-28 object-contain drop-shadow-lg transition-all ${isDragging ? "scale-105" : ""}`}
+            draggable={false}
+          />
+
+          {chemicals.length > 0 && (
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white border border-gray-300 rounded px-2 py-1 text-xs shadow-lg">
+              <div className="text-gray-800 font-medium text-center">{chemicals.map((c) => c.name.split(" ")[0]).join(" + ")}</div>
+              <div className="text-gray-600 text-center">{chemicals.reduce((sum, c) => sum + c.amount, 0).toFixed(1)} mL</div>
+              <div className="w-full h-1 rounded-full mt-1" style={{ backgroundColor: getMixedColor() }} />
+            </div>
+          )}
+        </div>
+      );
+    }
+
     if (id === "beaker") {
       return (
         <div className="relative">
