@@ -1068,13 +1068,229 @@ export default function VirtualLab({
                   <span>Return to Experiments</span>
                 </Button>
               </Link>
-              <Button
-                onClick={() => setShowResultsModal(false)}
-                className="bg-blue-500 hover:bg-blue-600 text-white"
-              >
-                Close Analysis
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button onClick={() => setShowQuizModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white">QUIZ</Button>
+                <Button
+                  onClick={() => setShowResultsModal(false)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  Close Analysis
+                </Button>
+              </div>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Quiz Modal */}
+        <Dialog open={showQuizModal} onOpenChange={setShowQuizModal}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto text-black">
+            <Card className="shadow-md">
+              <CardHeader>
+                <div className="flex items-center justify-between w-full">
+                  <CardTitle className="text-2xl">Equilibrium Shift — Quiz</CardTitle>
+                  {quizSubmitted && (
+                    <div className="text-blue-600 font-semibold">Marks obtained ({quizScore} / 5)</div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6 quiz-content">
+
+                  <section className="quiz-item">
+                    <h3 className="font-semibold">Q1. The equilibrium between [Co(H₂O)₆]²⁺ and [CoCl₄]²⁻ is sensitive to chloride ion concentration. This is because:</h3>
+                    <div className="mt-2 space-y-2">
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q1" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'A'} onChange={() => handleSelect('q1','A')} />
+                        <span>A) Chloride ions act as a catalyst in the reaction</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q1" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'B'} onChange={() => handleSelect('q1','B')} />
+                        <span>B) Chloride ions form a complex with Co²⁺, shifting the equilibrium</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q1" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'C'} onChange={() => handleSelect('q1','C')} />
+                        <span>C) Chloride ions increase the solubility of CoCl₂</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q1" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'D'} onChange={() => handleSelect('q1','D')} />
+                        <span>D) Chloride ions change the oxidation state of cobalt</span>
+                      </label>
+                    </div>
+                    {quizSubmitted && (() => {
+                      const correct = 'B';
+                      const selected = quizSelections.q1;
+                      const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                      return (
+                        <>
+                          <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Chloride ions act as a catalyst in the reaction' : selected === 'B' ? 'B) Chloride ions form a complex with Co²⁺, shifting the equilibrium' : selected === 'C' ? 'C) Chloride ions increase the solubility of CoCl₂' : selected === 'D' ? 'D) Chloride ions change the oxidation state of cobalt' : ''}</div>
+                          <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Chloride ions form a complex with Co²⁺, shifting the equilibrium</div>
+                        </>
+                      );
+                    })()}
+                  </section>
+
+                  <section className="quiz-item">
+                    <h3 className="font-semibold">Q2. Why does heating the solution favor formation of the blue [CoCl₄]²⁻ complex?</h3>
+                    <div className="mt-2 space-y-2">
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q2" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'A'} onChange={() => handleSelect('q2','A')} />
+                        <span>A) The forward reaction is exothermic, so heat drives it forward</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q2" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'B'} onChange={() => handleSelect('q2','B')} />
+                        <span>B) The forward reaction is endothermic, so heat drives it forward</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q2" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'C'} onChange={() => handleSelect('q2','C')} />
+                        <span>C) Heat increases the solubility of Cl⁻ ions</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q2" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'D'} onChange={() => handleSelect('q2','D')} />
+                        <span>D) Heat reduces water concentration</span>
+                      </label>
+                    </div>
+                    {quizSubmitted && (() => {
+                      const correct = 'B';
+                      const selected = quizSelections.q2;
+                      const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                      return (
+                        <>
+                          <div className={yourClass}>Your answer: {selected === 'A' ? 'A) The forward reaction is exothermic, so heat drives it forward' : selected === 'B' ? 'B) The forward reaction is endothermic, so heat drives it forward' : selected === 'C' ? 'C) Heat increases the solubility of Cl⁻ ions' : selected === 'D' ? 'D) Heat reduces water concentration' : ''}</div>
+                          <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The forward reaction is endothermic, so heat drives it forward</div>
+                        </>
+                      );
+                    })()}
+                  </section>
+
+                  <section className="quiz-item">
+                    <h3 className="font-semibold">Q3. When water is added to a blue [CoCl₄]²⁻ solution, the solution turns pink. This observation illustrates:</h3>
+                    <div className="mt-2 space-y-2">
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q3" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'A'} onChange={() => handleSelect('q3','A')} />
+                        <span>A) The principle of constant composition</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q3" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'B'} onChange={() => handleSelect('q3','B')} />
+                        <span>B) Le Chatelier’s principle — dilution shifts equilibrium toward [Co(H₂O)₆]²⁺</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q3" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'C'} onChange={() => handleSelect('q3','C')} />
+                        <span>C) The formation of a precipitate</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q3" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'D'} onChange={() => handleSelect('q3','D')} />
+                        <span>D) A redox reaction</span>
+                      </label>
+                    </div>
+                    {quizSubmitted && (() => {
+                      const correct = 'B';
+                      const selected = quizSelections.q3;
+                      const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                      return (
+                        <>
+                          <div className={yourClass}>Your answer: {selected === 'A' ? 'A) The principle of constant composition' : selected === 'B' ? 'B) Le Chatelier’s principle — dilution shifts equilibrium toward [Co(H₂O)₆]²⁺' : selected === 'C' ? 'C) The formation of a precipitate' : selected === 'D' ? 'D) A redox reaction' : ''}</div>
+                          <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) Le Chatelier’s principle — dilution shifts equilibrium toward [Co(H₂O)₆]²⁺</div>
+                        </>
+                      );
+                    })()}
+                  </section>
+
+                  <section className="quiz-item">
+                    <h3 className="font-semibold">Q4. In the equilibrium ([Co(H₂O)₆]²⁺ + 4Cl⁻ ⇌ [CoCl₄]²⁻ + 6H₂O), increasing pressure would:</h3>
+                    <div className="mt-2 space-y-2">
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q4" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'A'} onChange={() => handleSelect('q4','A')} />
+                        <span>A) Shift equilibrium toward blue [CoCl₄]²⁻</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q4" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'B'} onChange={() => handleSelect('q4','B')} />
+                        <span>B) Shift equilibrium toward pink [Co(H₂O)₆]²⁺</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q4" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'C'} onChange={() => handleSelect('q4','C')} />
+                        <span>C) Have no effect because it’s a liquid phase reaction</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q4" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'D'} onChange={() => handleSelect('q4','D')} />
+                        <span>D) Cause decomposition of CoCl₂</span>
+                      </label>
+                    </div>
+                    {quizSubmitted && (() => {
+                      const correct = 'C';
+                      const selected = quizSelections.q4;
+                      const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                      return (
+                        <>
+                          <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Shift equilibrium toward blue [CoCl₄]²⁻' : selected === 'B' ? 'B) Shift equilibrium toward pink [Co(H₂O)₆]²⁺' : selected === 'C' ? 'C) Have no effect because it’s a liquid phase reaction' : selected === 'D' ? 'D) Cause decomposition of CoCl₂' : ''}</div>
+                          <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) Have no effect because it’s a liquid phase reaction</div>
+                        </>
+                      );
+                    })()}
+                  </section>
+
+                  <section className="quiz-item">
+                    <h3 className="font-semibold">Q5. Which statement best describes the type of chemical equilibrium in this experiment?</h3>
+                    <div className="mt-2 space-y-2">
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q5" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'A'} onChange={() => handleSelect('q5','A')} />
+                        <span>A) Acid-base equilibrium</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q5" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'B'} onChange={() => handleSelect('q5','B')} />
+                        <span>B) Precipitation equilibrium</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q5" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'C'} onChange={() => handleSelect('q5','C')} />
+                        <span>C) Complex ion formation equilibrium</span>
+                      </label>
+                      <label className="quiz-option flex items-start space-x-2">
+                        <input type="radio" name="q5" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'D'} onChange={() => handleSelect('q5','D')} />
+                        <span>D) Redox equilibrium</span>
+                      </label>
+                    </div>
+                    {quizSubmitted && (() => {
+                      const correct = 'C';
+                      const selected = quizSelections.q5;
+                      const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                      return (
+                        <>
+                          <div className={yourClass}>Your answer: {selected === 'A' ? 'A) Acid-base equilibrium' : selected === 'B' ? 'B) Precipitation equilibrium' : selected === 'C' ? 'C) Complex ion formation equilibrium' : selected === 'D' ? 'D) Redox equilibrium' : ''}</div>
+                          <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) Complex ion formation equilibrium</div>
+                        </>
+                      );
+                    })()}
+                  </section>
+
+                </div>
+              </CardContent>
+
+              <div className="p-4 flex justify-between items-center">
+                <div className="flex items-center space-x-2">
+                  <Button variant="outline" className="flex items-center" onClick={() => { setShowQuizModal(false); setShowResultsModal(true); }}>
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                  </Button>
+                  <Link href="/">
+                    <Button className="bg-gray-700 hover:bg-gray-800 text-white flex items-center px-4 py-2">
+                      Return to Experiments
+                    </Button>
+                  </Link>
+                </div>
+
+                <div>
+                  {!quizSubmitted ? (
+                    <>
+                      <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); }}>Reset</Button>
+                      <Button onClick={() => { submitQuiz(); }} disabled={!allAnswered}>Submit</Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="outline" onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); }}>Reset</Button>
+                      <Button onClick={() => { setQuizSelections({}); setQuizSubmitted(false); setQuizScore(null); setShowQuizModal(false); }}>Close</Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </Card>
           </DialogContent>
         </Dialog>
 
