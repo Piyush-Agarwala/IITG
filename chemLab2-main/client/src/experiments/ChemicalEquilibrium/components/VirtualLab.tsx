@@ -34,6 +34,8 @@ interface ChemicalEquilibriumVirtualLabProps {
   setIsRunning: (running: boolean) => void;
   onResetTimer: () => void;
   onResetExperiment?: () => void;
+  timer?: number;
+  toggleTimer?: () => void;
 }
 
 function ChemicalEquilibriumVirtualLab({
