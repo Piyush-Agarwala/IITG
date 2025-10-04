@@ -590,113 +590,133 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
             ) : isEquilibriumShift ? (
               <>
                 <section>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-orange-600" />
-                    Key hazards
-                  </h3>
+                  <h3 className="text-lg font-semibold mb-3">Here’s a <em>Safety Guide</em> for the experiment — <em>“To study the shift in equilibrium between [Co(H₂O)₆]²⁺ and Cl⁻ by changing the concentration of either ions.”</em></h3>
+                  <p className="text-sm">This guide provides detailed chemical hazards, PPE, safe practices, waste disposal, first aid, emergency equipment, and general safety reminders specific to this experiment.</p>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧪 SAFETY GUIDE</h3>
+                  <h4 className="text-md font-semibold mb-2">🔷 1. Chemical Hazards</h4>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Chemical</th>
+                          <th className="pb-2">Hazard Type</th>
+                          <th className="pb-2">Safety Precautions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="py-2"><em>Cobalt(II) chloride (CoCl₂) / Cobalt(II) sulfate (CoSO₄)</em></td>
+                          <td className="py-2">Toxic if ingested or inhaled; may cause skin irritation; harmful to aquatic life.</td>
+                          <td className="py-2">• Avoid inhaling dust or vapours.<br />• Wear gloves and goggles.<br />• Do not touch with bare hands.<br />• Dispose of cobalt solutions as <em>heavy metal waste</em>, not in sink.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2"><em>Hydrochloric acid (HCl)</em></td>
+                          <td className="py-2">Corrosive; causes burns to skin and eyes; irritant vapour.</td>
+                          <td className="py-2">• Handle in a <em>fume hood</em> or well-ventilated area.<br />• Always <em>add acid to water</em>, never the reverse.<br />• Wear gloves, goggles, and lab coat.<br />• If spilled, neutralize with sodium bicarbonate before cleaning.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2"><em>Sodium chloride (NaCl)</em></td>
+                          <td className="py-2">Low hazard, but concentrated solution can irritate eyes or cuts.</td>
+                          <td className="py-2">• Avoid contact with eyes.<br />• Wipe spills immediately.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2"><em>Distilled water</em></td>
+                          <td className="py-2">—</td>
+                          <td className="py-2">Safe, but can cause splashes when mixing acids—handle glassware carefully.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🔷 2. Personal Protective Equipment (PPE)</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Cobalt(II) salts (e.g., CoCl₂): Toxic if swallowed/inhaled, skin/eye irritant; possible carcinogen; environmental hazard (aquatic toxicity). Avoid skin contact and aerosols.</li>
-                    <li>• Hydrochloric acid (HCl), especially concentrated: Corrosive; fumes irritate/burn eyes, skin, and respiratory tract. Mixing with water is exothermic.</li>
-                    <li>• Heat/temperature baths: Burn/scald risk; hot glass looks like cold glass.</li>
-                    <li>• Glassware: Breakage and cuts; pressure build‑up if capped with evolving fumes.</li>
+                    <li>• <em>Lab coat</em> – always worn and buttoned.</li>
+                    <li>• <em>Safety goggles</em> – protect eyes from acid splashes.</li>
+                    <li>• <em>Nitrile or latex gloves</em> – prevent skin contact with cobalt and acid.</li>
+                    <li>• <em>Closed shoes</em> – avoid skin exposure on feet.</li>
+                    <li>• <em>Face mask</em> (optional) – when working with cobalt powder or concentrated acid vapours.</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Personal protective equipment (PPE) & workspace</h3>
+                  <h3 className="text-lg font-semibold mb-3">🔷 3. Safe Laboratory Practices</h3>
+                  <ol className="list-decimal list-inside text-sm space-y-2">
+                    <li>Work in a well-ventilated area or fume hood when handling HCl.</li>
+                    <li>Label all test tubes clearly to avoid mix-ups.</li>
+                    <li>Avoid direct contact with any chemical; use pipettes or droppers.</li>
+                    <li>Never taste or smell any chemical directly.</li>
+                    <li>Do not pipette by mouth. Always use a pipette bulb.</li>
+                    <li>Avoid spills — in case of spill, inform instructor immediately.</li>
+                    <li>Keep all containers closed when not in use to avoid evaporation or contamination.</li>
+                    <li>Wash hands thoroughly after completing the experiment.</li>
+                  </ol>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🔷 4. Waste Disposal</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Mandatory: Splash goggles, lab coat, long pants, closed shoes, nitrile gloves (change if contaminated).</li>
-                    <li>• Work in a fume hood when using concentrated HCl or when noticeable HCl fumes are present.</li>
-                    <li>• Keep eyewash and safety shower accessible; know their locations.</li>
-                    <li>• No food/drinks. Tie back hair; avoid loose clothing.</li>
+                    <li>• <em>Cobalt-containing solutions</em> → Collect in a <em>labeled heavy-metal waste container</em> (never pour into sink).</li>
+                    <li>• <em>Acidic waste</em> → Neutralize with <em>sodium carbonate or sodium bicarbonate</em> before disposal.</li>
+                    <li>• <em>Glassware</em> → Rinse thoroughly before returning.</li>
+                    <li>• <em>Paper towels/filters contaminated with cobalt</em> → Dispose in <em>solid chemical waste bin</em>.</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Safer choices (if permitted by your protocol)</h3>
+                  <h3 className="text-lg font-semibold mb-3">🔷 5. First Aid Measures</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Type of Exposure</th>
+                          <th className="pb-2">Immediate Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="py-2">Skin contact</td>
+                          <td className="py-2">Rinse immediately with plenty of water for at least <em>10–15 minutes</em>. Remove contaminated clothing. Seek medical advice if irritation persists.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Eye contact</td>
+                          <td className="py-2">Rinse eyes thoroughly with water using an eye-wash station for <em>at least 15 minutes</em>. Seek medical help immediately.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Inhalation of fumes</td>
+                          <td className="py-2">Move to fresh air. Loosen tight clothing. If difficulty breathing continues, get medical help.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Ingestion</td>
+                          <td className="py-2">Do <em>not</em> induce vomiting. Rinse mouth with water and get medical attention immediately.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🔷 6. Emergency Equipment Checklist</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>��� Prefer dilute HCl (≤3–6 M) for routine demos; only use concentrated HCl to drive the blue complex if required���then hood only.</li>
-                    <li>• Use small volumes (1–5 mL scale) to minimize risk and waste.</li>
+                    <li>• Eye wash station</li>
+                    <li>• Safety shower</li>
+                    <li>• First-aid kit</li>
+                    <li>• Fire extinguisher (CO₂ or dry powder type)</li>
+                    <li>• Spill neutralizing agents (baking soda, sand)</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Handling & procedure controls</h3>
+                  <h3 className="text-lg font-semibold mb-3">⚠ 7. General Safety Reminder</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Add acid to water, never water to acid. Mix slowly; let heat dissipate.</li>
-                    <li>• Use dropper/Pasteur pipette for incremental additions; cap reagents promptly.</li>
-                    <li>• Avoid heating over open flames if volatile acids are present; use a controlled water bath (typically ≤60 °C) and a thermometer.</li>
-                    <li>• For cooling, use an ice bath; keep containers upright and labeled.</li>
-                    <li>• Do not seal vessels producing fumes; vent to the hood.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Incompatibilities & what to avoid</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Never mix HCl with oxidizers or bleach (risk of chlorine gas).</li>
-                    <li>• Keep cobalt solutions away from sinks and drains (environmental hazard).</li>
-                    <li>• Don’t pipette by mouth. Don’t touch face/eyes with gloved hands.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Spill & exposure response</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Small acid spill: Neutralize with sodium bicarbonate; wipe up with absorbent; dispose as hazardous chemical waste.</li>
-                    <li>• Cobalt solution spill: Absorb with inert material; collect as heavy‑metal hazardous waste. Decontaminate surfaces with detergent solution.</li>
-                    <li>• Skin contact (HCl or Co²⁺): Remove contaminated clothing; rinse with water 15 minutes. Seek medical attention for burns/persistent irritation.</li>
-                    <li>• Eye exposure: Flush at eyewash for 15 minutes, hold lids open; get medical help.</li>
-                    <li>• Inhalation of HCl fumes: Move to fresh air; seek medical attention if symptoms persist.</li>
-                    <li>• Ingestion: Rinse mouth; do not induce vomiting; seek immediate medical aid.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Waste management</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Collect all cobalt‑containing wastes (solutions, rinses, contaminated absorbents, gloves) in a labeled heavy‑metal waste container.</li>
-                    <li>• Acidic aqueous waste without cobalt/heavy metals may be neutralized per SOP; when in doubt, collect as hazardous.</li>
-                    <li>• Deface/peel labels on empty reagent bottles; triple‑rinse only if your SOP allows and if rinsate is collected appropriately.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Storage & labeling</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Store CoCl₂ and HCl in tightly closed, compatible containers with GHS labels and dates.</li>
-                    <li>• Keep acids in corrosion‑resistant secondary containment; segregate from bases and oxidizers.</li>
-                    <li>• Clearly label all working solutions: chemical name, concentration, date, your name.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Housekeeping & decontamination</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Work over chemical‑resistant trays to catch drips.</li>
-                    <li>• Wash benches and glassware promptly; final rinse to appropriate waste if it contains cobalt.</li>
-                    <li>• Remove gloves before touching door handles, phones, or notebooks.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Pre‑lab checklist</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Read SDS for cobalt(II) chloride and hydrochloric acid.</li>
-                    <li>• Inspect glassware; no cracks/chips. Have secondary containment.</li>
-                    <li>• Set up fume hood sash at proper height; verify airflow.</li>
-                    <li>• Prepare spill kit (bicarbonate, absorbent pads), neutralizer, and labeled waste bottles.</li>
-                    <li>• Thermometer, tongs, heat‑resistant gloves ready if using hot baths.</li>
-                    <li>• Emergency contacts posted; eyewash/shower tested recently.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Post‑lab checklist</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Quench/neutralize acids only as permitted; otherwise, collect as waste.</li>
-                    <li>• Transfer cobalt residues and rinses to heavy‑metal waste.</li>
-                    <li>• Decontaminate bench; remove PPE; wash hands thoroughly.</li>
+                    <li>• Handle all cobalt compounds as <em>toxic substances</em>.</li>
+                    <li>• Concentrated HCl is <em>highly corrosive</em> — add carefully using droppers or pipettes.</li>
+                    <li>• Dispose of waste <em>responsibly and separately</em>.</li>
+                    <li>• <em>Never work alone</em> in the lab during such experiments.</li>
                   </ul>
                 </section>
               </>
