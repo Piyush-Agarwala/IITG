@@ -410,89 +410,65 @@ function ChemicalEquilibriumVirtualLab({
     <TooltipProvider>
       {isPHExperiment ? (
         <div className="w-full flex gap-6" style={{ minHeight: '75vh' }}>
-          <aside className="w-72 bg-white/90 border border-gray-200 rounded-lg p-4">
+          {/* Left Equipment Column */}
+          <aside className="w-72 bg-white/90 border border-gray-200 rounded-lg p-4 flex flex-col">
             <h4 className="text-sm font-semibold mb-3">Equipment</h4>
-            <div className="grid gap-3">
-              {equipmentList.map((equipment) => (
-                <div
-                  key={equipment.id}
-                  data-testid={equipment.id}
-                  className="flex flex-col items-center text-center p-3 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-grab"
-                  draggable
-                  onDragStart={(e) => {
-                    e.dataTransfer.setData("equipment", equipment.id);
-                    e.dataTransfer.effectAllowed = "move";
-                  }}
-                  onDoubleClick={() => handleEquipmentDrop(equipment.id, 200, 200)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <div className="w-12 h-12 flex items-center justify-center bg-slate-50 rounded mb-2 text-blue-600">
-                    {equipment.icon}
+            <div className="flex-1 overflow-auto">
+              <div className="space-y-3">
+                {equipmentList.map((equipment) => (
+                  <div
+                    key={equipment.id}
+                    data-testid={equipment.id}
+                    className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-grab"
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("equipment", equipment.id);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDoubleClick={() => handleEquipmentDrop(equipment.id, 200, 200)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded text-blue-600">{equipment.icon}</div>
+                      <div className="text-sm font-medium text-gray-700">{equipment.name}</div>
+                    </div>
+                    <div>
+                      <button
+                        onClick={() => handleEquipmentDrop(equipment.id, 200, 200)}
+                        className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded"
+                      >
+                        Place
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-sm font-medium text-gray-700">{equipment.name}</div>
-                  <div className="mt-2">
-                    <button
-                      onClick={() => handleEquipmentDrop(equipment.id, 200, 200)}
-                      className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded"
-                    >
-                      Place
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            <div className="mt-4 text-xs text-gray-500">Tip: Drag equipment to the workspace or double-click to place.</div>
+            <div className="mt-4 text-xs text-gray-500">Tip: Drag equipment from the left panel to the workbench.</div>
 
-            <div className="mt-6">
+            <div className="mt-4">
               <button onClick={handleReset} className="w-full px-3 py-2 bg-red-50 text-red-600 rounded">Reset Experiment</button>
             </div>
           </aside>
 
+          {/* Center Workbench Area */}
           <main className="flex-1 flex flex-col">
             <div className="mb-4">
-              <div className="bg-white p-4 border rounded-lg">
+              <div className="rounded-lg bg-gradient-to-b from-yellow-50 to-white border p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex-1 pr-6">
-                    <h3 className="text-sm font-semibold">Experiment Progress</h3>
-                    <div className="mt-3">
-                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${Math.round(((currentStep - 1) / totalSteps) * 100)}%` }}
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-3 mt-3">
-                        {Array.from({ length: totalSteps }).map((_, i) => {
-                          const stepIndex = i + 1;
-                          const active = stepIndex <= currentStep;
-                          return (
-                            <div
-                              key={stepIndex}
-                              className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium ${active ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-600'}`}
-                              title={`Step ${stepIndex}`}
-                            >
-                              {stepIndex}
-                            </div>
-                          );
-                        })}
-
-                        <div className="ml-4 text-sm text-gray-700">
-                          <div className="font-medium">{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
-                          <div className="text-xs text-gray-500 mt-1">{allSteps[currentStep - 1]?.description ?? ''}</div>
-                        </div>
-                      </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 font-medium">Step</div>
+                    <div>
+                      <div className="text-sm font-semibold">Laboratory Workbench</div>
+                      <div className="text-xs text-gray-500">Interactive Workbench</div>
                     </div>
                   </div>
 
-                  <div className="w-40 text-right">
+                  <div className="flex items-center space-x-3">
                     <div className="text-xs text-gray-500">Step {currentStep} of {totalSteps}</div>
-                    <div className="mt-2 flex items-center justify-end gap-2">
-                      <button onClick={() => setCurrentStep(Math.max(1, currentStep - 1))} className="text-xs px-2 py-1 bg-gray-100 rounded">Undo</button>
-                      <button onClick={handleReset} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded">Reset</button>
-                    </div>
+                    <div className="inline-flex items-center px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">Step {currentStep}</div>
                   </div>
                 </div>
               </div>
@@ -504,6 +480,7 @@ function ChemicalEquilibriumVirtualLab({
                 selectedChemical={experimentStarted ? selectedChemical : null}
                 isRunning={isRunning}
                 experimentTitle={experimentTitle}
+                currentGuidedStep={currentStep}
               >
                 {equipmentPositions.map((pos) => {
                   const equipment = equipmentList.find((eq) => eq.id === pos.id);
@@ -530,15 +507,20 @@ function ChemicalEquilibriumVirtualLab({
 
             <div className="mt-4 bg-white p-3 border rounded">
               <h4 className="text-sm font-semibold mb-2">Instructions</h4>
-              <p className="text-xs text-gray-600">Follow the numbered steps on the right to complete the experiment. Use pH paper or indicator to measure pH after adding HCl to a beaker.</p>
+              <p className="text-xs text-gray-600">Follow the steps shown. Use pH paper or the universal indicator to measure pH after adding HCl to a beaker.</p>
             </div>
           </main>
 
+          {/* Right Live Analysis Column */}
           <aside className="w-72 bg-white/90 border border-gray-200 rounded-lg p-4">
-            <h4 className="text-sm font-semibold mb-3">Live Analysis</h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold">Live Analysis</h4>
+              <div className="text-xs text-gray-500">Step {currentStep} of {totalSteps}</div>
+            </div>
+
             <div className="text-xs text-gray-600 mb-3">
               <div className="font-medium">Current Step</div>
-              <div>{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
+              <div className="mt-1 text-sm">{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
             </div>
 
             <div className="text-xs text-gray-600 mb-3">
@@ -550,9 +532,19 @@ function ChemicalEquilibriumVirtualLab({
               </ul>
             </div>
 
-            <div className="text-xs text-gray-600">
-              <div className="font-medium mb-1">Measured pH</div>
-              <div className="text-lg font-bold">{measurements.ph ? measurements.ph : 'No result yet'}</div>
+            <div className="mt-2 mb-4 p-3 bg-gray-50 rounded">
+              <div className="text-xs font-medium text-gray-600">Measured pH</div>
+              <div className="text-2xl font-bold mt-1">{measurements.ph ? measurements.ph : 'No result yet'}</div>
+            </div>
+
+            <div className="text-sm font-semibold mb-2">Cases</div>
+            <div className="space-y-2">
+              <div className="p-2 border rounded">CASE 1
+                <div className="text-xs text-gray-500">No result yet</div>
+              </div>
+              <div className="p-2 border rounded">CASE 2
+                <div className="text-xs text-gray-500">No result yet</div>
+              </div>
             </div>
           </aside>
         </div>
