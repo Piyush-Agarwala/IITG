@@ -531,13 +531,24 @@ function ChemicalEquilibriumVirtualLab({
 
                   <div className="w-full md:w-64">
                     <div className="bg-white p-3 rounded border">
-                      <div className="text-xs font-medium text-gray-600">Current Step</div>
-                      <div className="font-semibold text-sm mt-1">{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
-                      <div className="text-xs text-gray-500 mt-1">{allSteps[currentStep - 1]?.description ?? ''}</div>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">Current Step</div>
+                          <div className="font-semibold text-sm mt-1">{allSteps[currentStep - 1]?.title ?? 'No step selected'}</div>
+                          <div className="text-xs text-gray-500 mt-1">{allSteps[currentStep - 1]?.description ?? ''}</div>
+                        </div>
+
+                        <div className="flex flex-col items-end space-y-2">
+                          <button onClick={toggleTimer} className="text-xs px-2 py-1 bg-white border rounded flex items-center space-x-2">
+                            {isRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                            <span className="text-xs">{formatTime(timer ?? 0)}</span>
+                          </button>
+                          <button onClick={handleReset} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded">Reset</button>
+                        </div>
+                      </div>
 
                       <div className="mt-3 flex items-center justify-between">
                         <button onClick={() => setCurrentStep(Math.max(1, currentStep - 1))} className="text-xs px-2 py-1 bg-gray-100 rounded">Undo</button>
-                        <button onClick={handleReset} className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded">Reset</button>
                       </div>
                     </div>
                   </div>
