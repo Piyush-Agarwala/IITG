@@ -569,17 +569,6 @@ function OxalicAcidVirtualLab({
     return () => window.removeEventListener('oxalic_image_shown', handler);
   }, [step.id, onStepComplete]);
 
-  useEffect(() => {
-    if (step.id === 1) {
-      return;
-    }
-    if (canProceed() && isActive) {
-      const timer = setTimeout(() => {
-        onStepComplete();
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [canProceed, isActive, onStepComplete, step.id]);
 
   const canProceed = useCallback(() => {
     switch (step.id) {
