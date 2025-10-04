@@ -6,7 +6,7 @@ import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Equipment } from "./Equipment";
 import { AB_LAB_EQUIPMENT } from "./Equipment";
 import { COLORS, INITIAL_TESTTUBE, GUIDED_STEPS, ANIMATION } from "../constants";
-import { Beaker, Info, Wrench, CheckCircle, ArrowRight, TestTube, Undo2, TrendingUp, Clock, Home } from "lucide-react";
+import { Beaker, Info, Wrench, CheckCircle, ArrowRight, ArrowLeft, TestTube, Undo2, TrendingUp, Clock, Home } from "lucide-react";
 import { Link } from "wouter";
 
 interface ExperimentMode {
