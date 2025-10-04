@@ -5,6 +5,7 @@ import {
   Beaker,
   Pipette,
 } from "lucide-react";
+import TransparentImage from "@/components/VirtualLab/TransparentImage";
 import StirringAnimation from "./StirringAnimation";
 import DissolutionAnimation from "./DissolutionAnimation";
 import type { EquipmentPosition, SolutionPreparationState } from "../types";
