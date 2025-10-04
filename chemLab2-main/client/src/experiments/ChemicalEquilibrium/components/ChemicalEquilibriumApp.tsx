@@ -26,6 +26,20 @@ export default function ChemicalEquilibriumApp({
   const experiment = experimentId === PHHClExperiment.id ? PHHClExperiment : ChemicalEquilibriumData;
   const updateProgress = useUpdateProgress();
 
+  // Auto-start when URL contains ?autostart=1 for the PH experiment
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const auto = params.get("autostart");
+      if (auto === "1" && experimentId === PHHClExperiment.id) {
+        setExperimentStarted(true);
+        setIsRunning(true);
+      }
+    } catch (e) {
+      // ignore in non-browser env
+    }
+  }, [experimentId]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isRunning && experimentStarted) {
@@ -121,16 +135,16 @@ export default function ChemicalEquilibriumApp({
           </h1>
           <p className="text-gray-600 mb-4">{experiment.description}</p>
 
-          {/* Progress Bar */}
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              Overall Progress
-            </span>
-            <span className="text-sm text-blue-600 font-semibold">
-              {progressPercentage}%
-            </span>
-          </div>
-          <Progress value={progressPercentage} className="h-2" />
+          {/* Progress Bar - hidden for PH HCl experiment (we show per-panel progress) */}
+          {experiment.id !== PHHClExperiment.id && (
+            <>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Overall Progress</span>
+                <span className="text-sm text-blue-600 font-semibold">{progressPercentage}%</span>
+              </div>
+              <Progress value={progressPercentage} className="h-2" />
+            </>
+          )}
         </div>
 
         {/* Main Lab Area */}
@@ -166,49 +180,61 @@ export default function ChemicalEquilibriumApp({
                   {experiment.title} - Virtual Laboratory
                 </span>
                 <div className="flex items-center space-x-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={toggleTimer}
-                    className="flex items-center"
-                  >
-                    {isRunning ? (
-                      <Pause className="h-4 w-4 mr-1" />
-                    ) : (
-                      <Play className="h-4 w-4 mr-1" />
-                    )}
-                    {formatTime(timer)}
-                  </Button>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={handlePreviousStep}
-                      disabled={true}
-                      size="sm"
-                      className="opacity-50 cursor-not-allowed"
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                    <div className="flex items-center space-x-2 px-2">
-                      <span className="text-sm text-gray-600">
-                        {currentStep + 1} / {experiment.stepDetails.length}
-                      </span>
-                      <span className="inline-flex items-center px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
-                        <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse mr-1"></div>
-                        STEP {currentStep + 1}
-                      </span>
+                  {experiment.id !== PHHClExperiment.id ? (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={toggleTimer}
+                        className="flex items-center"
+                      >
+                        {isRunning ? (
+                          <Pause className="h-4 w-4 mr-1" />
+                        ) : (
+                          <Play className="h-4 w-4 mr-1" />
+                        )}
+                        {formatTime(timer)}
+                      </Button>
+
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={handlePreviousStep}
+                          disabled={true}
+                          size="sm"
+                          className="opacity-50 cursor-not-allowed"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                        </Button>
+                        <div className="flex items-center space-x-2 px-2">
+                          <span className="text-sm text-gray-600">
+                            {currentStep + 1} / {experiment.stepDetails.length}
+                          </span>
+                          <span className="inline-flex items-center px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
+                            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse mr-1"></div>
+                            STEP {currentStep + 1}
+                          </span>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={handleNextStep}
+                          disabled={
+                            currentStep === experiment.stepDetails.length - 1
+                          }
+                          size="sm"
+                        >
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 px-2">
+                        <span className="text-sm text-gray-600">{currentStep + 1} / {experiment.stepDetails.length}</span>
+                        <span className="inline-flex items-center px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">STEP {currentStep + 1}</span>
+                      </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      onClick={handleNextStep}
-                      disabled={
-                        currentStep === experiment.stepDetails.length - 1
-                      }
-                      size="sm"
-                    >
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  )}
                 </div>
               </CardTitle>
             </CardHeader>
@@ -226,6 +252,14 @@ export default function ChemicalEquilibriumApp({
                 isRunning={isRunning}
                 setIsRunning={setIsRunning}
                 onResetTimer={() => setTimer(0)}
+                onResetExperiment={() => {
+                  setExperimentStarted(false);
+                  setIsRunning(false);
+                  setTimer(0);
+                  setCurrentStep(0);
+                }}
+                timer={timer}
+                toggleTimer={toggleTimer}
               />
             </CardContent>
           </Card>
