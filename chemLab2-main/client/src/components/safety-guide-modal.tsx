@@ -18,6 +18,7 @@ interface SafetyGuideModalProps {
 export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
   const [match, params] = useRoute("/experiment/:id");
   const isEquilibriumShift = match && params?.id === "1";
+  const isAmmoniumBuffer = match && params?.id === "9";
   const isEthanoicBuffer = match && params?.id === "10";
   const isTitration1 = match && params?.id === "6";
 
@@ -30,7 +31,9 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-red-600" />
-            {isEthanoicBuffer
+            {isAmmoniumBuffer
+              ? "Safety Guide — To study the change in pH of ammonium hydroxide solution on addition of ammonium chloride"
+              : isEthanoicBuffer
               ? "Safety Guide — To study the change in pH of ethanoic acid on addition of sodium ethanoate"
               : isEquilibriumShift
               ? "Equilibrium Shift: [Co(H₂O)₆]²⁺ ⇌ [CoCl₄]²⁻ — Safety Guidelines"
@@ -39,7 +42,15 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
               : "Virtual Chemistry Lab Safety Guide"}
           </DialogTitle>
           <DialogDescription>
-            {isEthanoicBuffer
+            {isAmmoniumBuffer
+              ? (
+                <div>
+                  <p>
+                    Here’s a <strong>comprehensive safety guide</strong> for the chemistry experiment: <em>“To study the change in pH of ammonium hydroxide solution on addition of ammonium chloride”</em>
+                  </p>
+                  <p className="mt-2 text-sm text-gray-600">This guide covers laboratory safety, chemical hazards, first-aid, waste disposal, emergency procedures, and post-experiment cleanup.</p>
+                </div>
+              ) : isEthanoicBuffer
               ? (
                 <div>
                   <p>
@@ -56,7 +67,187 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
         </DialogHeader>
         <ScrollArea className="h-[60vh] pr-4">
           <div className="space-y-6">
-            {isEthanoicBuffer ? (
+            {isAmmoniumBuffer ? (
+              <>
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧪 1. Objective of Safety Measures</h3>
+                  <p className="text-sm">To ensure safe handling of chemicals and apparatus during the experiment involving <strong>ammonium hydroxide (NH₄OH)</strong> and <strong>ammonium chloride (NH₄Cl)</strong>, both of which can cause irritation or harm if misused.</p>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">⚗ 2. Chemical Hazards</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Chemical</th>
+                          <th className="pb-2">Nature of Hazard</th>
+                          <th className="pb-2">Possible Effects</th>
+                          <th className="pb-2">Safety Precautions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="py-2">Ammonium hydroxide (NH₄OH)</td>
+                          <td className="py-2">Corrosive and irritant; releases ammonia vapour</td>
+                          <td className="py-2">Irritates eyes, nose, throat, and skin; inhalation causes coughing or burning sensation</td>
+                          <td className="py-2">Work in a well-ventilated area or fume hood. Avoid direct inhalation. Wear gloves, goggles, and lab coat. Keep container tightly closed.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Ammonium chloride (NH₄Cl)</td>
+                          <td className="py-2">Low toxicity but can irritate skin, eyes, and mucous membranes</td>
+                          <td className="py-2">Coughing or irritation on inhalation; nausea if ingested</td>
+                          <td className="py-2">Handle with gloves; avoid dust formation; do not taste or inhale.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Distilled water</td>
+                          <td className="py-2">None</td>
+                          <td className="py-2">—</td>
+                          <td className="py-2">Use clean, labeled containers only.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧤 3. Personal Protective Equipment (PPE)</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Lab coat: Protects skin and clothing from splashes.</li>
+                    <li>• Safety goggles: Prevents eye irritation from NH₄OH vapours or splashes.</li>
+                    <li>• Gloves (nitrile or latex): Prevents contact with corrosive NH₄OH.</li>
+                    <li>• Closed footwear: Protects against spills.</li>
+                    <li>• Face mask (optional but recommended): Reduces exposure to ammonia vapour.</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🌬 4. Laboratory Environment</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Perform the experiment in a well-ventilated laboratory or fume hood.</li>
+                    <li>• Keep chemical containers tightly closed when not in use.</li>
+                    <li>• Avoid heating or mixing chemicals unnecessarily — ammonia vapour is released easily.</li>
+                    <li>• Keep acidic substances away from ammonium hydroxide (to prevent hazardous neutralization reactions).</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">⚖ 5. Handling and Storage</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Label all bottles and beakers clearly (NH₄OH, NH₄Cl, distilled water).</li>
+                    <li>• Store NH₄OH in a cool, shaded area away from acids.</li>
+                    <li>• Do not pipette by mouth — always use a pipette filler.</li>
+                    <li>• Mix solutions slowly and stir gently to avoid splashes.</li>
+                    <li>• Clean all spills immediately with plenty of water.</li>
+                    <li>• Wash hands thoroughly after completing the experiment.</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🚱 6. Waste Disposal</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Do not pour concentrated NH₄OH into the sink directly.</li>
+                    <li>• Collect waste solution (mixture of NH₄OH and NH₄Cl) in a labeled container.</li>
+                    <li>• Dilute the waste with plenty of water before disposal if permitted by local rules.</li>
+                    <li>• Follow local laboratory chemical disposal protocols.</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🚨 7. First Aid Measures</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Incident</th>
+                          <th className="pb-2">Immediate Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="py-2">Skin contact (NH₄OH or NH₄Cl)</td>
+                          <td className="py-2">Rinse affected area immediately with plenty of water for at least 10–15 minutes. Remove contaminated clothing. Seek medical advice if irritation persists.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Eye contact</td>
+                          <td className="py-2">Rinse eyes with clean running water for at least 15 minutes. Keep eyelids open. Seek medical attention immediately.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Inhalation of NH₄OH vapour</td>
+                          <td className="py-2">Move the person to fresh air immediately. Loosen clothing and ensure normal breathing. If irritation continues, seek medical help.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Accidental ingestion</td>
+                          <td className="py-2">Do not induce vomiting. Rinse mouth with water. Seek medical attention immediately.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Spillage</td>
+                          <td className="py-2">Wear gloves, dilute with excess water, wipe with paper towel, and dispose in chemical waste container.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🔥 8. Emergency and Good Laboratory Practices</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Know the location of eye-wash station, safety shower, and first-aid box.</li>
+                    <li>• Do not eat, drink, or apply cosmetics in the laboratory.</li>
+                    <li>• Avoid touching face or eyes during the experiment.</li>
+                    <li>• Report all spills, injuries, or accidents to the instructor immediately.</li>
+                    <li>• Keep the work area tidy and dry — pH meters and electrical equipment should not be near liquid spills.</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">✅ 9. Post-Experiment Cleanup</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Rinse glassware thoroughly with tap water followed by distilled water.</li>
+                    <li>• Switch off the pH meter and clean the electrode as per manufacturer instructions.</li>
+                    <li>• Wipe lab benches clean and dry.</li>
+                    <li>• Wash hands thoroughly before leaving the lab.</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">⚠ 10. Safety Summary</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Hazard Type</th>
+                          <th className="pb-2">Risk Level</th>
+                          <th className="pb-2">Preventive Measure</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="py-2">Ammonia vapour inhalation</td>
+                          <td className="py-2">Moderate</td>
+                          <td className="py-2">Work under fume hood, avoid leaning over NH₄OH.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Chemical splashes</td>
+                          <td className="py-2">Moderate</td>
+                          <td className="py-2">Use goggles, gloves, and coat.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Skin/eye irritation</td>
+                          <td className="py-2">Moderate</td>
+                          <td className="py-2">Wash immediately with plenty of water.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Accidental ingestion</td>
+                          <td className="py-2">Low</td>
+                          <td className="py-2">Never pipette by mouth; label all solutions.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              </>
+            ) : isEthanoicBuffer ? (
               <>
                 <section>
                   <h3 className="text-lg font-semibold mb-3">🔰 Safety Guide</h3>
@@ -469,41 +660,4 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                   <ul className="space-y-2 text-sm">
                     <li>• Check that all virtual equipment is properly set up</li>
                     <li>• Ensure stirring mechanisms are functioning correctly</li>
-                    <li>• Verify temperature controls are responsive</li>
-                    <li>• Use appropriate glassware for each step</li>
-                    <li>• Follow proper mixing and stirring techniques</li>
-                  </ul>
-                </section>
-
-                {/* Emergency Procedures */}
-                <section>
-                  <div className="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                    <h3 className="text-lg font-semibold mb-3 text-red-800">Virtual Emergency Procedures</h3>
-                    <ul className="space-y-2 text-sm text-red-700">
-                      <li>• If an experiment behaves unexpectedly, stop and review instructions</li>
-                      <li>• Reset the simulation if parameters go out of safe ranges</li>
-                      <li>• Contact instructor if you encounter persistent issues</li>
-                      <li>• Document any unusual observations in your lab notebook</li>
-                    </ul>
-                  </div>
-                </section>
-
-                {/* Best Practices */}
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Best Practices for Virtual Labs</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Take your time - rushing leads to mistakes</li>
-                    <li>• Record observations and measurements accurately</li>
-                    <li>• Review safety information before each new experiment</li>
-                    <li>• Practice proper laboratory techniques even in virtual environment</li>
-                    <li>• Ask questions if you're unsure about any procedure</li>
-                  </ul>
-                </section>
-              </>
-            )}
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
-  );
-}
+                    <li>• Verify temperature controls are responsive
