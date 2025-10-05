@@ -458,7 +458,7 @@ function ChemicalEquilibriumVirtualLab({
                   <div
                     key={equipment.id}
                     data-testid={equipment.id}
-                    className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-grab"
+                    className="equipment-card justify-between"
                     draggable
                     onDragStart={(e) => {
                       e.dataTransfer.setData("equipment", equipment.id);
