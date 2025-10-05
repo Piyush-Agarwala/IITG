@@ -77,8 +77,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     if (id === "test-tube") return { x: baseX, y: baseY + 140 };
     if (id === "universal-indicator") return { x: baseX, y: baseY + 320 };
     if (id === "hcl-0-1m") return { x: baseX + 260, y: baseY + 20 };
-    if (id === "hcl-0-01m") return { x: baseX + 260, y: baseY + 160 };
-    if (id === "hcl-0-001m") return { x: baseX + 260, y: baseY + 300 };
+    if (id === "hcl-0-01m") return { x: baseX + 260, y: baseY + 180 };
+    if (id === "hcl-0-001m") return { x: baseX + 260, y: baseY + 340 };
     return { x: baseX, y: baseY };
   };
 
@@ -115,15 +115,15 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       "hcl-0-001m": { label: "0.001 M HCl", molarity: 0.001 },
     };
     setDialogOpenFor({ id, ...map[id] });
-    setVolumeStr("5.0");
+    setVolumeStr("10.0");
     setVolumeError(null);
   };
 
   const confirmAddHcl = () => {
     if (!dialogOpenFor) return;
     const v = parseFloat(volumeStr);
-    if (Number.isNaN(v) || v < 2.0 || v > 15.0) {
-      setVolumeError("Please enter a value between 2.0 and 15.0 mL");
+    if (Number.isNaN(v) || v < 10.0 || v > 15.0) {
+      setVolumeError("Please enter a value between 10.0 and 15.0 mL");
       return;
     }
     const vL = v / 1000; // L
@@ -264,6 +264,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                     currentStep={currentStep}
                     color={e.id === 'universal-indicator' ? (e as any).color : undefined}
                     volume={e.id === 'test-tube' ? testTubeVolume : undefined}
+                    onInteract={(id) => { if (id.startsWith('hcl-')) openHclDialog(id); }}
                   />
                 );
               })}
@@ -273,7 +274,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                 const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator')!;
                 return (
                   <div key="measure-button" className="measure-button-wrapper" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
-                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${shouldBlinkMeasure ? 'animate-pulse' : ''}`} onClick={testPH}>
+                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm measure-action-btn ${shouldBlinkMeasure ? 'blink-until-pressed' : ''}`} onClick={testPH} aria-pressed={shouldBlinkMeasure}>
                       MEASURE
                     </Button>
                   </div>
@@ -340,24 +341,25 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
             <input
               type="number"
               step={0.1}
-              min={2.0}
+              min={10.0}
               max={15.0}
               value={volumeStr}
               onChange={(e) => {
                 const val = e.target.value;
                 setVolumeStr(val);
                 const parsed = parseFloat(val);
-                if (Number.isNaN(parsed) || parsed < 2.0 || parsed > 15.0) setVolumeError("Please enter a value between 2.0 and 15.0 mL");
+                if (Number.isNaN(parsed) || parsed < 10.0 || parsed > 15.0) setVolumeError("Please enter a value between 10.0 and 15.0 mL");
                 else setVolumeError(null);
               }}
               className="w-full border rounded-md px-3 py-2"
               placeholder="Enter volume in mL"
             />
             {volumeError && <p className="text-xs text-red-600">{volumeError}</p>}
+            {!volumeError && <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpenFor(null)}>Cancel</Button>
-            <Button onClick={confirmAddHcl} disabled={!!volumeError || Number.isNaN(parseFloat(volumeStr)) || parseFloat(volumeStr) < 2.0 || parseFloat(volumeStr) > 15.0}>Add Solution</Button>
+            <Button onClick={confirmAddHcl} disabled={!!volumeError || Number.isNaN(parseFloat(volumeStr)) || parseFloat(volumeStr) < 10.0 || parseFloat(volumeStr) > 15.0}>Add Solution</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

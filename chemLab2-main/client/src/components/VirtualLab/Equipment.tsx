@@ -9,42 +9,43 @@ import {
 import TransparentImage from "./TransparentImage";
 
 interface EquipmentProps {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  onDrag: (id: string, x: number, y: number) => void;
-  position: { x: number; y: number } | null;
-  chemicals?: Array<{
     id: string;
     name: string;
-    color: string;
-    amount: number;
-    concentration: string;
-  }>;
-  onChemicalDrop?: (
-    chemicalId: string,
-    equipmentId: string,
-    amount: number,
-  ) => void;
-  onRemove?: (id: string) => void;
-  cobaltReactionState?: {
-    cobaltChlorideAdded: boolean;
-    distilledWaterAdded: boolean;
-    stirrerActive: boolean;
-    colorTransition: "blue" | "transitioning" | "pink";
-    step3WaterAdded: boolean;
-  };
-  allEquipmentPositions?: Array<{
-    id: string;
-    x: number;
-    y: number;
-    chemicals: any[];
-  }>;
-  currentStep?: number;
-  disabled?: boolean;
-  isCobaltAnimation?: boolean;
-  color?: string;
-  volume?: number;
+    icon: React.ReactNode;
+    onDrag: (id: string, x: number, y: number) => void;
+    position: { x: number; y: number } | null;
+    chemicals?: Array<{
+      id: string;
+      name: string;
+      color: string;
+      amount: number;
+      concentration: string;
+    }>;
+    onChemicalDrop?: (
+      chemicalId: string,
+      equipmentId: string,
+      amount: number,
+    ) => void;
+    onRemove?: (id: string) => void;
+    cobaltReactionState?: {
+      cobaltChlorideAdded: boolean;
+      distilledWaterAdded: boolean;
+      stirrerActive: boolean;
+      colorTransition: "blue" | "transitioning" | "pink";
+      step3WaterAdded: boolean;
+    };
+    allEquipmentPositions?: Array<{
+      id: string;
+      x: number;
+      y: number;
+      chemicals: any[];
+    }>;
+    currentStep?: number;
+    disabled?: boolean;
+    isCobaltAnimation?: boolean;
+    color?: string;
+    volume?: number;
+    onInteract?: (id: string) => void;
 }
 
 export const Equipment: React.FC<EquipmentProps> = ({
@@ -63,6 +64,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   isCobaltAnimation = false,
   color,
   volume,
+  onInteract,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isDropping, setIsDropping] = useState(false);
@@ -430,13 +432,38 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
     // Use provided images for specific equipment types with bigger sizes
 
-    // Render reagent bottles (HCl variants) as square bottle tiles on workbench
+    // Render reagent bottles (HCl variants) as styled tiles like cobalt/HCl in EquilibriumShift
     if (id.startsWith("hcl-") || id.startsWith("hcl_")) {
+      const concentration = id === "hcl-0-1m" ? "HCl 0.1M" : id === "hcl-0-01m" ? "HCl 0.01M" : id === "hcl-0-001m" ? "HCl 0.001M" : "HCl";
+
+      // If positioned on the workbench render as a white card with the bottle tile and a label underneath
+      if (position) {
+        // Match reference: all HCl variants render as a white card with the bottle and concentration label inside
+        const insideLabel = id === "hcl-0-1m" ? "0.1 M HCl" : id === "hcl-0-01m" ? "0.01 M HCl" : id === "hcl-0-001m" ? "0.001 M HCl" : concentration;
+        return (
+          <div className="w-28 rounded-xl bg-white border border-gray-200 shadow-md p-3 flex flex-col items-center cursor-pointer" onClick={() => onInteract && onInteract(id)}>
+            <div className="w-20 h-20 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
+              {icon}
+            </div>
+            <div className="mt-2 text-[13px] font-medium text-gray-700">{insideLabel}</div>
+          </div>
+        );
+      }
+
+      // Default toolbar rendering when not on workbench
       return (
         <div className="flex flex-col items-center">
-          <div className="w-24 h-24 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
-            {icon}
+          <div
+            className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm"
+            style={{ backgroundColor: '#fffacd' }}
+          >
+            <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-yellow-200 to-transparent opacity-60" />
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-600 opacity-60">
+              <Droplet className="w-7 h-7" />
+            </div>
           </div>
+          <span className="text-xs font-medium text-center">{name}</span>
+          <span className="text-xs text-yellow-600 font-semibold">{concentration}</span>
         </div>
       );
     }
@@ -713,7 +740,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
           {/* Bottom label */}
           {id === "test-tube" ? (
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
               25ml Test Tube
             </div>
           ) : (
