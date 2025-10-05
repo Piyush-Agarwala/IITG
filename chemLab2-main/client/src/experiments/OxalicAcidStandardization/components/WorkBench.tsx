@@ -73,6 +73,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [acidAmount, setAcidAmount] = useState<string>("");
   // pouring animation state when adding acid into the weighing boat
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
+  const [washAnimation, setWashAnimation] = useState<{ x: number; y: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
 
   // messages shown on the workbench area (transient)
@@ -230,6 +231,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           ],
         }
       ]);
+      // small delay then align beaker & wash bottle for step 4
+      setTimeout(() => alignBeakerAndWash(true), 60);
 
       // Notify parent that this chemical bottle was placed so the chemical can be removed from the palette
       try {
@@ -272,6 +275,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             : data.imageSrc,
         }
       ]);
+      setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed so it can be removed from the palette
       if (onEquipmentPlaced) onEquipmentPlaced(data.id);
       return;
@@ -295,6 +299,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           imageSrc: raw,
         }
       ]);
+      setTimeout(() => alignBeakerAndWash(true), 60);
       return;
     }
 
@@ -322,6 +327,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             : undefined,
         }
       ]);
+      setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed (hide from palette)
       if (onEquipmentPlaced) onEquipmentPlaced(eq.id);
       return;
@@ -381,14 +387,202 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     setEquipmentPositions(prev => prev.filter(pos => pos.id !== id));
   };
 
-  const handleEquipmentAction = (action: string) => {
+  const handleEquipmentAction = (action: string, equipmentId?: string) => {
     switch (action) {
       case "weigh":
       case "stir":
       case "adjust_volume":
         onStepAction();
         break;
+      case "rinse": {
+        if (!equipmentId) {
+          showMessage('No wash bottle selected.');
+          return;
+        }
+        const bottle = equipmentPositions.find(p => p.id === equipmentId);
+        if (!bottle) {
+          showMessage('Wash bottle is not on the workbench.');
+          return;
+        }
+
+        // Find nearest beaker
+        const beakers = equipmentPositions.filter(p => ((p.typeId ?? p.id) + '').toLowerCase().includes('beaker'));
+        if (beakers.length === 0) {
+          showMessage('Place a beaker on the workbench to rinse.');
+          return;
+        }
+        let nearest = beakers[0];
+        let minDist = Number.POSITIVE_INFINITY;
+        beakers.forEach(b => {
+          const dx = (b.x || 0) - (bottle.x || 0);
+          const dy = (b.y || 0) - (bottle.y || 0);
+          const d = Math.hypot(dx, dy);
+          if (d < minDist) { minDist = d; nearest = b; }
+        });
+
+        // Start visual rinse animation positioned near the beaker
+        setWashAnimation({ x: (nearest.x || 0) + 20, y: (nearest.y || 0) - 60, active: true });
+        showMessage('Rinsing the beaker...');
+
+        // After animation completes, clear chemicals in the beaker visually
+        window.setTimeout(() => {
+          setEquipmentPositions(prev => prev.map(pos => pos.id === nearest.id ? { ...pos, chemicals: [] } : pos));
+          setWashAnimation(null);
+          showMessage('Beaker rinsed.');
+        }, 2200);
+
+        break;
+      }
     }
+  };
+
+  // Auto-align beaker and wash bottle when step 4 is active and both are present
+  const washAlignRef = useRef(false);
+  useEffect(() => {
+    if (step.id !== 4) {
+      washAlignRef.current = false;
+      return;
+    }
+
+    const normalize = (value?: string) => (value ? value.toString().toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
+    const beaker = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('beaker'));
+    const wash = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('wash') || (p.typeId ?? p.id).toString().includes('wash_bottle') || (p.typeId ?? p.id).toString().includes('wash-bottle'));
+
+    if (!beaker || !wash) {
+      washAlignRef.current = false;
+      return;
+    }
+
+    // Avoid re-aligning repeatedly
+    if (washAlignRef.current) return;
+
+    const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+    if (!surface) return;
+    const rect = surface.getBoundingClientRect();
+
+    // If volumetric flask is present, align to match reference: beaker left/center, wash bottle slightly to its right and higher
+    const flask = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('volumetric_flask') || (p.typeId ?? p.id).toString().toLowerCase().includes('volumetric_flask'));
+
+    let targetBeakerX: number;
+    let targetBeakerY: number;
+    let targetWashX: number;
+    let targetWashY: number;
+
+    if (flask) {
+      // place beaker slightly left-of-center, a bit lower to appear on the bench
+      targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
+      targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
+      // wash bottle a little to the right and slightly higher so the spout overlaps the beaker rim naturally
+      targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
+      targetWashY = Math.max(2, targetBeakerY - 28);
+
+      // place flask to the right of wash bottle if possible (slightly lower to keep composition)
+      const targetFlaskX = Math.min(rect.width - 80, targetWashX + 110);
+      const targetFlaskY = Math.min(rect.height - 80, targetBeakerY + 6);
+
+      // apply flask position immediately to keep spacing
+      setEquipmentPositions(prev => prev.map(pos => {
+        if (pos.id === flask.id) return { ...pos, x: targetFlaskX, y: targetFlaskY };
+        return pos;
+      }));
+    } else {
+      // Default target: beaker slightly left of center, wash bottle above-right of beaker
+      targetBeakerX = Math.max(16, Math.floor(rect.width * 0.35));
+      targetBeakerY = Math.max(16, Math.floor(rect.height * 0.44));
+      targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
+      targetWashY = Math.max(8, targetBeakerY - 64);
+    }
+
+    // Avoid overlapping existing weighing boat(s). If a weighing boat is present near targets, shift beaker down below the boat
+    const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
+
+    const isOverlapping = (x1: number, y1: number, x2: number, y2: number, threshold = 60) => {
+      return Math.hypot(x1 - x2, y1 - y2) < threshold;
+    };
+
+    if (boats.length > 0) {
+      const boat = boats[0];
+      // if default beaker pos would land on/near the boat, move beaker below the boat
+      if (isOverlapping(targetBeakerX, targetBeakerY, boat.x || 0, boat.y || 0, 80)) {
+        targetBeakerX = Math.max(16, (boat.x || 0) - 20);
+        targetBeakerY = (boat.y || 0) + 90; // place below
+        // ensure within surface
+        targetBeakerX = Math.min(rect.width - 80, targetBeakerX);
+        targetBeakerY = Math.min(rect.height - 80, targetBeakerY);
+        // wash bottle should go to beaker's top-right
+        targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
+        targetWashY = Math.max(8, targetBeakerY - 64);
+      }
+    }
+
+    // If any other equipment is close to target positions, nudge them slightly to avoid collision
+    const occupied = equipmentPositions.filter(p => p.id !== beaker.id && p.id !== wash.id);
+    const adjustIfCollision = (x: number, y: number) => {
+      let nx = x;
+      let ny = y;
+      occupied.forEach(o => {
+        if (isOverlapping(nx, ny, o.x || 0, o.y || 0, 70)) {
+          ny += 80; // push down
+          nx += 30; // nudge right
+        }
+      });
+      // clamp
+      nx = Math.max(8, Math.min(rect.width - 80, nx));
+      ny = Math.max(8, Math.min(rect.height - 80, ny));
+      return { nx, ny };
+    };
+
+    const beakerPos = adjustIfCollision(targetBeakerX, targetBeakerY);
+    const washPos = adjustIfCollision(targetWashX, targetWashY);
+
+    setEquipmentPositions(prev => {
+      const updated = prev.map(pos => {
+        if (pos.id === beaker.id) return { ...pos, x: beakerPos.nx, y: beakerPos.ny };
+        if (pos.id === wash.id) return { ...pos, x: washPos.nx, y: washPos.ny };
+        return pos;
+      });
+      // Ensure beaker renders on top by placing it at the end of the array
+      const beakerItem = updated.find(p => p.id === beaker.id);
+      if (!beakerItem) return updated;
+      const others = updated.filter(p => p.id !== beaker.id);
+      return [...others, beakerItem];
+    });
+
+    washAlignRef.current = true;
+  }, [equipmentPositions, step.id]);
+
+  // Alignment helper that forces the beaker and wash bottle into the step-4 layout.
+  const alignBeakerAndWash = (force = false) => {
+    try {
+      if (step.id !== 4) return;
+      const normalize = (value?: string) => (value ? value.toString().toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
+      const beaker = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('beaker'));
+      const wash = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('wash') || (p.typeId ?? p.id).toString().includes('wash_bottle') || (p.typeId ?? p.id).toString().includes('wash-bottle'));
+      if (!beaker || !wash) return;
+
+      const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+      if (!surface) return;
+      const rect = surface.getBoundingClientRect();
+
+      // Preferred positions copied from the step-4 targets
+      const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
+      const targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
+      const targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
+      const targetWashY = Math.max(2, targetBeakerY - 28);
+
+      setEquipmentPositions(prev => {
+        const updated = prev.map(pos => {
+          if (pos.id === beaker.id) return { ...pos, x: targetBeakerX, y: targetBeakerY };
+          if (pos.id === wash.id) return { ...pos, x: targetWashX, y: targetWashY };
+          return pos;
+        });
+        // ensure beaker renders on top
+        const beakerItem = updated.find(p => p.id === beaker.id);
+        if (!beakerItem) return updated;
+        const others = updated.filter(p => p.id !== beaker.id);
+        return [...others, beakerItem];
+      });
+    } catch (e) { console.warn('align error', e); }
   };
 
   const getCurrentStepGuidance = () => {
@@ -618,6 +812,21 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     />
                   ))}
                 </div>
+              </div>
+            )}
+
+            {washAnimation && washAnimation.active && (
+              <div
+                aria-hidden
+                className="wash-animation-wrapper"
+                style={{ left: washAnimation.x, top: washAnimation.y, position: 'absolute', zIndex: 70 }}
+              >
+                <div className="wash-bottle">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none">
+                    <path d="M7 2h10v2h1v2l-1 2v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3V8L6 6V4h1V2z" stroke="#0f172a" strokeWidth="1" fill="#fff" />
+                  </svg>
+                </div>
+                <div className="wash-stream" aria-hidden style={{ width: 6, height: 60, background: 'linear-gradient(#e6f4ff,#cfefff)', borderRadius: 4, transform: 'rotate(15deg)', marginLeft: 12 }} />
               </div>
             )}
 
@@ -885,7 +1094,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               </div>
               <div className="text-xs text-gray-600 space-y-1">
                 <p><strong>Formula:</strong> m = M × V × MW</p>
-                <p><strong>Calculation:</strong> {(0.05 * 0.25 * 126.07).toFixed(4)} g = 0.05 M × 0.250 L × 126.07 g/mol</p>
+                <p><strong>Calculation:</strong> {(0.05 * 0.25 * 126.07).toFixed(4)} g = 0.05 M × 0.250 L �� 126.07 g/mol</p>
               </div>
             </CardContent>
           </Card>
