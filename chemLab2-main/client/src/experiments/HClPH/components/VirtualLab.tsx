@@ -262,7 +262,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                     onRemove={handleRemove}
                     allEquipmentPositions={equipmentOnBench.map(p => ({ id: p.id, x: p.position.x, y: p.position.y, chemicals: [] }))}
                     currentStep={currentStep}
-                    color={e.id === 'universal-indicator' ? (e as any).color : undefined}
+                    color={e.id === 'test-tube' ? (testTubeColor as any) : (e.id === 'universal-indicator' ? (e as any).color : undefined)}
                     volume={e.id === 'test-tube' ? testTubeVolume : undefined}
                     onInteract={(id) => { if (id.startsWith('hcl-')) openHclDialog(id); }}
                   />
