@@ -517,6 +517,15 @@ export const Equipment: React.FC<EquipmentProps> = ({
         break;
       case "oxalic_acid":
         return null;
+      case "wash_bottle":
+        return (
+          <button
+            onClick={() => onAction?.("rinse", id)}
+            className="text-xs bg-blue-400 text-white px-2 py-1 rounded hover:bg-blue-500"
+          >
+            Rinse Beaker
+          </button>
+        );
     }
     return null;
   };
