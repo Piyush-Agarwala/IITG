@@ -258,10 +258,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                     name={e.name}
                     icon={itemDef?.icon || <Beaker className="w-8 h-8" />}
                     position={e.position}
-                    onDrag={(id, x, y) => handleDrop(id, x, y, 'move')}
                     onRemove={handleRemove}
-                    allEquipmentPositions={equipmentOnBench.map(p => ({ id: p.id, x: p.position.x, y: p.position.y, chemicals: [] }))}
-                    currentStep={currentStep}
                     color={e.id === 'test-tube' ? testTubeColor : (e.id === 'universal-indicator' ? (e as any).color : undefined)}
                     volume={e.id === 'test-tube' ? testTubeVolume : undefined}
                     onInteract={(id) => { if (id.startsWith('hcl-')) openHclDialog(id); }}
