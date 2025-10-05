@@ -228,10 +228,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                 {items.map((eq) => (
                   <div key={eq.id} className="equipment-card" draggable onDragStart={(e) => { e.dataTransfer.setData('equipment', eq.id); }} onDoubleClick={() => { if (eq.id.startsWith('hcl-')) openHclDialog(eq.id); }}>
                     <div className="equipment-icon"><div className="equipment-icon-inner">{eq.icon}</div></div>
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-800">{eq.name}</div>
-                      
-                    </div>
+                    <div className="equipment-name mt-2">{eq.name}</div>
                     
                   </div>
                 ))}
