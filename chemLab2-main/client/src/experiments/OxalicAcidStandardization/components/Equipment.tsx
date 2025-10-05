@@ -381,7 +381,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className={`mx-auto mb-2 ${position ? "h-40" : "h-24"} w-auto object-contain pointer-events-none select-none`}
+                className={`mx-auto mb-2 ${position ? "h-40" : "h-24"} w-auto object-contain mix-blend-multiply pointer-events-none select-none`}
                 tolerance={245}
                 colorDiff={8}
                 draggable={false}
@@ -435,7 +435,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className="w-32 h-32 mx-auto mb-2 object-contain"
+                className="w-32 h-32 mx-auto mb-2 object-contain mix-blend-multiply pointer-events-none select-none"
                 tolerance={245}
                 colorDiff={8}
                 draggable={false}
