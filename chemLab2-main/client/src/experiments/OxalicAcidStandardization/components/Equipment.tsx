@@ -547,7 +547,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             name.toLowerCase().includes('volumetric-flask') ||
             name.toLowerCase().includes('flask')
           ) {
-            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fccda75b4063b4fe985feac502d383c08?format=webp&width=800";
+            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc62483aee73448e6934446dfd24d2875?format=webp&width=800";
           }
 
           e.dataTransfer.setData("text/plain", JSON.stringify(payload));
