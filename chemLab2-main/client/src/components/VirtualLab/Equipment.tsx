@@ -429,7 +429,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
     }
 
     // Use provided images for specific equipment types with bigger sizes
-    if (id === "test_tubes") {
+    if (id === "test_tubes" || id === "test-tube" || id === "test-tube") {
       // Check if test tube is being heated (positioned above hot water beaker in step 4)
       const isBeingHeated = () => {
         if (!position) return false;
@@ -858,7 +858,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
       const hasTestTubeNearby = () => {
         if (!position) return false;
         const testTube = allEquipmentPositions.find(
-          (pos) => pos.id === "test_tubes",
+          (pos) => pos.id === "test_tubes" || id === "test-tube" || pos.id === "test-tube",
         );
         if (!testTube) return false;
         const distance = Math.sqrt(
@@ -1926,7 +1926,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             e.preventDefault();
           }}
           className={`absolute bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center font-bold transition-colors shadow-lg hover:shadow-xl ${
-            id === "test_tubes"
+            id === "test_tubes" || id === "test-tube"
               ? "w-8 h-8 text-xs top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-white z-50" // Center of test tube
               : "w-6 h-6 text-xs -top-2 -right-2 z-30" // Default positioning for other equipment
           }`}
