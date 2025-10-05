@@ -740,7 +740,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
           {/* Bottom label */}
           {id === "test-tube" ? (
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
               25ml Test Tube
             </div>
           ) : (
