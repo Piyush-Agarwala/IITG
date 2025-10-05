@@ -305,18 +305,22 @@
 /* Equipment icon styles (custom for left equipment panel) */
 .equipment-item { }
 .equipment-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 0.5rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 0.75rem;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(241,248,255,0.8));
-  border: 1px solid rgba(59,130,246,0.12);
-  box-shadow: 0 6px 12px rgba(2,6,23,0.06);
+  background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+  border: 1px solid rgba(2, 6, 23, 0.06);
+  box-shadow:
+    0 1px 0 rgba(2, 6, 23, 0.02),
+    0 8px 20px rgba(2, 6, 23, 0.06),
+    0 0 0 6px rgba(59, 130, 246, 0.06);
   color: var(--science-blue);
 }
-.equipment-icon-inner { width: 24px; height: 24px; display:flex; align-items:center; justify-content:center; }
+.equipment-icon-inner { width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; }
 .equipment-name { @apply text-sm font-medium text-gray-700; }
 
 /* Equipment card container to match reference design */
@@ -324,14 +328,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 14px;
   border-radius: 0.75rem;
   background: #ffffff;
   border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 1px 0 rgba(2, 6, 23, 0.02), 0 8px 24px rgba(2, 6, 23, 0.06);
+  box-shadow: 0 1px 0 rgba(2, 6, 23, 0.02), 0 10px 28px rgba(2, 6, 23, 0.06);
   cursor: grab;
 }
-.equipment-card:hover { box-shadow: 0 1px 0 rgba(2,6,23,0.03), 0 12px 32px rgba(2,6,23,0.08); }
+.equipment-card:hover { box-shadow: 0 1px 0 rgba(2,6,23,0.03), 0 14px 36px rgba(2,6,23,0.08); }
 
 .lab-workbench {
   position: relative;
