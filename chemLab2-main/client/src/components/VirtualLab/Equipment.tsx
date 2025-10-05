@@ -436,6 +436,18 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
       // If positioned on the workbench render as a white card with the bottle tile and a label underneath
       if (position) {
+        // Match reference: label inside the white card for 0.1 M HCl bottle
+        if (id === "hcl-0-1m") {
+          return (
+            <div className="w-28 rounded-xl bg-white border border-gray-200 shadow-md p-3 flex flex-col items-center">
+              <div className="w-20 h-20 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
+                {icon}
+              </div>
+              <div className="mt-2 text-[13px] font-medium text-gray-700">0.1 M HCl</div>
+            </div>
+          );
+        }
+        // Default HCl card with caption below
         return (
           <div className="flex flex-col items-center">
             <div className="w-28 rounded-md bg-white border border-gray-200 shadow-sm p-3">
