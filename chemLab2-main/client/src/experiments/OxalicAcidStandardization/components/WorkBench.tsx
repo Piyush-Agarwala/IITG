@@ -252,7 +252,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: data.id,
           name: data.name,
-          imageSrc: data.imageSrc,
+          imageSrc: (step.id === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1782add6aa7c40cc992b82016876895e?format=webp&width=800'
+            : data.imageSrc,
         }
       ]);
       // Notify parent that this equipment was placed so it can be removed from the palette
@@ -300,7 +302,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: eq.id,
           name: eq.name,
-          imageSrc: undefined,
+          imageSrc: (step.id === 4 && eq.id === 'volumetric_flask')
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1782add6aa7c40cc992b82016876895e?format=webp&width=800'
+            : undefined,
         }
       ]);
       // Notify parent that this equipment was placed (hide from palette)
