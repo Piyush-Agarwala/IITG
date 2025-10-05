@@ -75,6 +75,35 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
 
+  // messages shown on the workbench area (transient)
+  const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
+  const messageTimeoutRef = useRef<number | null>(null);
+
+  const showMessage = useCallback((text: string) => {
+    setWorkbenchMessage(text);
+    if (messageTimeoutRef.current) {
+      window.clearTimeout(messageTimeoutRef.current);
+    }
+    messageTimeoutRef.current = window.setTimeout(() => {
+      setWorkbenchMessage(null);
+      messageTimeoutRef.current = null;
+    }, 8000);
+  }, []);
+
+  // Cleanup for timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (messageTimeoutRef.current) {
+        window.clearTimeout(messageTimeoutRef.current);
+        messageTimeoutRef.current = null;
+      }
+      if (pourTimeoutRef.current) {
+        window.clearTimeout(pourTimeoutRef.current);
+        pourTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   // show a colorful hint for first-time users; persist dismissal in localStorage
   const [showAcidHint, setShowAcidHint] = useState<boolean>(false);
   useEffect(() => {
@@ -89,20 +118,6 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     try { localStorage.setItem('seenAcidControl', '1'); } catch (e) {}
     setShowAcidHint(false);
   };
-
-  const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
-  const messageTimeoutRef = useRef<number | null>(null);
-
-  const showMessage = useCallback((text: string) => {
-    setWorkbenchMessage(text);
-    if (messageTimeoutRef.current) {
-      window.clearTimeout(messageTimeoutRef.current);
-    }
-    messageTimeoutRef.current = window.setTimeout(() => {
-      setWorkbenchMessage(null);
-      messageTimeoutRef.current = null;
-    }, 8000);
-  }, []);
 
   useEffect(() => {
     return () => {

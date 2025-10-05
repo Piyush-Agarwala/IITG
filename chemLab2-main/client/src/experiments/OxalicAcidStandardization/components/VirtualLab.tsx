@@ -569,6 +569,7 @@ function OxalicAcidVirtualLab({
     return () => window.removeEventListener('oxalic_image_shown', handler);
   }, [step.id, onStepComplete]);
 
+
   // Remove analytical balance from the workspace only when advancing from step 3 to step 4.
   // Do NOT notify the parent so the equipment palette remains unchanged.
   const prevStepRef = useRef<number | null>(null);
