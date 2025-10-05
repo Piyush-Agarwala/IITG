@@ -528,6 +528,17 @@ export const Equipment: React.FC<EquipmentProps> = ({
             payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F2cdb1bf8e78d4140840cb99a7f302fc8?format=webp&width=800";
           }
 
+          // Attach wash bottle image so when a wash bottle is dropped it shows the provided transparent image
+          if (
+            id === 'wash_bottle' ||
+            id === 'wash-bottle' ||
+            name.toLowerCase().includes('wash bottle') ||
+            name.toLowerCase().includes('wash-bottle') ||
+            name.toLowerCase().includes('wash')
+          ) {
+            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fbe18414e41004082b9629bd25c359dcb?format=webp&width=800";
+          }
+
           e.dataTransfer.setData("text/plain", JSON.stringify(payload));
         }}
         onMouseEnter={() => setIsHovered(true)}
