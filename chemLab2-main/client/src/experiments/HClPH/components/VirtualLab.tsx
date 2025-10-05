@@ -226,7 +226,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               </h3>
               <div className="space-y-3">
                 {items.map((eq) => (
-                  <div key={eq.id} className="p-3 border border-gray-200 rounded-lg bg-white shadow-sm flex items-center space-x-3" draggable onDragStart={(e) => { e.dataTransfer.setData('equipment', eq.id); }} onDoubleClick={() => { if (eq.id.startsWith('hcl-')) openHclDialog(eq.id); }}>
+                  <div key={eq.id} className="equipment-card" draggable onDragStart={(e) => { e.dataTransfer.setData('equipment', eq.id); }} onDoubleClick={() => { if (eq.id.startsWith('hcl-')) openHclDialog(eq.id); }}>
                     <div className="equipment-icon"><div className="equipment-icon-inner">{eq.icon}</div></div>
                     <div className="flex-1">
                       <div className="font-medium text-gray-800">{eq.name}</div>
