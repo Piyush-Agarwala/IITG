@@ -420,8 +420,22 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           if (d < minDist) { minDist = d; nearest = b; }
         });
 
-        // Start visual rinse animation positioned near the beaker
-        setWashAnimation({ x: (nearest.x || 0) + 20, y: (nearest.y || 0) - 60, active: true });
+        // Compute wash animation position using actual DOM bounding rect so the stream is over the beaker
+        const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+        let animX = (nearest.x || 0) + 20;
+        let animY = (nearest.y || 0) - 60;
+        if (surfaceEl) {
+          const beakerEl = surfaceEl.querySelector(`[data-equipment-id="${nearest.id}"]`) as HTMLElement | null;
+          const surfaceRect = surfaceEl.getBoundingClientRect();
+          if (beakerEl) {
+            const beakerRect = beakerEl.getBoundingClientRect();
+            animX = beakerRect.left - surfaceRect.left + beakerRect.width * 0.6;
+            animY = beakerRect.top - surfaceRect.top - Math.max(40, beakerRect.height * 0.6);
+          }
+        }
+
+        // Start visual rinse animation positioned above the beaker
+        setWashAnimation({ x: animX, y: animY, active: true });
         showMessage('Rinsing the beaker...');
 
         // After animation completes, clear chemicals in the beaker visually
@@ -821,12 +835,23 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 className="wash-animation-wrapper"
                 style={{ left: washAnimation.x, top: washAnimation.y, position: 'absolute', zIndex: 70 }}
               >
-                <div className="wash-bottle">
+                <div className="wash-bottle" style={{ transform: 'translateX(-6px) rotate(-8deg)' }}>
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none">
                     <path d="M7 2h10v2h1v2l-1 2v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3V8L6 6V4h1V2z" stroke="#0f172a" strokeWidth="1" fill="#fff" />
                   </svg>
                 </div>
-                <div className="wash-stream" aria-hidden style={{ width: 6, height: 60, background: 'linear-gradient(#e6f4ff,#cfefff)', borderRadius: 4, transform: 'rotate(15deg)', marginLeft: 12 }} />
+
+                <div className="wash-drops" aria-hidden>
+                  {[0,1,2,3,4].map((i) => (
+                    <span
+                      key={i}
+                      className="wash-drop"
+                      style={{ left: `${40 + (i * 7)}%`, animationDelay: `${i * 0.12}s` }}
+                    />
+                  ))}
+                </div>
+
+                <div className="wash-splash" aria-hidden />
               </div>
             )}
 

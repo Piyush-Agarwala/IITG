@@ -483,7 +483,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (chemicals.some(c => c.id === "oxalic_acid")) {
           return (
             <button
-              onClick={() => onAction?.("weigh", id)}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => { e.stopPropagation(); onAction?.("weigh", id); }}
               className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
             >
               Record Weight
@@ -495,7 +496,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (chemicals.length > 0 && !preparationState?.dissolved) {
           return (
             <button
-              onClick={() => onAction?.("stir", id)}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => { e.stopPropagation(); onAction?.("stir", id); }}
               className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
             >
               Stir
@@ -507,7 +509,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (preparationState?.nearMark && !preparationState?.finalVolume) {
           return (
             <button
-              onClick={() => onAction?.("adjust_volume", id)}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => { e.stopPropagation(); onAction?.("adjust_volume", id); }}
               className="text-xs bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
             >
               Make to Mark
@@ -520,7 +523,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
       case "wash_bottle":
         return (
           <button
-            onClick={() => onAction?.("rinse", id)}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); onAction?.("rinse", id); }}
             className="text-xs bg-blue-400 text-white px-2 py-1 rounded hover:bg-blue-500"
           >
             Rinse Beaker
@@ -631,8 +635,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
     >
       {getEquipmentContent()}
 
-      {/* Action Button */}
-      <div className="mt-2">
+      {/* Action Button: render as absolute overlay so clicks are not intercepted by other layers */}
+      <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 6, zIndex: 1100, pointerEvents: 'auto' }}>
         {getActionButton()}
       </div>
 

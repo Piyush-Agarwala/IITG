@@ -86,6 +86,7 @@ function OxalicAcidVirtualLab({
   const [showErrorAnalysis, setShowErrorAnalysis] = useState(false);
   const stepOneAutoProgressedRef = useRef(false);
   const stepTwoAlignedRef = useRef(false);
+  const stepFourAlignedRef = useRef(false);
 
   const addResult = useCallback((result: Omit<Result, "id" | "timestamp">) => {
     const newResult: Result = {
@@ -554,6 +555,96 @@ function OxalicAcidVirtualLab({
       }
     };
   }, [equipmentPositions, step.id, preparationState.oxalicAcidAdded, onStepComplete]);
+
+  useEffect(() => {
+    if (step.id !== 4) {
+      stepFourAlignedRef.current = false;
+      return;
+    }
+
+    // If we've already aligned for this step, skip
+    if (stepFourAlignedRef.current) {
+      return;
+    }
+
+    const normalize = (value?: string) =>
+      value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "";
+
+    const hasBeaker = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("beaker"));
+    const hasWash = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("wash"));
+
+    if (!hasBeaker || !hasWash) {
+      stepFourAlignedRef.current = false;
+      return;
+    }
+
+    let frame: number | null = null;
+    const attemptAlignment = () => {
+      const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+      if (!surface) {
+        frame = window.requestAnimationFrame(attemptAlignment);
+        return;
+      }
+
+      const els = Array.from(surface.querySelectorAll('[data-equipment-type]')) as HTMLElement[];
+      const beakerEl = els.find(e => (e.getAttribute('data-equipment-type')||'').toLowerCase().includes('beaker'));
+      const washEl = els.find(e => (e.getAttribute('data-equipment-type')||'').toLowerCase().includes('wash'));
+
+      if (!beakerEl || !washEl) {
+        frame = window.requestAnimationFrame(attemptAlignment);
+        return;
+      }
+
+      const surfaceRect = surface.getBoundingClientRect();
+      const beakerRect = beakerEl.getBoundingClientRect();
+      const washRect = washEl.getBoundingClientRect();
+
+      const targetBeakerX = Math.max(0, surfaceRect.width * 0.35 - beakerRect.width / 2);
+      const targetBeakerY = Math.max(0, surfaceRect.height * 0.6 - beakerRect.height / 2);
+      const targetWashX = targetBeakerX + beakerRect.width * 0.5;
+      const targetWashY = targetBeakerY - washRect.height * 0.9;
+
+      setEquipmentPositions(prev => {
+        let changed = false;
+        const next = prev.map(pos => {
+          const key = (pos.typeId ?? pos.id).toLowerCase();
+          if (key.includes("beaker")) {
+            if (Math.abs(pos.x - targetBeakerX) > 1 || Math.abs(pos.y - targetBeakerY) > 1) {
+              changed = true;
+              return { ...pos, x: targetBeakerX, y: targetBeakerY };
+            }
+            return pos;
+          }
+          if (key.includes("wash")) {
+            if (Math.abs(pos.x - targetWashX) > 1 || Math.abs(pos.y - targetWashY) > 1) {
+              changed = true;
+              return { ...pos, x: targetWashX, y: targetWashY };
+            }
+            return pos;
+          }
+          return pos;
+        });
+        return changed ? next : prev;
+      });
+
+      const beakerAligned = Math.abs(beakerRect.left - (surfaceRect.left + targetBeakerX)) < 12 &&
+        Math.abs(beakerRect.top - (surfaceRect.top + targetBeakerY)) < 12;
+      const washAligned = Math.abs(washRect.left - (surfaceRect.left + targetWashX)) < 12 &&
+        Math.abs(washRect.top - (surfaceRect.top + targetWashY)) < 12;
+
+      if (beakerAligned && washAligned && !stepFourAlignedRef.current) {
+        stepFourAlignedRef.current = true;
+        // alignment complete for step 4
+      }
+    };
+
+    frame = window.requestAnimationFrame(attemptAlignment);
+    return () => {
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [equipmentPositions, step.id]);
 
   // Listen for the workbench image shown event and auto-complete step 3
   useEffect(() => {

@@ -476,3 +476,60 @@
   70% { opacity: 1; }
   100% { transform: translateY(86px) scale(0.6); opacity: 0; }
 }
+
+/* Wash/rinse animation */
+.wash-animation-wrapper {
+  pointer-events: none;
+  transform: translate(-50%, 0);
+}
+.wash-bottle {
+  width: 40px;
+  height: 40px;
+  display: block;
+  margin: 0 auto;
+  animation: wash-bob 2.2s ease-in-out infinite;
+}
+@keyframes wash-bob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px) rotate(-6deg); }
+  100% { transform: translateY(0); }
+}
+.wash-drops {
+  position: absolute;
+  left: 50%;
+  top: 28px;
+  width: 120px;
+  height: 120px;
+  transform: translateX(-50%);
+}
+.wash-drop {
+  position: absolute;
+  width: 6px;
+  height: 10px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(200,235,255,0.95));
+  opacity: 0.95;
+  animation: wash-fall 0.8s ease-in infinite;
+}
+@keyframes wash-fall {
+  0% { transform: translateY(-6px) scale(0.8); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateY(72px) scale(0.6); opacity: 0; }
+}
+.wash-splash {
+  width: 56px;
+  height: 18px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.9), rgba(135,206,235,0.6));
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 78px;
+  animation: splash 0.9s ease-out both;
+  opacity: 0.95;
+}
+@keyframes splash {
+  0% { transform: translateX(-50%) scale(0.2); opacity: 0; }
+  40% { transform: translateX(-50%) scale(1.1); opacity: 0.95; }
+  100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+}
