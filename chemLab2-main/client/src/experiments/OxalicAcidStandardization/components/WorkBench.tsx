@@ -431,6 +431,47 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     }
   };
 
+  // Auto-align beaker and wash bottle when step 4 is active and both are present
+  const washAlignRef = useRef(false);
+  useEffect(() => {
+    if (step.id !== 4) {
+      washAlignRef.current = false;
+      return;
+    }
+
+    const normalize = (value?: string) => (value ? value.toString().toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
+    const beaker = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('beaker'));
+    const wash = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('wash') || (p.typeId ?? p.id).toString().includes('wash_bottle') || (p.typeId ?? p.id).toString().includes('wash-bottle'));
+
+    if (!beaker || !wash) {
+      washAlignRef.current = false;
+      return;
+    }
+
+    // Avoid re-aligning repeatedly
+    if (washAlignRef.current) return;
+
+    const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+    if (!surface) return;
+    const rect = surface.getBoundingClientRect();
+
+    // Target beaker position: slightly left of center
+    const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.35));
+    const targetBeakerY = Math.max(16, Math.floor(rect.height * 0.44));
+
+    // Wash bottle above-right of beaker
+    const targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
+    const targetWashY = Math.max(8, targetBeakerY - 64);
+
+    setEquipmentPositions(prev => prev.map(pos => {
+      if (pos.id === beaker.id) return { ...pos, x: targetBeakerX, y: targetBeakerY };
+      if (pos.id === wash.id) return { ...pos, x: targetWashX, y: targetWashY };
+      return pos;
+    }));
+
+    washAlignRef.current = true;
+  }, [equipmentPositions, step.id]);
+
   const getCurrentStepGuidance = () => {
     switch (step.id) {
       case 1:
@@ -940,7 +981,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               </div>
               <div className="text-xs text-gray-600 space-y-1">
                 <p><strong>Formula:</strong> m = M × V × MW</p>
-                <p><strong>Calculation:</strong> {(0.05 * 0.25 * 126.07).toFixed(4)} g = 0.05 M × 0.250 L × 126.07 g/mol</p>
+                <p><strong>Calculation:</strong> {(0.05 * 0.25 * 126.07).toFixed(4)} g = 0.05 M × 0.250 L �� 126.07 g/mol</p>
               </div>
             </CardContent>
           </Card>
