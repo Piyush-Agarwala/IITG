@@ -249,24 +249,24 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
           {/* Workbench */}
           <div className="lg:col-span-6">
             <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={equipmentOnBench.find(e => e.id === 'universal-indicator') ? testPH : undefined}>
-              {equipmentOnBench.map((e) => (
-                <div key={e.id} style={{ position: 'absolute', left: e.position.x, top: e.position.y, transform: 'translate(-50%, -50%)' }}>
-                  <div className="relative">
-                    <div className="w-16 h-16 flex items-center justify-center text-blue-600">
-                      {items.find((i) => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />}
-                    </div>
-                    {e.id === 'test-tube' && (
-                      <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-10 h-24 rounded-b-md overflow-hidden border border-blue-200 bg-white/80">
-                        <div className="absolute bottom-0 left-0 right-0" style={{ height: `${Math.min(100, (testTubeVolume/25)*100)}%`, background: testTubeColor || 'transparent' }} />
-                      </div>
-                    )}
-                    {/* Color tint for pH paper */}
-                    {e.id === 'universal-indicator' && (e as any).color && (
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-14 h-2 rounded" style={{ background: (e as any).color }} />
-                    )}
-                  </div>
-                </div>
-              ))}
+              {equipmentOnBench.map((e) => {
+                const itemDef = items.find((i) => i.id === e.id);
+                return (
+                  <RenderEquipment
+                    key={e.id}
+                    id={e.id}
+                    name={e.name}
+                    icon={itemDef?.icon || <Beaker className="w-8 h-8" />}
+                    position={e.position}
+                    onDrag={(id, x, y) => handleDrop(id, x, y, 'move')}
+                    onRemove={handleRemove}
+                    allEquipmentPositions={equipmentOnBench.map(p => ({ id: p.id, x: p.position.x, y: p.position.y, chemicals: [] }))}
+                    currentStep={currentStep}
+                    color={e.id === 'universal-indicator' ? (e as any).color : undefined}
+                    volume={e.id === 'test-tube' ? testTubeVolume : undefined}
+                  />
+                );
+              })}
 
               {/* Contextual measure button near pH paper */}
               {equipmentOnBench.find(e => e.id === 'universal-indicator') && (() => {
