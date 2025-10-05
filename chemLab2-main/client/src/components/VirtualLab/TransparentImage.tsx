@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import React, { useEffect, useState } from "react";
-
 interface TransparentImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   tolerance?: number; // 0-255, higher = more pixels treated as white
