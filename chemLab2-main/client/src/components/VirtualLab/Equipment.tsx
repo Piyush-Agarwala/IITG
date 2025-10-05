@@ -430,13 +430,22 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
     // Use provided images for specific equipment types with bigger sizes
 
-    // Render reagent bottles (HCl variants) as square bottle tiles on workbench
+    // Render reagent bottles (HCl variants) as styled tiles like cobalt/HCl in EquilibriumShift
     if (id.startsWith("hcl-") || id.startsWith("hcl_")) {
+      const concentration = id === "hcl-0-1m" ? "HCl 0.1M" : id === "hcl-0-01m" ? "HCl 0.01M" : id === "hcl-0-001m" ? "HCl 0.001M" : "HCl";
       return (
         <div className="flex flex-col items-center">
-          <div className="w-24 h-24 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
-            {icon}
+          <div
+            className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm"
+            style={{ backgroundColor: '#fffacd' }}
+          >
+            <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-yellow-200 to-transparent opacity-60" />
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-600 opacity-60">
+              <Droplet className="w-7 h-7" />
+            </div>
           </div>
+          <span className="text-xs font-medium text-center">{name}</span>
+          <span className="text-xs text-yellow-600 font-semibold">{concentration}</span>
         </div>
       );
     }
