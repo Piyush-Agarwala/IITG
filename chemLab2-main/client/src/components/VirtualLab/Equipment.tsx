@@ -429,6 +429,18 @@ export const Equipment: React.FC<EquipmentProps> = ({
     }
 
     // Use provided images for specific equipment types with bigger sizes
+
+    // Render reagent bottles (HCl variants) as square bottle tiles on workbench
+    if (id.startsWith("hcl-") || id.startsWith("hcl_")) {
+      return (
+        <div className="flex flex-col items-center">
+          <div className="w-24 h-24 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
+            {icon}
+          </div>
+        </div>
+      );
+    }
+
     if (id === "test_tubes" || id === "test-tube" || id === "test-tube") {
       // Check if test tube is being heated (positioned above hot water beaker in step 4)
       const isBeingHeated = () => {
