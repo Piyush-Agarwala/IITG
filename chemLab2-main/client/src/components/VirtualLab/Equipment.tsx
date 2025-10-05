@@ -646,12 +646,19 @@ export const Equipment: React.FC<EquipmentProps> = ({
         }
       }, [cooling, coolingStartTime, currentStep]);
 
+      const currentVolumeMl = (finalVolumeUsed ?? (typeof volume === 'number' ? volume : Math.max(0, chemicals.reduce((sum, c) => sum + (c.amount || 0), 0))));
       return (
         <div className="relative group">
-          {/* Volume label above test tube */}
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-300 shadow-sm">
-            <span className="text-xs font-semibold text-gray-700">25ml Test Tube</span>
-          </div>
+          {/* Top badge */}
+          {id === "test-tube" ? (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-300 shadow-sm">
+              <span className="text-xs font-semibold text-gray-700">{`${Number(currentVolumeMl || 0).toFixed(1)} mL`}</span>
+            </div>
+          ) : (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-300 shadow-sm">
+              <span className="text-xs font-semibold text-gray-700">25ml Test Tube</span>
+            </div>
+          )}
 
           <img
             key={getTestTubeImage()} // Force re-render when image changes
@@ -692,10 +699,16 @@ export const Equipment: React.FC<EquipmentProps> = ({
             }}
           />
 
-          {/* Current volume badge (shows Final Volume Used if available) */}
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
-            {`${(finalVolumeUsed ?? Math.max(0, chemicals.reduce((sum, c) => sum + (c.amount || 0), 0))).toFixed(1)} mL`}
-          </div>
+          {/* Bottom label */}
+          {id === "test-tube" ? (
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
+              25ml Test Tube
+            </div>
+          ) : (
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
+              {`${Number(currentVolumeMl || 0).toFixed(1)} mL`}
+            </div>
+          )}
 
           {/* Pink cobalt animation effects */}
           {isCobaltAnimation && (
