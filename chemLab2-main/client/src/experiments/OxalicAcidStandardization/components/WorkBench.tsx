@@ -420,8 +420,22 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           if (d < minDist) { minDist = d; nearest = b; }
         });
 
-        // Start visual rinse animation positioned near the beaker
-        setWashAnimation({ x: (nearest.x || 0) + 20, y: (nearest.y || 0) - 60, active: true });
+        // Compute wash animation position using actual DOM bounding rect so the stream is over the beaker
+        const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+        let animX = (nearest.x || 0) + 20;
+        let animY = (nearest.y || 0) - 60;
+        if (surfaceEl) {
+          const beakerEl = surfaceEl.querySelector(`[data-equipment-id="${nearest.id}"]`) as HTMLElement | null;
+          const surfaceRect = surfaceEl.getBoundingClientRect();
+          if (beakerEl) {
+            const beakerRect = beakerEl.getBoundingClientRect();
+            animX = beakerRect.left - surfaceRect.left + beakerRect.width * 0.6;
+            animY = beakerRect.top - surfaceRect.top - Math.max(40, beakerRect.height * 0.6);
+          }
+        }
+
+        // Start visual rinse animation positioned above the beaker
+        setWashAnimation({ x: animX, y: animY, active: true });
         showMessage('Rinsing the beaker...');
 
         // After animation completes, clear chemicals in the beaker visually
