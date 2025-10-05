@@ -231,6 +231,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           ],
         }
       ]);
+      // small delay then align beaker & wash bottle for step 4
+      setTimeout(() => alignBeakerAndWash(true), 60);
 
       // Notify parent that this chemical bottle was placed so the chemical can be removed from the palette
       try {
@@ -273,6 +275,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             : data.imageSrc,
         }
       ]);
+      setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed so it can be removed from the palette
       if (onEquipmentPlaced) onEquipmentPlaced(data.id);
       return;
@@ -296,6 +299,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           imageSrc: raw,
         }
       ]);
+      setTimeout(() => alignBeakerAndWash(true), 60);
       return;
     }
 
@@ -323,6 +327,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             : undefined,
         }
       ]);
+      setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed (hide from palette)
       if (onEquipmentPlaced) onEquipmentPlaced(eq.id);
       return;
@@ -545,6 +550,40 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     washAlignRef.current = true;
   }, [equipmentPositions, step.id]);
+
+  // Alignment helper that forces the beaker and wash bottle into the step-4 layout.
+  const alignBeakerAndWash = (force = false) => {
+    try {
+      if (step.id !== 4) return;
+      const normalize = (value?: string) => (value ? value.toString().toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
+      const beaker = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('beaker'));
+      const wash = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('wash') || (p.typeId ?? p.id).toString().includes('wash_bottle') || (p.typeId ?? p.id).toString().includes('wash-bottle'));
+      if (!beaker || !wash) return;
+
+      const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+      if (!surface) return;
+      const rect = surface.getBoundingClientRect();
+
+      // Preferred positions copied from the step-4 targets
+      const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
+      const targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
+      const targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
+      const targetWashY = Math.max(2, targetBeakerY - 28);
+
+      setEquipmentPositions(prev => {
+        const updated = prev.map(pos => {
+          if (pos.id === beaker.id) return { ...pos, x: targetBeakerX, y: targetBeakerY };
+          if (pos.id === wash.id) return { ...pos, x: targetWashX, y: targetWashY };
+          return pos;
+        });
+        // ensure beaker renders on top
+        const beakerItem = updated.find(p => p.id === beaker.id);
+        if (!beakerItem) return updated;
+        const others = updated.filter(p => p.id !== beaker.id);
+        return [...others, beakerItem];
+      });
+    } catch (e) { console.warn('align error', e); }
+  };
 
   const getCurrentStepGuidance = () => {
     switch (step.id) {
