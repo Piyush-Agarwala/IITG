@@ -274,7 +274,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                 const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator')!;
                 return (
                   <div key="measure-button" className="measure-button-wrapper" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
-                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${shouldBlinkMeasure ? 'animate-pulse' : ''}`} onClick={testPH}>
+                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm measure-action-btn ${shouldBlinkMeasure ? 'blink-until-pressed' : ''}`} onClick={testPH} aria-pressed={shouldBlinkMeasure}>
                       MEASURE
                     </Button>
                   </div>
