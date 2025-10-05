@@ -230,7 +230,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                     <div className="equipment-icon"><div className="equipment-icon-inner">{eq.icon}</div></div>
                     <div className="flex-1">
                       <div className="font-medium text-gray-800">{eq.name}</div>
-                      <div className="text-xs text-gray-500">Drag to workbench</div>
+                      
                     </div>
                     {eq.id.startsWith('hcl-') && (
                       <Button size="sm" variant="outline" onClick={() => openHclDialog(eq.id)}>Add</Button>
