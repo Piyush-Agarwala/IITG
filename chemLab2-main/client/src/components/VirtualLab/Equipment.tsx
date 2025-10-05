@@ -9,42 +9,43 @@ import {
 import TransparentImage from "./TransparentImage";
 
 interface EquipmentProps {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  onDrag: (id: string, x: number, y: number) => void;
-  position: { x: number; y: number } | null;
-  chemicals?: Array<{
     id: string;
     name: string;
-    color: string;
-    amount: number;
-    concentration: string;
-  }>;
-  onChemicalDrop?: (
-    chemicalId: string,
-    equipmentId: string,
-    amount: number,
-  ) => void;
-  onRemove?: (id: string) => void;
-  cobaltReactionState?: {
-    cobaltChlorideAdded: boolean;
-    distilledWaterAdded: boolean;
-    stirrerActive: boolean;
-    colorTransition: "blue" | "transitioning" | "pink";
-    step3WaterAdded: boolean;
-  };
-  allEquipmentPositions?: Array<{
-    id: string;
-    x: number;
-    y: number;
-    chemicals: any[];
-  }>;
-  currentStep?: number;
-  disabled?: boolean;
-  isCobaltAnimation?: boolean;
-  color?: string;
-  volume?: number;
+    icon: React.ReactNode;
+    onDrag: (id: string, x: number, y: number) => void;
+    position: { x: number; y: number } | null;
+    chemicals?: Array<{
+      id: string;
+      name: string;
+      color: string;
+      amount: number;
+      concentration: string;
+    }>;
+    onChemicalDrop?: (
+      chemicalId: string,
+      equipmentId: string,
+      amount: number,
+    ) => void;
+    onRemove?: (id: string) => void;
+    cobaltReactionState?: {
+      cobaltChlorideAdded: boolean;
+      distilledWaterAdded: boolean;
+      stirrerActive: boolean;
+      colorTransition: "blue" | "transitioning" | "pink";
+      step3WaterAdded: boolean;
+    };
+    allEquipmentPositions?: Array<{
+      id: string;
+      x: number;
+      y: number;
+      chemicals: any[];
+    }>;
+    currentStep?: number;
+    disabled?: boolean;
+    isCobaltAnimation?: boolean;
+    color?: string;
+    volume?: number;
+    onInteract?: (id: string) => void;
 }
 
 export const Equipment: React.FC<EquipmentProps> = ({
@@ -63,6 +64,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
   isCobaltAnimation = false,
   color,
   volume,
+  onInteract,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isDropping, setIsDropping] = useState(false);
@@ -439,7 +441,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         // Match reference: all HCl variants render as a white card with the bottle and concentration label inside
         const insideLabel = id === "hcl-0-1m" ? "0.1 M HCl" : id === "hcl-0-01m" ? "0.01 M HCl" : id === "hcl-0-001m" ? "0.001 M HCl" : concentration;
         return (
-          <div className="w-28 rounded-xl bg-white border border-gray-200 shadow-md p-3 flex flex-col items-center">
+          <div className="w-28 rounded-xl bg-white border border-gray-200 shadow-md p-3 flex flex-col items-center cursor-pointer" onClick={() => onInteract && onInteract(id)}>
             <div className="w-20 h-20 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
               {icon}
             </div>
