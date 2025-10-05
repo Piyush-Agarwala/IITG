@@ -73,6 +73,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [acidAmount, setAcidAmount] = useState<string>("");
   // pouring animation state when adding acid into the weighing boat
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
+  const [washAnimation, setWashAnimation] = useState<{ x: number; y: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
 
   // messages shown on the workbench area (transient)
@@ -381,13 +382,52 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     setEquipmentPositions(prev => prev.filter(pos => pos.id !== id));
   };
 
-  const handleEquipmentAction = (action: string) => {
+  const handleEquipmentAction = (action: string, equipmentId?: string) => {
     switch (action) {
       case "weigh":
       case "stir":
       case "adjust_volume":
         onStepAction();
         break;
+      case "rinse": {
+        if (!equipmentId) {
+          showMessage('No wash bottle selected.');
+          return;
+        }
+        const bottle = equipmentPositions.find(p => p.id === equipmentId);
+        if (!bottle) {
+          showMessage('Wash bottle is not on the workbench.');
+          return;
+        }
+
+        // Find nearest beaker
+        const beakers = equipmentPositions.filter(p => ((p.typeId ?? p.id) + '').toLowerCase().includes('beaker'));
+        if (beakers.length === 0) {
+          showMessage('Place a beaker on the workbench to rinse.');
+          return;
+        }
+        let nearest = beakers[0];
+        let minDist = Number.POSITIVE_INFINITY;
+        beakers.forEach(b => {
+          const dx = (b.x || 0) - (bottle.x || 0);
+          const dy = (b.y || 0) - (bottle.y || 0);
+          const d = Math.hypot(dx, dy);
+          if (d < minDist) { minDist = d; nearest = b; }
+        });
+
+        // Start visual rinse animation positioned near the beaker
+        setWashAnimation({ x: (nearest.x || 0) + 20, y: (nearest.y || 0) - 60, active: true });
+        showMessage('Rinsing the beaker...');
+
+        // After animation completes, clear chemicals in the beaker visually
+        window.setTimeout(() => {
+          setEquipmentPositions(prev => prev.map(pos => pos.id === nearest.id ? { ...pos, chemicals: [] } : pos));
+          setWashAnimation(null);
+          showMessage('Beaker rinsed.');
+        }, 2200);
+
+        break;
+      }
     }
   };
 
@@ -618,6 +658,21 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     />
                   ))}
                 </div>
+              </div>
+            )}
+
+            {washAnimation && washAnimation.active && (
+              <div
+                aria-hidden
+                className="wash-animation-wrapper"
+                style={{ left: washAnimation.x, top: washAnimation.y, position: 'absolute', zIndex: 70 }}
+              >
+                <div className="wash-bottle">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none">
+                    <path d="M7 2h10v2h1v2l-1 2v6a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3V8L6 6V4h1V2z" stroke="#0f172a" strokeWidth="1" fill="#fff" />
+                  </svg>
+                </div>
+                <div className="wash-stream" aria-hidden style={{ width: 6, height: 60, background: 'linear-gradient(#e6f4ff,#cfefff)', borderRadius: 4, transform: 'rotate(15deg)', marginLeft: 12 }} />
               </div>
             )}
 
