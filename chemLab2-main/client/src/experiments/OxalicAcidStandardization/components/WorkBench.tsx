@@ -568,20 +568,6 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               return null;
             })}
 
-            {/* Washing overlay for step 4 sequence */}
-            {washing && washing.active && (
-              <div
-                aria-hidden
-                className="wash-animation"
-                style={{ left: washing.x, top: washing.y, position: 'absolute', zIndex: 80 }}
-              >
-                <div className="w-28 h-28 rounded-full bg-gradient-to-b from-blue-100 to-transparent opacity-90 flex items-end justify-center pointer-events-none" style={{ transform: 'translate(-10px, -20px)' }}>
-                  <div className="w-2 h-12 bg-blue-300 rounded-full animate-pulse" />
-                </div>
-                <div className="text-xs mt-1 bg-white bg-opacity-80 p-1 rounded shadow">Washing...</div>
-              </div>
-            )}
-
             {pouring && pouring.active && (
               <div
                 aria-hidden
