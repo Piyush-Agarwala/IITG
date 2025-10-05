@@ -539,6 +539,17 @@ export const Equipment: React.FC<EquipmentProps> = ({
             payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fbe18414e41004082b9629bd25c359dcb?format=webp&width=800";
           }
 
+          // Attach volumetric flask image for drops (use transparent PNG/WebP)
+          if (
+            id === 'volumetric_flask' ||
+            id === 'volumetric-flask' ||
+            name.toLowerCase().includes('volumetric flask') ||
+            name.toLowerCase().includes('volumetric-flask') ||
+            name.toLowerCase().includes('flask')
+          ) {
+            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fccda75b4063b4fe985feac502d383c08?format=webp&width=800";
+          }
+
           e.dataTransfer.setData("text/plain", JSON.stringify(payload));
         }}
         onMouseEnter={() => setIsHovered(true)}
