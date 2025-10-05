@@ -78,7 +78,7 @@ interface EquipmentProps {
   ) => void;
   onRemove?: (id: string) => void;
   preparationState?: SolutionPreparationState;
-  onAction?: (action: string) => void;
+  onAction?: (action: string, equipmentId?: string) => void;
   stepId?: number;
 }
 
@@ -483,7 +483,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (chemicals.some(c => c.id === "oxalic_acid")) {
           return (
             <button
-              onClick={() => onAction?.("weigh")}
+              onClick={() => onAction?.("weigh", id)}
               className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
             >
               Record Weight
@@ -495,7 +495,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (chemicals.length > 0 && !preparationState?.dissolved) {
           return (
             <button
-              onClick={() => onAction?.("stir")}
+              onClick={() => onAction?.("stir", id)}
               className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
             >
               Stir
@@ -507,7 +507,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         if (preparationState?.nearMark && !preparationState?.finalVolume) {
           return (
             <button
-              onClick={() => onAction?.("adjust_volume")}
+              onClick={() => onAction?.("adjust_volume", id)}
               className="text-xs bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
             >
               Make to Mark
