@@ -469,7 +469,9 @@ function ChemicalEquilibriumVirtualLab({
                     tabIndex={0}
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded text-blue-600">{equipment.icon}</div>
+                      <div className="equipment-icon">
+                        <div className="equipment-icon-inner">{equipment.icon}</div>
+                      </div>
                       <div className="text-sm font-medium text-gray-700">{equipment.name}</div>
                     </div>
                     <div>
