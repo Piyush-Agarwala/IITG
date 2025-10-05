@@ -1346,7 +1346,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         <div className="relative">
           {/* Use processed image with white background removed when possible and enlarge on workbench */}
           <TransparentImage
-            src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Feedcdd4c2aa14b9f8222c4bea5a57b98?format=webp&width=800"
+            src="/assets/beaker.svg"
             alt="Beaker"
             className={`w-36 h-36 object-contain drop-shadow-lg transition-transform duration-200 ${isDragging ? "scale-105" : ""}`}
             tolerance={245}

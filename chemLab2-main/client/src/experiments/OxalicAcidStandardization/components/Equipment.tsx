@@ -381,7 +381,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className={`mx-auto mb-2 ${position ? "h-40" : "h-24"} w-auto object-contain pointer-events-none select-none`}
+                className={`mx-auto mb-2 ${position ? "h-40" : "h-24"} w-auto object-contain mix-blend-multiply pointer-events-none select-none`}
                 tolerance={245}
                 colorDiff={8}
                 draggable={false}
@@ -435,7 +435,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className="w-32 h-32 mx-auto mb-2 object-contain"
+                className="w-32 h-32 mx-auto mb-2 object-contain mix-blend-multiply pointer-events-none select-none"
                 tolerance={245}
                 colorDiff={8}
                 draggable={false}
@@ -528,6 +528,28 @@ export const Equipment: React.FC<EquipmentProps> = ({
             payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F2cdb1bf8e78d4140840cb99a7f302fc8?format=webp&width=800";
           }
 
+          // Attach wash bottle image so when a wash bottle is dropped it shows the provided transparent image
+          if (
+            id === 'wash_bottle' ||
+            id === 'wash-bottle' ||
+            name.toLowerCase().includes('wash bottle') ||
+            name.toLowerCase().includes('wash-bottle') ||
+            name.toLowerCase().includes('wash')
+          ) {
+            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fbe18414e41004082b9629bd25c359dcb?format=webp&width=800";
+          }
+
+          // Attach volumetric flask image for drops (use transparent PNG/WebP)
+          if (
+            id === 'volumetric_flask' ||
+            id === 'volumetric-flask' ||
+            name.toLowerCase().includes('volumetric flask') ||
+            name.toLowerCase().includes('volumetric-flask') ||
+            name.toLowerCase().includes('flask')
+          ) {
+            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fccda75b4063b4fe985feac502d383c08?format=webp&width=800";
+          }
+
           e.dataTransfer.setData("text/plain", JSON.stringify(payload));
         }}
         onMouseEnter={() => setIsHovered(true)}
@@ -541,11 +563,10 @@ export const Equipment: React.FC<EquipmentProps> = ({
     );
   }
 
-  const containerClass = isAnalytical
+  const hasCustomImage = !!imageSrc || (position as any)?.isBottle;
+  const containerClass = isAnalytical || isWeighingBoat || hasCustomImage
     ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-transform ${isDragging ? 'scale-105' : ''}`
-    : isWeighingBoat
-      ? `absolute bg-transparent p-0 border-0 shadow-none cursor-move select-none transition-transform ${isDragging ? 'scale-105' : ''}`
-      : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
+    : `absolute bg-white rounded-lg border-2 p-3 shadow-lg cursor-move select-none transition-all ${isDragging ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-300 hover:border-blue-400'}`;
 
   return (
     <div
