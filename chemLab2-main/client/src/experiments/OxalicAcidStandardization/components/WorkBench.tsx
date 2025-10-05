@@ -78,6 +78,20 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [washing, setWashing] = useState<{ x: number; y: number; active: boolean } | null>(null);
   const washTransferRef = useRef(false);
 
+  const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
+  const messageTimeoutRef = useRef<number | null>(null);
+
+  const showMessage = useCallback((text: string) => {
+    setWorkbenchMessage(text);
+    if (messageTimeoutRef.current) {
+      window.clearTimeout(messageTimeoutRef.current);
+    }
+    messageTimeoutRef.current = window.setTimeout(() => {
+      setWorkbenchMessage(null);
+      messageTimeoutRef.current = null;
+    }, 8000);
+  }, []);
+
   // When on step 4 and required equipment (beaker, wash bottle, weighing boat) are present,
   // run a short sequence: wash the beaker, then transfer acid from the weighing boat into the beaker.
   useEffect(() => {
@@ -166,20 +180,6 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     try { localStorage.setItem('seenAcidControl', '1'); } catch (e) {}
     setShowAcidHint(false);
   };
-
-  const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
-  const messageTimeoutRef = useRef<number | null>(null);
-
-  const showMessage = useCallback((text: string) => {
-    setWorkbenchMessage(text);
-    if (messageTimeoutRef.current) {
-      window.clearTimeout(messageTimeoutRef.current);
-    }
-    messageTimeoutRef.current = window.setTimeout(() => {
-      setWorkbenchMessage(null);
-      messageTimeoutRef.current = null;
-    }, 8000);
-  }, []);
 
   useEffect(() => {
     return () => {
