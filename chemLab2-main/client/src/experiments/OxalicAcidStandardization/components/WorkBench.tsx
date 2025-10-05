@@ -74,6 +74,83 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   // pouring animation state when adding acid into the weighing boat
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
+  // washing state for step 4 sequence
+  const [washing, setWashing] = useState<{ x: number; y: number; active: boolean } | null>(null);
+  const washTransferRef = useRef(false);
+
+  // When on step 4 and required equipment (beaker, wash bottle, weighing boat) are present,
+  // run a short sequence: wash the beaker, then transfer acid from the weighing boat into the beaker.
+  useEffect(() => {
+    if (step.id !== 4) {
+      washTransferRef.current = false;
+      return;
+    }
+    if (washTransferRef.current) return;
+
+    const normalize = (v?: string) => (v ? v.toLowerCase().replace(/\s+/g,'_').replace(/-/g,'_') : '');
+    const hasBeaker = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes('beaker'));
+    const hasWash = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes('wash_bottle') || normalize(pos.typeId ?? pos.id).includes('wash-bottle') || (pos.name||'').toLowerCase().includes('wash'));
+    const hasBoat = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes('weighing_boat') || (pos.name||'').toLowerCase().includes('weighing boat'));
+
+    if (!hasBeaker || !hasWash || !hasBoat) return;
+
+    washTransferRef.current = true;
+
+    const beaker = equipmentPositions.find(pos => (pos.typeId ?? pos.id).toString().toLowerCase().includes('beaker'));
+    const wash = equipmentPositions.find(pos => (pos.typeId ?? pos.id).toString().toLowerCase().includes('wash_bottle') || (pos.typeId ?? pos.id).toString().toLowerCase().includes('wash-bottle') || (pos.name||'').toLowerCase().includes('wash'));
+    const boat = equipmentPositions.find(pos => (pos.typeId ?? pos.id).toString().toLowerCase().includes('weighing_boat') || (pos.name||'').toLowerCase().includes('weighing boat'));
+
+    // start washing animation positioned near the wash bottle
+    setWashing({ x: (wash?.x ?? 120), y: (wash?.y ?? 120), active: true });
+    showMessage('Washing the beaker with the wash bottle...');
+
+    const washTimeout = window.setTimeout(() => {
+      setWashing(null);
+
+      if (!boat) {
+        showMessage('Place the weighing boat containing acid on the workbench to transfer.');
+        return;
+      }
+
+      showMessage('Transferring acid from the weighing boat into the beaker...');
+      setPouring({ boatId: boat.id, x: (boat.x ?? 100) + 40, y: (boat.y ?? 100) - 60, active: true });
+
+      const transferTimeout = window.setTimeout(() => {
+        // move oxalic acid from boat to beaker (if present)
+        setEquipmentPositions(prev => {
+          const bId = beaker?.id;
+          if (!bId) return prev;
+          const boatIdx = prev.findIndex(p => p.id === boat.id);
+          const beakerIdx = prev.findIndex(p => p.id === bId);
+          if (boatIdx === -1 || beakerIdx === -1) return prev;
+          const boatPos = prev[boatIdx];
+          const beakerPos = prev[beakerIdx];
+          const oxChem = (boatPos.chemicals || []).find(c => c.id === 'oxalic_acid');
+          if (!oxChem) return prev;
+          const updated = prev.map((p, idx) => {
+            if (idx === boatIdx) {
+              return { ...p, chemicals: p.chemicals.filter(c => c.id !== 'oxalic_acid') };
+            }
+            if (idx === beakerIdx) {
+              return { ...p, chemicals: [...p.chemicals, { ...oxChem }] };
+            }
+            return p;
+          });
+          return updated;
+        });
+
+        setPouring(null);
+        showMessage('Acid transferred into beaker.');
+        try { window.dispatchEvent(new CustomEvent('oxalic_transfer_complete')); } catch (_) {}
+      }, 3000);
+
+      // cleanup for transfer timeout
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      return () => { window.clearTimeout(transferTimeout); };
+    }, 1800);
+
+    return () => { window.clearTimeout(washTimeout); };
+  }, [equipmentPositions, step.id, setEquipmentPositions, showMessage]);
 
   // show a colorful hint for first-time users; persist dismissal in localStorage
   const [showAcidHint, setShowAcidHint] = useState<boolean>(false);
