@@ -307,7 +307,19 @@ export const Equipment: React.FC<EquipmentProps> = ({
         const isNearMark = preparationState?.nearMark;
         return (
           <div className="text-center relative">
-            <FlaskConical className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+            {imageSrc ? (
+              <TransparentImage
+                src={imageSrc}
+                alt={name}
+                className={position ? "mx-auto mb-2 h-40 w-auto object-contain mix-blend-multiply pointer-events-none select-none" : "mx-auto mb-2 h-24 w-auto object-contain mix-blend-multiply pointer-events-none select-none"}
+                tolerance={245}
+                colorDiff={8}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+              />
+            ) : (
+              <FlaskConical className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+            )}
             <div className="text-xs space-y-1">
               <div>250 mL</div>
               {chemicals.length > 0 && (
@@ -547,7 +559,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             name.toLowerCase().includes('volumetric-flask') ||
             name.toLowerCase().includes('flask')
           ) {
-            payload.imageSrc = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc62483aee73448e6934446dfd24d2875?format=webp&width=800";
+            payload.imageSrc = undefined as any;
           }
 
           e.dataTransfer.setData("text/plain", JSON.stringify(payload));
