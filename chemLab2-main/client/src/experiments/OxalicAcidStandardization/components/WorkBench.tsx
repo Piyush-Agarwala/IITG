@@ -530,11 +530,18 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     const beakerPos = adjustIfCollision(targetBeakerX, targetBeakerY);
     const washPos = adjustIfCollision(targetWashX, targetWashY);
 
-    setEquipmentPositions(prev => prev.map(pos => {
-      if (pos.id === beaker.id) return { ...pos, x: beakerPos.nx, y: beakerPos.ny };
-      if (pos.id === wash.id) return { ...pos, x: washPos.nx, y: washPos.ny };
-      return pos;
-    }));
+    setEquipmentPositions(prev => {
+      const updated = prev.map(pos => {
+        if (pos.id === beaker.id) return { ...pos, x: beakerPos.nx, y: beakerPos.ny };
+        if (pos.id === wash.id) return { ...pos, x: washPos.nx, y: washPos.ny };
+        return pos;
+      });
+      // Ensure beaker renders on top by placing it at the end of the array
+      const beakerItem = updated.find(p => p.id === beaker.id);
+      if (!beakerItem) return updated;
+      const others = updated.filter(p => p.id !== beaker.id);
+      return [...others, beakerItem];
+    });
 
     washAlignRef.current = true;
   }, [equipmentPositions, step.id]);
