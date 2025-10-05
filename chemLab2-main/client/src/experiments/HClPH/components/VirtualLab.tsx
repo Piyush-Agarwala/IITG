@@ -77,8 +77,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     if (id === "test-tube") return { x: baseX, y: baseY + 140 };
     if (id === "universal-indicator") return { x: baseX, y: baseY + 320 };
     if (id === "hcl-0-1m") return { x: baseX + 260, y: baseY + 20 };
-    if (id === "hcl-0-01m") return { x: baseX + 260, y: baseY + 160 };
-    if (id === "hcl-0-001m") return { x: baseX + 260, y: baseY + 300 };
+    if (id === "hcl-0-01m") return { x: baseX + 260, y: baseY + 180 };
+    if (id === "hcl-0-001m") return { x: baseX + 260, y: baseY + 340 };
     return { x: baseX, y: baseY };
   };
 
