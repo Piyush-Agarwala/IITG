@@ -429,7 +429,19 @@ export const Equipment: React.FC<EquipmentProps> = ({
     }
 
     // Use provided images for specific equipment types with bigger sizes
-    if (id === "test_tubes") {
+
+    // Render reagent bottles (HCl variants) as square bottle tiles on workbench
+    if (id.startsWith("hcl-") || id.startsWith("hcl_")) {
+      return (
+        <div className="flex flex-col items-center">
+          <div className="w-24 h-24 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
+            {icon}
+          </div>
+        </div>
+      );
+    }
+
+    if (id === "test_tubes" || id === "test-tube" || id === "test-tube") {
       // Check if test tube is being heated (positioned above hot water beaker in step 4)
       const isBeingHeated = () => {
         if (!position) return false;
@@ -646,12 +658,19 @@ export const Equipment: React.FC<EquipmentProps> = ({
         }
       }, [cooling, coolingStartTime, currentStep]);
 
+      const currentVolumeMl = (finalVolumeUsed ?? (typeof volume === 'number' ? volume : Math.max(0, chemicals.reduce((sum, c) => sum + (c.amount || 0), 0))));
       return (
         <div className="relative group">
-          {/* Volume label above test tube */}
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-300 shadow-sm">
-            <span className="text-xs font-semibold text-gray-700">25ml Test Tube</span>
-          </div>
+          {/* Top badge */}
+          {id === "test-tube" ? (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-300 shadow-sm">
+              <span className="text-xs font-semibold text-gray-700">{`${Number(currentVolumeMl || 0).toFixed(1)} mL`}</span>
+            </div>
+          ) : (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-300 shadow-sm">
+              <span className="text-xs font-semibold text-gray-700">25ml Test Tube</span>
+            </div>
+          )}
 
           <img
             key={getTestTubeImage()} // Force re-render when image changes
@@ -692,10 +711,16 @@ export const Equipment: React.FC<EquipmentProps> = ({
             }}
           />
 
-          {/* Current volume badge (shows Final Volume Used if available) */}
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
-            {`${(finalVolumeUsed ?? Math.max(0, chemicals.reduce((sum, c) => sum + (c.amount || 0), 0))).toFixed(1)} mL`}
-          </div>
+          {/* Bottom label */}
+          {id === "test-tube" ? (
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
+              25ml Test Tube
+            </div>
+          ) : (
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-gray-300 shadow-sm text-[10px] font-semibold text-gray-700">
+              {`${Number(currentVolumeMl || 0).toFixed(1)} mL`}
+            </div>
+          )}
 
           {/* Pink cobalt animation effects */}
           {isCobaltAnimation && (
@@ -858,7 +883,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
       const hasTestTubeNearby = () => {
         if (!position) return false;
         const testTube = allEquipmentPositions.find(
-          (pos) => pos.id === "test_tubes",
+          (pos) => pos.id === "test_tubes" || id === "test-tube" || pos.id === "test-tube",
         );
         if (!testTube) return false;
         const distance = Math.sqrt(
@@ -1926,7 +1951,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             e.preventDefault();
           }}
           className={`absolute bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center font-bold transition-colors shadow-lg hover:shadow-xl ${
-            id === "test_tubes"
+            id === "test_tubes" || id === "test-tube"
               ? "w-8 h-8 text-xs top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-white z-50" // Center of test tube
               : "w-6 h-6 text-xs -top-2 -right-2 z-30" // Default positioning for other equipment
           }`}
