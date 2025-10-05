@@ -455,11 +455,37 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     if (!surface) return;
     const rect = surface.getBoundingClientRect();
 
-    // Default target: beaker slightly left of center, wash bottle above-right of beaker
-    let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.35));
-    let targetBeakerY = Math.max(16, Math.floor(rect.height * 0.44));
-    let targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
-    let targetWashY = Math.max(8, targetBeakerY - 64);
+    // If volumetric flask is present, align to match reference: beaker left/center, wash bottle slightly to its right and higher
+    const flask = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('volumetric_flask') || (p.typeId ?? p.id).toString().toLowerCase().includes('volumetric_flask'));
+
+    let targetBeakerX: number;
+    let targetBeakerY: number;
+    let targetWashX: number;
+    let targetWashY: number;
+
+    if (flask) {
+      targetBeakerX = Math.max(16, Math.floor(rect.width * 0.25));
+      targetBeakerY = Math.max(24, Math.floor(rect.height * 0.5));
+      // wash bottle to the right of beaker, slightly higher so spout appears over the beaker lip
+      targetWashX = Math.min(rect.width - 60, targetBeakerX + 120);
+      targetWashY = Math.max(8, targetBeakerY - 40);
+
+      // place flask to the right of wash bottle if possible
+      const targetFlaskX = Math.min(rect.width - 80, targetWashX + 110);
+      const targetFlaskY = targetBeakerY;
+
+      // apply flask position immediately to keep spacing
+      setEquipmentPositions(prev => prev.map(pos => {
+        if (pos.id === flask.id) return { ...pos, x: targetFlaskX, y: targetFlaskY };
+        return pos;
+      }));
+    } else {
+      // Default target: beaker slightly left of center, wash bottle above-right of beaker
+      targetBeakerX = Math.max(16, Math.floor(rect.width * 0.35));
+      targetBeakerY = Math.max(16, Math.floor(rect.height * 0.44));
+      targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
+      targetWashY = Math.max(8, targetBeakerY - 64);
+    }
 
     // Avoid overlapping existing weighing boat(s). If a weighing boat is present near targets, shift beaker down below the boat
     const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
@@ -787,7 +813,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Chemical Equation</h4>
                 <div className="text-xs font-mono bg-gray-50 rounded-lg p-3 border text-center leading-relaxed">
                   <div>H₂C₂O₄·2H₂O (s) → H₂C₂O₄ (aq) + 2H₂O</div>
-                  <div className="mt-1">H₂C��O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
+                  <div className="mt-1">H₂C₂O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
                 </div>
               </div>
 
