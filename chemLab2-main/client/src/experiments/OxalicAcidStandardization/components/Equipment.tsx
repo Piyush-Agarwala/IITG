@@ -635,8 +635,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
     >
       {getEquipmentContent()}
 
-      {/* Action Button */}
-      <div className="mt-2">
+      {/* Action Button: render as absolute overlay so clicks are not intercepted by other layers */}
+      <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 6, zIndex: 1100, pointerEvents: 'auto' }}>
         {getActionButton()}
       </div>
 
