@@ -264,6 +264,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                     currentStep={currentStep}
                     color={e.id === 'universal-indicator' ? (e as any).color : undefined}
                     volume={e.id === 'test-tube' ? testTubeVolume : undefined}
+                    onInteract={(id) => { if (id.startsWith('hcl-')) openHclDialog(id); }}
                   />
                 );
               })}
