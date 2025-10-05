@@ -131,8 +131,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setHPlusMoles((m) => m + moles);
     setTestTubeVolume((vol) => Math.max(0, Math.min(25, vol + v)));
 
-    // tint solution strongly acidic
-    setTestTubeColor("rgba(255, 99, 71, 0.6)");
+    // tint solution light-blue when HCl is added
+    setTestTubeColor("rgba(100,181,246,0.6)");
 
     setShowToast(`Added ${v.toFixed(1)} mL of ${dialogOpenFor.label}`);
     setTimeout(() => setShowToast(null), 1800);
