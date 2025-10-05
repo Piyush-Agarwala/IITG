@@ -436,29 +436,14 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
       // If positioned on the workbench render as a white card with the bottle tile and a label underneath
       if (position) {
-        // Match reference: label inside the white card for 0.1 M HCl bottle
-        if (id === "hcl-0-1m") {
-          return (
-            <div className="w-28 rounded-xl bg-white border border-gray-200 shadow-md p-3 flex flex-col items-center">
-              <div className="w-20 h-20 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
-                {icon}
-              </div>
-              <div className="mt-2 text-[13px] font-medium text-gray-700">0.1 M HCl</div>
-            </div>
-          );
-        }
-        // Default HCl card with caption below
+        // Match reference: all HCl variants render as a white card with the bottle and concentration label inside
+        const insideLabel = id === "hcl-0-1m" ? "0.1 M HCl" : id === "hcl-0-01m" ? "0.01 M HCl" : id === "hcl-0-001m" ? "0.001 M HCl" : concentration;
         return (
-          <div className="flex flex-col items-center">
-            <div className="w-28 rounded-md bg-white border border-gray-200 shadow-sm p-3">
-              <div className="w-20 h-20 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow mx-auto flex items-center justify-center">
-                {icon}
-              </div>
+          <div className="w-28 rounded-xl bg-white border border-gray-200 shadow-md p-3 flex flex-col items-center">
+            <div className="w-20 h-20 rounded-md bg-bottle-yellow border border-gray-200 chemical-bottle-shadow flex items-center justify-center">
+              {icon}
             </div>
-            <div className="mt-2 bg-white rounded-md px-3 py-2 border border-gray-200 text-sm font-medium shadow-sm w-28">
-              <div className="text-gray-700 text-center">{name}</div>
-              <div className="text-xs text-yellow-600 font-semibold text-center">{concentration}</div>
-            </div>
+            <div className="mt-2 text-[13px] font-medium text-gray-700">{insideLabel}</div>
           </div>
         );
       }
