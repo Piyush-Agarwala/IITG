@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Beaker, Droplets, FlaskConical, TestTube, Undo2, CheckCircle } from "lucide-react";
+import { Equipment as RenderEquipment } from "@/components/VirtualLab/Equipment";
 import type { Experiment } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
