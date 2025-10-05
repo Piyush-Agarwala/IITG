@@ -455,17 +455,57 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     if (!surface) return;
     const rect = surface.getBoundingClientRect();
 
-    // Target beaker position: slightly left of center
-    const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.35));
-    const targetBeakerY = Math.max(16, Math.floor(rect.height * 0.44));
+    // Default target: beaker slightly left of center, wash bottle above-right of beaker
+    let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.35));
+    let targetBeakerY = Math.max(16, Math.floor(rect.height * 0.44));
+    let targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
+    let targetWashY = Math.max(8, targetBeakerY - 64);
 
-    // Wash bottle above-right of beaker
-    const targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
-    const targetWashY = Math.max(8, targetBeakerY - 64);
+    // Avoid overlapping existing weighing boat(s). If a weighing boat is present near targets, shift beaker down below the boat
+    const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
+
+    const isOverlapping = (x1: number, y1: number, x2: number, y2: number, threshold = 60) => {
+      return Math.hypot(x1 - x2, y1 - y2) < threshold;
+    };
+
+    if (boats.length > 0) {
+      const boat = boats[0];
+      // if default beaker pos would land on/near the boat, move beaker below the boat
+      if (isOverlapping(targetBeakerX, targetBeakerY, boat.x || 0, boat.y || 0, 80)) {
+        targetBeakerX = Math.max(16, (boat.x || 0) - 20);
+        targetBeakerY = (boat.y || 0) + 90; // place below
+        // ensure within surface
+        targetBeakerX = Math.min(rect.width - 80, targetBeakerX);
+        targetBeakerY = Math.min(rect.height - 80, targetBeakerY);
+        // wash bottle should go to beaker's top-right
+        targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
+        targetWashY = Math.max(8, targetBeakerY - 64);
+      }
+    }
+
+    // If any other equipment is close to target positions, nudge them slightly to avoid collision
+    const occupied = equipmentPositions.filter(p => p.id !== beaker.id && p.id !== wash.id);
+    const adjustIfCollision = (x: number, y: number) => {
+      let nx = x;
+      let ny = y;
+      occupied.forEach(o => {
+        if (isOverlapping(nx, ny, o.x || 0, o.y || 0, 70)) {
+          ny += 80; // push down
+          nx += 30; // nudge right
+        }
+      });
+      // clamp
+      nx = Math.max(8, Math.min(rect.width - 80, nx));
+      ny = Math.max(8, Math.min(rect.height - 80, ny));
+      return { nx, ny };
+    };
+
+    const beakerPos = adjustIfCollision(targetBeakerX, targetBeakerY);
+    const washPos = adjustIfCollision(targetWashX, targetWashY);
 
     setEquipmentPositions(prev => prev.map(pos => {
-      if (pos.id === beaker.id) return { ...pos, x: targetBeakerX, y: targetBeakerY };
-      if (pos.id === wash.id) return { ...pos, x: targetWashX, y: targetWashY };
+      if (pos.id === beaker.id) return { ...pos, x: beakerPos.nx, y: beakerPos.ny };
+      if (pos.id === wash.id) return { ...pos, x: washPos.nx, y: washPos.ny };
       return pos;
     }));
 
@@ -747,7 +787,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Chemical Equation</h4>
                 <div className="text-xs font-mono bg-gray-50 rounded-lg p-3 border text-center leading-relaxed">
                   <div>H₂C₂O₄·2H₂O (s) → H₂C₂O₄ (aq) + 2H₂O</div>
-                  <div className="mt-1">H₂C₂O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
+                  <div className="mt-1">H₂C��O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
                 </div>
               </div>
 
