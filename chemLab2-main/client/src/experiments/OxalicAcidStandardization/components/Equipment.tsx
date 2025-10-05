@@ -602,8 +602,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
           if (isDragging) return 1000;
           try {
             const key = (equipmentIdentifier || '').toString().toLowerCase();
-            if (key.includes('beaker')) return 300;
-            if (key.includes('wash') || key.includes('wash_bottle') || key.includes('wash-bottle')) return 200;
+            if (key.includes('beaker')) return 500;
+            if (key.includes('wash') || key.includes('wash_bottle') || key.includes('wash-bottle')) return 150;
           } catch {}
           return 10;
         })(),
