@@ -569,6 +569,20 @@ function OxalicAcidVirtualLab({
     return () => window.removeEventListener('oxalic_image_shown', handler);
   }, [step.id, onStepComplete]);
 
+  // Listen for a transfer event from the workbench (wash + transfer sequence)
+  useEffect(() => {
+    const handler = () => {
+      if (step.id === 4) {
+        setPreparationState(prev => ({ ...prev, transferredToFlask: true }));
+        setTimeout(() => {
+          try { onStepComplete(); } catch (e) {}
+        }, 400);
+      }
+    };
+    window.addEventListener('oxalic_transfer_complete', handler);
+    return () => window.removeEventListener('oxalic_transfer_complete', handler);
+  }, [step.id, onStepComplete]);
+
   // Remove analytical balance from the workspace only when advancing from step 3 to step 4.
   // Do NOT notify the parent so the equipment palette remains unchanged.
   const prevStepRef = useRef<number | null>(null);
