@@ -432,6 +432,29 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
     // Use provided images for specific equipment types with bigger sizes
 
+    // pH paper / universal indicator rendering on workbench
+    if (
+      id === "universal-indicator" ||
+      id.toLowerCase().includes("ph") ||
+      name.toLowerCase().includes("ph")
+    ) {
+      return (
+        <div className="flex flex-col items-center">
+          <div
+            className="w-24 h-8 relative overflow-visible mb-2"
+            style={{ backgroundColor: color || "transparent" }}
+          >
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fa1eea72a49464b2f93611a90f0edd819?format=webp&width=800"
+              alt="pH Paper"
+              className="w-full h-full object-contain"
+              style={{ mixBlendMode: "multiply", opacity: 0.95, transform: "rotate(0) scale(5)", transformOrigin: "center" }}
+            />
+          </div>
+        </div>
+      );
+    }
+
     // Render reagent bottles (HCl variants) as styled tiles like cobalt/HCl in EquilibriumShift
     if (id.startsWith("hcl-") || id.startsWith("hcl_")) {
       const concentration = id === "hcl-0-1m" ? "HCl 0.1M" : id === "hcl-0-01m" ? "HCl 0.01M" : id === "hcl-0-001m" ? "HCl 0.001M" : "HCl";
