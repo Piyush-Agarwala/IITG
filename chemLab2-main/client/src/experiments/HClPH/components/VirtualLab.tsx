@@ -269,10 +269,32 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               {/* Contextual measure button near pH paper */}
               {equipmentOnBench.find(e => e.id === 'universal-indicator') && (() => {
                 const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator')!;
+                const paperHasColor = Boolean((phItem as any).color);
                 return (
                   <div key="measure-button" className="measure-button-wrapper" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
-                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm measure-action-btn ${shouldBlinkMeasure ? 'blink-until-pressed' : ''}`} onClick={testPH} aria-pressed={shouldBlinkMeasure}>
-                      MEASURE
+                    <Button
+                      size="sm"
+                      className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm measure-action-btn ${shouldBlinkMeasure ? 'blink-until-pressed' : ''}`}
+                      onClick={() => {
+                        if (!paperHasColor) {
+                          testPH();
+                          return;
+                        }
+                        // Replace pH paper: clear tint/color but KEEP last measured value
+                        setEquipmentOnBench(prev => prev.map(e => {
+                          if (e.id === 'universal-indicator') {
+                            const copy = { ...e } as any;
+                            delete copy.color;
+                            return copy;
+                          }
+                          return e;
+                        }));
+                        setShowToast('New pH paper placed');
+                        setTimeout(() => setShowToast(null), 1400);
+                      }}
+                      aria-pressed={shouldBlinkMeasure}
+                    >
+                      {!paperHasColor ? 'MEASURE' : 'New pH paper'}
                     </Button>
                   </div>
                 );
