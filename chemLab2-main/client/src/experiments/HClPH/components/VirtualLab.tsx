@@ -1,0 +1,370 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
+import { Beaker, Droplets, FlaskConical, TestTube, Undo2, CheckCircle } from "lucide-react";
+import type { Experiment } from "@shared/schema";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+interface VirtualLabProps {
+  experiment: Experiment;
+  experimentStarted: boolean;
+  onStartExperiment: () => void;
+  isRunning: boolean;
+  setIsRunning: (running: boolean) => void;
+  currentStep: number;
+  onStepComplete: (stepId?: number) => void;
+  onStepUndo?: (stepId?: number) => void;
+  onReset: () => void;
+  completedSteps: number[];
+}
+
+export default function VirtualLab({ experiment, experimentStarted, onStartExperiment, isRunning, setIsRunning, currentStep, onStepComplete, onStepUndo, onReset, completedSteps }: VirtualLabProps) {
+  const [equipmentOnBench, setEquipmentOnBench] = useState<Array<{ id: string; name: string; position: { x: number; y: number } }>>([]);
+
+  // Test tube visual state
+  const [testTubeVolume, setTestTubeVolume] = useState(0); // mL
+  const [testTubeColor, setTestTubeColor] = useState<string | undefined>(undefined);
+
+  // Chemistry state – track strong acid (H+) moles from added HCl solutions
+  const [hPlusMoles, setHPlusMoles] = useState(0);
+  const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
+  const [results, setResults] = useState<Record<string, number>>({}); // map by label
+
+  // UI state
+  const [showToast, setShowToast] = useState<string | null>(null);
+  const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
+
+  // Dialog state for adding HCl volumes
+  const [dialogOpenFor, setDialogOpenFor] = useState<null | { id: string; label: string; molarity: number }>(null);
+  const [volumeStr, setVolumeStr] = useState("5.0");
+  const [volumeError, setVolumeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEquipmentOnBench([]);
+    setTestTubeVolume(0);
+    setTestTubeColor(undefined);
+    setHPlusMoles(0);
+    setLastMeasuredPH(null);
+    setResults({});
+    setShowToast(null);
+    setShouldBlinkMeasure(false);
+  }, [experiment.id]);
+
+  const items = useMemo(() => {
+    const iconFor = (name: string) => {
+      const key = name.toLowerCase();
+      if (key.includes("test tube")) return <TestTube className="w-8 h-8" />;
+      if (key.includes("ph") || key.includes("indicator")) return <FlaskConical className="w-8 h-8" />;
+      return <Droplets className="w-8 h-8" />;
+    };
+
+    // Define canonical equipment for this experiment (explicit, independent of data file)
+    const core = [
+      { id: "test-tube", name: "25ml Test Tube" },
+      { id: "hcl-0-1m", name: "Hydrochloric acid 0.1 M" },
+      { id: "hcl-0-01m", name: "Hydrochloric acid 0.01 M" },
+      { id: "hcl-0-001m", name: "Hydrochloric acid 0.001 M" },
+      { id: "universal-indicator", name: "pH Paper / Universal Indicator" },
+    ];
+    return core.map((c) => ({ ...c, icon: iconFor(c.name) }));
+  }, []);
+
+  const getPosition = (id: string) => {
+    const baseX = 220;
+    const baseY = 160;
+    if (id === "test-tube") return { x: baseX, y: baseY + 140 };
+    if (id === "universal-indicator") return { x: baseX, y: baseY + 320 };
+    if (id === "hcl-0-1m") return { x: baseX + 260, y: baseY + 20 };
+    if (id === "hcl-0-01m") return { x: baseX + 260, y: baseY + 160 };
+    if (id === "hcl-0-001m") return { x: baseX + 260, y: baseY + 300 };
+    return { x: baseX, y: baseY };
+  };
+
+  const handleDrop = (id: string, x: number, y: number, action: "new" | "move" = "new") => {
+    const item = items.find((i) => i.id === id);
+    if (!item) return;
+
+    if (action === "move") {
+      setEquipmentOnBench((prev) => prev.map((e) => (e.id === id ? { ...e, position: { x, y } } : e)));
+      return;
+    }
+
+    if (!equipmentOnBench.find((e) => e.id === id)) {
+      const fixed = id === "test-tube" || id === "universal-indicator" || id.startsWith("hcl-");
+      const pos = getPosition(id);
+      setEquipmentOnBench((prev) => [
+        ...prev,
+        { id, name: item.name, position: fixed ? { ...pos } : { x, y } },
+      ]);
+      // Mark progress for first interaction(s)
+      if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+    }
+  };
+
+  const handleRemove = (id: string) => {
+    setEquipmentOnBench((prev) => prev.filter((e) => e.id !== id));
+    if (onStepUndo) onStepUndo();
+  };
+
+  const openHclDialog = (id: string) => {
+    const map: Record<string, { label: string; molarity: number }> = {
+      "hcl-0-1m": { label: "0.1 M HCl", molarity: 0.1 },
+      "hcl-0-01m": { label: "0.01 M HCl", molarity: 0.01 },
+      "hcl-0-001m": { label: "0.001 M HCl", molarity: 0.001 },
+    };
+    setDialogOpenFor({ id, ...map[id] });
+    setVolumeStr("5.0");
+    setVolumeError(null);
+  };
+
+  const confirmAddHcl = () => {
+    if (!dialogOpenFor) return;
+    const v = parseFloat(volumeStr);
+    if (Number.isNaN(v) || v < 2.0 || v > 15.0) {
+      setVolumeError("Please enter a value between 2.0 and 15.0 mL");
+      return;
+    }
+    const vL = v / 1000; // L
+    const moles = dialogOpenFor.molarity * vL; // strong acid: [H+] from HCl
+    setHPlusMoles((m) => m + moles);
+    setTestTubeVolume((vol) => Math.max(0, Math.min(25, vol + v)));
+
+    // tint solution strongly acidic
+    setTestTubeColor("rgba(255, 99, 71, 0.6)");
+
+    setShowToast(`Added ${v.toFixed(1)} mL of ${dialogOpenFor.label}`);
+    setTimeout(() => setShowToast(null), 1800);
+
+    // Encourage measuring after adding an acid
+    setShouldBlinkMeasure(true);
+
+    if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+
+    setDialogOpenFor(null);
+  };
+
+  function computePH(): number | null {
+    const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
+    const concH = hPlusMoles / totalVolL;
+    if (!isFinite(concH) || concH <= 0) return null;
+    const ph = -Math.log10(concH);
+    return Math.max(0, Math.min(14, ph));
+  }
+
+  function testPH() {
+    if (testTubeVolume <= 0) {
+      setShowToast("No solution in test tube");
+      setTimeout(() => setShowToast(null), 1400);
+      return;
+    }
+    const ph = computePH();
+    if (ph == null) {
+      setShowToast("pH measurement inconclusive");
+      setTimeout(() => setShowToast(null), 1400);
+      return;
+    }
+    setLastMeasuredPH(ph);
+    setShowToast(`Measured pH ≈ ${ph.toFixed(2)}`);
+    setTimeout(() => setShowToast(null), 1800);
+    setShouldBlinkMeasure(false);
+
+    // Update indicator color
+    let paperColor: string | undefined = undefined;
+    if (ph < 2) paperColor = "#e53935"; // red
+    else if (ph < 4) paperColor = "#fb8c00"; // orange
+    else if (ph < 7) paperColor = "#fdd835"; // yellow
+    else if (ph < 8) paperColor = "#8bc34a"; // green
+    else paperColor = "#64b5f6"; // blue
+
+    setEquipmentOnBench((prev) => prev.map((e) => (e.id === "universal-indicator" ? ({ ...(e as any), color: paperColor } as any) : e)));
+
+    // Store by closest concentration label currently placed (priority: 0.1M, 0.01M, 0.001M)
+    const placed = equipmentOnBench.map((e) => e.id);
+    const label = placed.includes("hcl-0-1m") ? "0.1 M" : placed.includes("hcl-0-01m") ? "0.01 M" : placed.includes("hcl-0-001m") ? "0.001 M" : "Sample";
+    setResults((r) => ({ ...r, [label]: ph }));
+
+    // Map to guided steps in the dataset
+    if (currentStep === 3 || currentStep === 4) {
+      if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
+    }
+  }
+
+  const stepsProgress = (
+    <div className="mb-4 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">Experiment Progress</h3>
+        <span className="text-sm text-blue-600 font-medium">Step {currentStep} of {experiment.stepDetails.length}</span>
+      </div>
+      <div className="flex space-x-2 mb-3">
+        {experiment.stepDetails.map((step) => (
+          <div key={step.id} className={`flex-1 h-2 rounded-full ${completedSteps.includes(step.id) ? 'bg-green-500' : currentStep === step.id ? 'bg-blue-500' : 'bg-gray-200'}`} />
+        ))}
+      </div>
+      <div className="flex items-start space-x-3">
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${completedSteps.includes(currentStep) ? 'bg-green-500 text-white' : 'bg-blue-500 text-white'}`}>
+          {completedSteps.includes(currentStep) ? <CheckCircle className="w-4 h-4" /> : <span className="text-sm font-bold">{currentStep}</span>}
+        </div>
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-800 mb-1">{experiment.stepDetails[currentStep-1]?.title}</h4>
+          <p className="text-xs text-gray-600">{experiment.stepDetails[currentStep-1]?.description}</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <TooltipProvider>
+      <div className="w-full h-full bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 p-6">
+        {stepsProgress}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+          {/* Equipment */}
+          <div className="lg:col-span-3 space-y-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                Equipment
+              </h3>
+              <div className="space-y-3">
+                {items.map((eq) => (
+                  <div key={eq.id} className="p-3 border border-gray-200 rounded-lg bg-white shadow-sm flex items-center space-x-3" draggable onDragStart={(e) => { e.dataTransfer.setData('equipment', eq.id); }} onDoubleClick={() => { if (eq.id.startsWith('hcl-')) openHclDialog(eq.id); }}>
+                    <div>{eq.icon}</div>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-800">{eq.name}</div>
+                      <div className="text-xs text-gray-500">Drag to workbench</div>
+                    </div>
+                    {eq.id.startsWith('hcl-') && (
+                      <Button size="sm" variant="outline" onClick={() => openHclDialog(eq.id)}>Add</Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                <p className="text-xs text-blue-700"><strong>Tip:</strong> Drag equipment to the workbench following the steps.</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Button onClick={() => { if (equipmentOnBench.length) { const id = equipmentOnBench[equipmentOnBench.length-1].id; handleRemove(id); } }} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
+                <Undo2 className="w-4 h-4 mr-2" /> UNDO
+              </Button>
+              <Button onClick={() => { setEquipmentOnBench([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
+            </div>
+          </div>
+
+          {/* Workbench */}
+          <div className="lg:col-span-6">
+            <WorkBench onDrop={handleDrop} isRunning={isRunning} currentStep={currentStep} onTestPH={equipmentOnBench.find(e => e.id === 'universal-indicator') ? testPH : undefined}>
+              {equipmentOnBench.map((e) => (
+                <div key={e.id} style={{ position: 'absolute', left: e.position.x, top: e.position.y, transform: 'translate(-50%, -50%)' }}>
+                  <div className="relative">
+                    <div className="w-16 h-16 flex items-center justify-center text-blue-600">
+                      {items.find((i) => i.id === e.id)?.icon || <Beaker className="w-8 h-8" />}
+                    </div>
+                    {e.id === 'test-tube' && (
+                      <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-10 h-24 rounded-b-md overflow-hidden border border-blue-200 bg-white/80">
+                        <div className="absolute bottom-0 left-0 right-0" style={{ height: `${Math.min(100, (testTubeVolume/25)*100)}%`, background: testTubeColor || 'transparent' }} />
+                      </div>
+                    )}
+                    {/* Color tint for pH paper */}
+                    {e.id === 'universal-indicator' && (e as any).color && (
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-14 h-2 rounded" style={{ background: (e as any).color }} />
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Contextual measure button near pH paper */}
+              {equipmentOnBench.find(e => e.id === 'universal-indicator') && (() => {
+                const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator')!;
+                return (
+                  <div key="measure-button" className="measure-button-wrapper" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
+                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm ${shouldBlinkMeasure ? 'animate-pulse' : ''}`} onClick={testPH}>
+                      MEASURE
+                    </Button>
+                  </div>
+                );
+              })()}
+            </WorkBench>
+          </div>
+
+          {/* Live Analysis */}
+          <div className="lg:col-span-3 space-y-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 mr-2" aria-hidden="true" />
+                Live Analysis
+              </h3>
+              <div className="mb-4">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Current Step</h4>
+                <p className="text-xs text-gray-600">{experiment.stepDetails[currentStep-1]?.title}</p>
+              </div>
+              <div className="mb-4">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Completed Steps</h4>
+                <div className="space-y-1">
+                  {experiment.stepDetails.map((step) => (
+                    <div key={step.id} className={`flex items-center space-x-2 text-xs ${completedSteps.includes(step.id) ? 'text-green-600' : 'text-gray-400'}`}>
+                      <CheckCircle className="w-3 h-3" />
+                      <span>{step.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Measured pH</h4>
+                <div className="flex items-center space-x-2">
+                  <div className="text-2xl font-bold text-purple-700">{lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '--'}</div>
+                  <div className="text-xs text-gray-500">{lastMeasuredPH != null ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement yet'}</div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2 mt-4">
+                  {(["0.1 M", "0.01 M", "0.001 M"] as const).map((lab) => (
+                    <div key={lab} className="p-2 rounded border border-gray-200 bg-gray-50 text-sm">
+                      <div className="font-medium">HCl {lab}</div>
+                      <div className="text-lg text-black font-semibold">{results[lab] != null ? `${results[lab].toFixed(2)} (${results[lab] < 7 ? 'Acidic' : results[lab] > 7 ? 'Basic' : 'Neutral'})` : 'No result yet'}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dialog for adding HCl volumes */}
+      <Dialog open={!!dialogOpenFor} onOpenChange={(open) => { if (!open) setDialogOpenFor(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Volume</DialogTitle>
+            <DialogDescription>Enter the volume of {dialogOpenFor?.label} to add to the test tube.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Volume (mL)</label>
+            <input
+              type="number"
+              step={0.1}
+              min={2.0}
+              max={15.0}
+              value={volumeStr}
+              onChange={(e) => {
+                const val = e.target.value;
+                setVolumeStr(val);
+                const parsed = parseFloat(val);
+                if (Number.isNaN(parsed) || parsed < 2.0 || parsed > 15.0) setVolumeError("Please enter a value between 2.0 and 15.0 mL");
+                else setVolumeError(null);
+              }}
+              className="w-full border rounded-md px-3 py-2"
+              placeholder="Enter volume in mL"
+            />
+            {volumeError && <p className="text-xs text-red-600">{volumeError}</p>}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpenFor(null)}>Cancel</Button>
+            <Button onClick={confirmAddHcl} disabled={!!volumeError || Number.isNaN(parseFloat(volumeStr)) || parseFloat(volumeStr) < 2.0 || parseFloat(volumeStr) > 15.0}>Add Solution</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </TooltipProvider>
+  );
+}
