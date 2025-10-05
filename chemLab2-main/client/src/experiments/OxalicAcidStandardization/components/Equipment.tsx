@@ -598,7 +598,15 @@ export const Equipment: React.FC<EquipmentProps> = ({
       style={{
         left: position.x,
         top: position.y,
-        zIndex: isDragging ? 1000 : 10,
+        zIndex: (() => {
+          if (isDragging) return 1000;
+          try {
+            const key = (equipmentIdentifier || '').toString().toLowerCase();
+            if (key.includes('beaker')) return 300;
+            if (key.includes('wash') || key.includes('wash_bottle') || key.includes('wash-bottle')) return 200;
+          } catch {}
+          return 10;
+        })(),
       }}
       onMouseDown={handleMouseDown}
       onClick={(e) => {
