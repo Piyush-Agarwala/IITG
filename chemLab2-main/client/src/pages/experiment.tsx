@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "@/components/header";
 import ChemicalEquilibriumApp from "@/experiments/ChemicalEquilibrium/components/ChemicalEquilibriumApp";
+import HClPHApp from "@/experiments/HClPH/components/HClPHApp";
 import EquilibriumShiftApp from "@/experiments/EquilibriumShift/components/EquilibriumShiftApp";
 import FeSCNEquilibriumApp from "@/experiments/FeSCNEquilibrium/components/FeSCNEquilibriumApp";
 import Titration1App from "@/experiments/Titration1/components/Titration1App";
@@ -37,7 +38,7 @@ export default function Experiment() {
       case 3:
         return <FeSCNEquilibriumApp onBack={() => window.history.back()} />;
       case 4:
-        return <ChemicalEquilibriumApp onBack={() => window.history.back()} />;
+        return <HClPHApp onBack={() => window.history.back()} />;
       case 5:
         return <Titration1App onBack={() => window.history.back()} />;
       case 6:
