@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
 import { Beaker, Droplets, FlaskConical, TestTube, Undo2, CheckCircle } from "lucide-react";
-import { Equipment as RenderEquipment } from "@/components/VirtualLab/Equipment";
+import { Equipment as RenderEquipment } from "@/experiments/PHComparison/components/Equipment";
 import type { Experiment } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -53,8 +53,20 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   }, [experiment.id]);
 
   const items = useMemo(() => {
-    const iconFor = (name: string) => {
+    const iconFor = (id: string, name: string) => {
       const key = name.toLowerCase();
+      // Special bottle icon for all HCl variants (match 0.01M style)
+      if (id.startsWith('hcl-')) {
+        return (
+          <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacd' }}>
+            <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-yellow-200 to-transparent opacity-60" />
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-600 opacity-60">
+              <Droplets className="w-7 h-7" />
+            </div>
+          </div>
+        );
+      }
+
       if (key.includes("test tube")) return <TestTube className="w-8 h-8" />;
       if (key.includes("ph") || key.includes("indicator")) return <FlaskConical className="w-8 h-8" />;
       return <Droplets className="w-8 h-8" />;
@@ -68,7 +80,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       { id: "hcl-0-001m", name: "Hydrochloric acid 0.001 M" },
       { id: "universal-indicator", name: "pH Paper / Universal Indicator" },
     ];
-    return core.map((c) => ({ ...c, icon: iconFor(c.name) }));
+    return core.map((c) => ({ ...c, icon: iconFor(c.id, c.name) }));
   }, []);
 
   const getPosition = (id: string) => {
@@ -131,8 +143,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setHPlusMoles((m) => m + moles);
     setTestTubeVolume((vol) => Math.max(0, Math.min(25, vol + v)));
 
-    // tint solution strongly acidic
-    setTestTubeColor("rgba(255, 99, 71, 0.6)");
+    // tint solution light-blue when HCl is added
+    setTestTubeColor("rgba(100,181,246,0.6)");
 
     setShowToast(`Added ${v.toFixed(1)} mL of ${dialogOpenFor.label}`);
     setTimeout(() => setShowToast(null), 1800);
@@ -258,11 +270,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                     name={e.name}
                     icon={itemDef?.icon || <Beaker className="w-8 h-8" />}
                     position={e.position}
-                    onDrag={(id, x, y) => handleDrop(id, x, y, 'move')}
                     onRemove={handleRemove}
-                    allEquipmentPositions={equipmentOnBench.map(p => ({ id: p.id, x: p.position.x, y: p.position.y, chemicals: [] }))}
-                    currentStep={currentStep}
-                    color={e.id === 'universal-indicator' ? (e as any).color : undefined}
+                    color={e.id === 'test-tube' ? testTubeColor : (e.id === 'universal-indicator' ? (e as any).color : undefined)}
                     volume={e.id === 'test-tube' ? testTubeVolume : undefined}
                     onInteract={(id) => { if (id.startsWith('hcl-')) openHclDialog(id); }}
                   />
@@ -272,10 +281,32 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               {/* Contextual measure button near pH paper */}
               {equipmentOnBench.find(e => e.id === 'universal-indicator') && (() => {
                 const phItem = equipmentOnBench.find(e => e.id === 'universal-indicator')!;
+                const paperHasColor = Boolean((phItem as any).color);
                 return (
                   <div key="measure-button" className="measure-button-wrapper" style={{ position: 'absolute', left: phItem.position.x, top: phItem.position.y + 70, transform: 'translate(-50%, 0)' }}>
-                    <Button size="sm" className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm measure-action-btn ${shouldBlinkMeasure ? 'blink-until-pressed' : ''}`} onClick={testPH} aria-pressed={shouldBlinkMeasure}>
-                      MEASURE
+                    <Button
+                      size="sm"
+                      className={`bg-amber-600 text-white hover:bg-amber-700 shadow-sm measure-action-btn ${shouldBlinkMeasure ? 'blink-until-pressed' : ''}`}
+                      onClick={() => {
+                        if (!paperHasColor) {
+                          testPH();
+                          return;
+                        }
+                        // Replace pH paper: clear tint/color but KEEP last measured value
+                        setEquipmentOnBench(prev => prev.map(e => {
+                          if (e.id === 'universal-indicator') {
+                            const copy = { ...e } as any;
+                            delete copy.color;
+                            return copy;
+                          }
+                          return e;
+                        }));
+                        setShowToast('New pH paper placed');
+                        setTimeout(() => setShowToast(null), 1400);
+                      }}
+                      aria-pressed={shouldBlinkMeasure}
+                    >
+                      {!paperHasColor ? 'MEASURE' : 'New pH paper'}
                     </Button>
                   </div>
                 );

@@ -93,9 +93,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
   // Placed item
   const lowerName = name.toLowerCase();
   const isAceticOrSodium = id === 'acetic-0-01m' || id === '0-1-m-ethanoic-acetic-acid' || lowerName.includes('ethanoic') || lowerName.includes('acetic') || lowerName.includes('sodium ethanoate') || lowerName.includes('sodium acetate');
-  // Force ethanoic acid and sodium ethanoate bottles to use the same visual style as HCl (yellow bottle)
-  const bottleBgClass = isAceticOrSodium ? 'bg-bottle-yellow' : ((lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? 'bg-bottle-blue' : 'bg-bottle-yellow');
-  const dropletColorClass = isAceticOrSodium ? 'text-yellow-700' : ((lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl')) ? 'text-blue-600' : 'text-yellow-700');
+  // Treat HCl and ammonium-related reagents as blue bottles
+  const isHCl = id.toLowerCase().startsWith('hcl') || lowerName.includes('hcl');
+  const isAmmoniumOrSodium = lowerName.includes('sodium') || lowerName.includes('ammonium hydroxide') || lowerName.includes('nh4oh') || lowerName.includes('ammonium chloride') || lowerName.includes('nh4cl');
+
+  const bottleBgClass = isAceticOrSodium ? 'bg-bottle-yellow' : (isHCl || isAmmoniumOrSodium ? 'bg-bottle-blue' : 'bg-bottle-yellow');
+  const dropletColorClass = isAceticOrSodium ? 'text-yellow-700' : (isHCl || isAmmoniumOrSodium ? 'text-blue-600' : 'text-yellow-700');
   const isPH = name.toLowerCase().includes('ph') || id.toLowerCase().includes('ph');
 
   const renderNameParts = (n: string) => {
