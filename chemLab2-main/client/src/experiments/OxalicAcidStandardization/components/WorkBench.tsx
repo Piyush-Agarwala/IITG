@@ -464,16 +464,16 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     let targetWashY: number;
 
     if (flask) {
-      // place beaker near the top-center of the surface so wash bottle can sit behind/right
-      targetBeakerX = Math.max(16, Math.floor(rect.width * 0.5) - 40);
-      targetBeakerY = Math.max(12, Math.floor(rect.height * 0.28));
-      // wash bottle slightly to the right and a bit higher so the spout overlaps the beaker rim
-      targetWashX = Math.min(rect.width - 60, targetBeakerX + 60);
-      targetWashY = Math.max(6, targetBeakerY - 20);
+      // place beaker slightly left-of-center, a bit lower to appear on the bench
+      targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
+      targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
+      // wash bottle a little to the right and slightly higher so the spout overlaps the beaker rim naturally
+      targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
+      targetWashY = Math.max(2, targetBeakerY - 28);
 
-      // place flask to the right of wash bottle if possible (keep slightly lower)
-      const targetFlaskX = Math.min(rect.width - 80, targetWashX + 100);
-      const targetFlaskY = Math.min(rect.height - 80, targetBeakerY + 10);
+      // place flask to the right of wash bottle if possible (slightly lower to keep composition)
+      const targetFlaskX = Math.min(rect.width - 80, targetWashX + 110);
+      const targetFlaskY = Math.min(rect.height - 80, targetBeakerY + 6);
 
       // apply flask position immediately to keep spacing
       setEquipmentPositions(prev => prev.map(pos => {
