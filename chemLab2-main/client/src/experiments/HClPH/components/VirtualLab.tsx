@@ -53,8 +53,20 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   }, [experiment.id]);
 
   const items = useMemo(() => {
-    const iconFor = (name: string) => {
+    const iconFor = (id: string, name: string) => {
       const key = name.toLowerCase();
+      // Special bottle icon for all HCl variants (match 0.01M style)
+      if (id.startsWith('hcl-')) {
+        return (
+          <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacd' }}>
+            <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-yellow-200 to-transparent opacity-60" />
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-600 opacity-60">
+              <Droplets className="w-7 h-7" />
+            </div>
+          </div>
+        );
+      }
+
       if (key.includes("test tube")) return <TestTube className="w-8 h-8" />;
       if (key.includes("ph") || key.includes("indicator")) return <FlaskConical className="w-8 h-8" />;
       return <Droplets className="w-8 h-8" />;
@@ -68,7 +80,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       { id: "hcl-0-001m", name: "Hydrochloric acid 0.001 M" },
       { id: "universal-indicator", name: "pH Paper / Universal Indicator" },
     ];
-    return core.map((c) => ({ ...c, icon: iconFor(c.name) }));
+    return core.map((c) => ({ ...c, icon: iconFor(c.id, c.name) }));
   }, []);
 
   const getPosition = (id: string) => {
