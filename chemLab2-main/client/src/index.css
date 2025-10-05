@@ -319,6 +319,20 @@
 .equipment-icon-inner { width: 24px; height: 24px; display:flex; align-items:center; justify-content:center; }
 .equipment-name { @apply text-sm font-medium text-gray-700; }
 
+/* Equipment card container to match reference design */
+.equipment-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  box-shadow: 0 1px 0 rgba(2, 6, 23, 0.02), 0 8px 24px rgba(2, 6, 23, 0.06);
+  cursor: grab;
+}
+.equipment-card:hover { box-shadow: 0 1px 0 rgba(2,6,23,0.03), 0 12px 32px rgba(2,6,23,0.08); }
+
 .lab-workbench {
   position: relative;
   width: 100%;
