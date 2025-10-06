@@ -25,7 +25,7 @@ interface WorkBenchProps {
   stepNumber: number;
   totalSteps: number;
   experimentTitle: string;
-  onStepAction: () => void;
+  onStepAction: (opts?: { skipAnimation?: boolean }) => void;
   canProceed: boolean;
   equipmentPositions: EquipmentPosition[];
   setEquipmentPositions: React.Dispatch<React.SetStateAction<EquipmentPosition[]>>;
