@@ -161,6 +161,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setResults({});
     setEquipmentOnBench(prev => prev.map(e => e.id === 'universal-indicator' ? ({ ...(e as any), color: undefined } as any) : e));
     setShouldBlinkReset(false);
+    setLastUsedHclLabel(null);
     setShowToast('HCl reset');
     setTimeout(() => setShowToast(null), 1400);
   };
