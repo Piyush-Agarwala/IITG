@@ -242,7 +242,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     if (label === '0.001 M') {
       setTimeout(() => {
         setShowResultsModal(true);
-      }, 800);
+      }, 5000);
     }
 
     // Map to guided steps in the dataset
