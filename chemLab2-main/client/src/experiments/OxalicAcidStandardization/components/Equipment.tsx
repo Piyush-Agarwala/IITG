@@ -385,11 +385,11 @@ export const Equipment: React.FC<EquipmentProps> = ({
       case "beaker":
         const hasOxalicAcid = chemicals.some(c => c.id === "oxalic_acid");
         const hasWater = chemicals.some(c => c.id === "distilled_water");
-        const showCustomBeakerImage = imageSrc && stepId === 4;
+        const showCustomBeakerImage = !!imageSrc && (stepId === 4 || !!position);
 
         return (
           <div className="text-center relative">
-            {imageSrc && stepId === 4 ? (
+            {showCustomBeakerImage ? (
               <TransparentImage
                 src={imageSrc}
                 alt={name}
