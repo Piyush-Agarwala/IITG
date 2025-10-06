@@ -60,9 +60,9 @@ const OxalicAcidData: OxalicAcidExperiment = {
     },
     {
       id: 5,
-      title: "Add Water to Near Mark",
+      title: "add distilled water to beaker",
       description:
-        "Add distilled water to the volumetric flask until the level is about 2-3 cm below the graduation mark. Swirl gently to mix.",
+        "add distilled water to beaker",
       duration: "3 minutes",
       completed: false,
     },
