@@ -240,6 +240,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
     // If the 0.001 M result was just recorded, open the Results & Analysis modal
     if (label === '0.001 M') {
+      setShouldBlinkReset(false);
       setTimeout(() => {
         setShowResultsModal(true);
       }, 5000);
