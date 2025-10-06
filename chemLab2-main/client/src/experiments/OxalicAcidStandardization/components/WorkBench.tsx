@@ -597,11 +597,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         });
       }
 
-      // Preferred positions copied from the step-4 targets
-      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
-      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
-      let targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
-      let targetWashY = Math.max(2, targetBeakerY - 28);
+      // Preferred positions copied from the step-4 targets (adjusted to match reference image)
+      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.5 - 40));
+      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.44));
+      // place wash bottle to the right of the beaker and slightly higher
+      let targetWashX = Math.min(rect.width - 60, targetBeakerX + Math.floor(rect.width * 0.18));
+      let targetWashY = Math.max(2, targetBeakerY - Math.floor(rect.height * 0.06));
 
       // If there are weighing boats present, avoid overlapping them by nudging beaker/wash
       const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y) && (p.x > 8 || p.y > 8));
