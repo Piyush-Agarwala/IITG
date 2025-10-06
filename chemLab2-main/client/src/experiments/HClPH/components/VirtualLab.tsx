@@ -31,10 +31,13 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [hPlusMoles, setHPlusMoles] = useState(0);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
   const [results, setResults] = useState<Record<string, number>>({}); // map by label
+  const [lastUsedHclLabel, setLastUsedHclLabel] = useState<string | null>(null);
 
   // UI state
   const [showToast, setShowToast] = useState<string | null>(null);
   const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
+  const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
+  const [showResultsModal, setShowResultsModal] = useState(false);
 
   // Dialog state for adding HCl volumes
   const [dialogOpenFor, setDialogOpenFor] = useState<null | { id: string; label: string; molarity: number }>(null);
@@ -48,6 +51,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setHPlusMoles(0);
     setLastMeasuredPH(null);
     setResults({});
+    setLastUsedHclLabel(null);
     setShowToast(null);
     setShouldBlinkMeasure(false);
   }, [experiment.id]);
@@ -55,20 +59,8 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const items = useMemo(() => {
     const iconFor = (id: string, name: string) => {
       const key = name.toLowerCase();
-      // Special bottle icon for all HCl variants (match 0.01M style)
-      if (id.startsWith('hcl-')) {
-        return (
-          <div className="w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm" style={{ backgroundColor: '#fffacd' }}>
-            <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-yellow-200 to-transparent opacity-60" />
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-600 opacity-60">
-              <Droplets className="w-7 h-7" />
-            </div>
-          </div>
-        );
-      }
-
       if (key.includes("test tube")) return <TestTube className="w-8 h-8" />;
-      if (key.includes("ph") || key.includes("indicator")) return <FlaskConical className="w-8 h-8" />;
+      if (key.includes("indicator") || key.includes("meter") || key.includes('ph')) return <FlaskConical className="w-8 h-8" />;
       return <Droplets className="w-8 h-8" />;
     };
 
@@ -141,6 +133,11 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     const vL = v / 1000; // L
     const moles = dialogOpenFor.molarity * vL; // strong acid: [H+] from HCl
     setHPlusMoles((m) => m + moles);
+
+    // Record last used HCl concentration for result mapping
+    const shortLabel = dialogOpenFor.molarity === 0.1 ? '0.1 M' : dialogOpenFor.molarity === 0.01 ? '0.01 M' : '0.001 M';
+    setLastUsedHclLabel(shortLabel);
+
     setTestTubeVolume((vol) => Math.max(0, Math.min(25, vol + v)));
 
     // tint solution light-blue when HCl is added
@@ -155,6 +152,19 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
 
     setDialogOpenFor(null);
+  };
+
+  const resetHcl = () => {
+    setTestTubeVolume(0);
+    setHPlusMoles(0);
+    setTestTubeColor(undefined);
+    setLastMeasuredPH(null);
+    // Preserve previously recorded pH results in Live Analysis — do not clear setResults()
+    setEquipmentOnBench(prev => prev.map(e => e.id === 'universal-indicator' ? ({ ...(e as any), color: undefined } as any) : e));
+    setShouldBlinkReset(false);
+    setLastUsedHclLabel(null);
+    setShowToast('HCl reset');
+    setTimeout(() => setShowToast(null), 1400);
   };
 
   function computePH(): number | null {
@@ -181,6 +191,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setShowToast(`Measured pH ≈ ${ph.toFixed(2)}`);
     setTimeout(() => setShowToast(null), 1800);
     setShouldBlinkMeasure(false);
+    setShouldBlinkReset(true);
 
     // Update indicator color
     let paperColor: string | undefined = undefined;
@@ -192,10 +203,20 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
     setEquipmentOnBench((prev) => prev.map((e) => (e.id === "universal-indicator" ? ({ ...(e as any), color: paperColor } as any) : e)));
 
-    // Store by closest concentration label currently placed (priority: 0.1M, 0.01M, 0.001M)
-    const placed = equipmentOnBench.map((e) => e.id);
-    const label = placed.includes("hcl-0-1m") ? "0.1 M" : placed.includes("hcl-0-01m") ? "0.01 M" : placed.includes("hcl-0-001m") ? "0.001 M" : "Sample";
-    setResults((r) => ({ ...r, [label]: ph }));
+    // Store under the concentration actually used last; fall back to presence on bench
+    let label = lastUsedHclLabel;
+    if (!label) {
+      const placed = equipmentOnBench.map((e) => e.id);
+      label = placed.includes('hcl-0-1m') ? '0.1 M' : placed.includes('hcl-0-01m') ? '0.01 M' : placed.includes('hcl-0-001m') ? '0.001 M' : 'Sample';
+    }
+    setResults((r) => ({ ...r, [label as string]: ph }));
+
+    // If the 0.001 M result was just recorded, open the Results & Analysis modal
+    if (label === '0.001 M') {
+      setTimeout(() => {
+        setShowResultsModal(true);
+      }, 800);
+    }
 
     // Map to guided steps in the dataset
     if (currentStep === 3 || currentStep === 4) {
@@ -242,9 +263,13 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                   <div key={eq.id} className="equipment-card" draggable onDragStart={(e) => { e.dataTransfer.setData('equipment', eq.id); }} onDoubleClick={() => { if (eq.id.startsWith('hcl-')) openHclDialog(eq.id); }}>
                     <div className="equipment-icon"><div className="equipment-icon-inner">{eq.icon}</div></div>
                     <div className="equipment-name mt-2">{eq.name}</div>
-                    
                   </div>
                 ))}
+
+                {/* RESET HCL button placed below HCl bottles */}
+                <div className="mt-2">
+                  <Button onClick={resetHcl} variant="outline" className={`w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100 ${shouldBlinkReset ? 'blink-until-pressed' : ''}`}>RESET HCL</Button>
+                </div>
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                 <p className="text-xs text-blue-700"><strong>Tip:</strong> Drag equipment to the workbench following the steps.</p>
@@ -361,39 +386,79 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       </div>
 
       {/* Dialog for adding HCl volumes */}
-      <Dialog open={!!dialogOpenFor} onOpenChange={(open) => { if (!open) setDialogOpenFor(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter Volume</DialogTitle>
-            <DialogDescription>Enter the volume of {dialogOpenFor?.label} to add to the test tube.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Volume (mL)</label>
-            <input
-              type="number"
-              step={0.1}
-              min={10.0}
-              max={15.0}
-              value={volumeStr}
-              onChange={(e) => {
-                const val = e.target.value;
-                setVolumeStr(val);
-                const parsed = parseFloat(val);
-                if (Number.isNaN(parsed) || parsed < 10.0 || parsed > 15.0) setVolumeError("Please enter a value between 10.0 and 15.0 mL");
-                else setVolumeError(null);
-              }}
-              className="w-full border rounded-md px-3 py-2"
-              placeholder="Enter volume in mL"
-            />
-            {volumeError && <p className="text-xs text-red-600">{volumeError}</p>}
-            {!volumeError && <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>}
+  <Dialog open={!!dialogOpenFor} onOpenChange={(open) => { if (!open) setDialogOpenFor(null); }}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Enter Volume</DialogTitle>
+        <DialogDescription>Enter the volume of {dialogOpenFor?.label} to add to the test tube.</DialogDescription>
+      </DialogHeader>
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Volume (mL)</label>
+        <input
+          type="number"
+          step={0.1}
+          min={10.0}
+          max={15.0}
+          value={volumeStr}
+          onChange={(e) => {
+            const val = e.target.value;
+            setVolumeStr(val);
+            const parsed = parseFloat(val);
+            if (Number.isNaN(parsed) || parsed < 10.0 || parsed > 15.0) setVolumeError("Please enter a value between 10.0 and 15.0 mL");
+            else setVolumeError(null);
+          }}
+          className="w-full border rounded-md px-3 py-2"
+          placeholder="Enter volume in mL"
+        />
+        {volumeError && <p className="text-xs text-red-600">{volumeError}</p>}
+        {!volumeError && <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>}
+      </div>
+      <DialogFooter>
+        <Button variant="outline" onClick={() => setDialogOpenFor(null)}>Cancel</Button>
+        <Button onClick={confirmAddHcl} disabled={!!volumeError || Number.isNaN(parseFloat(volumeStr)) || parseFloat(volumeStr) < 10.0 || parseFloat(volumeStr) > 15.0}>Add Solution</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+
+  {/* Results & Analysis Modal (opens automatically when 0.001 M pH is recorded) */}
+  <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
+    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>Results & Analysis — HCl pH Measurement</DialogTitle>
+        <DialogDescription>Summary of measured pH values for each HCl concentration and suggested analysis.</DialogDescription>
+      </DialogHeader>
+
+      <div className="py-4 space-y-4 text-black">
+        <div>
+          <h4 className="font-semibold">Measured pH (latest)</h4>
+          <div className="text-2xl font-bold text-purple-700">{lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '--'}</div>
+          <div className="text-sm text-gray-600">{lastMeasuredPH != null ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement'}</div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold">Recorded pH by concentration</h4>
+          <div className="grid grid-cols-1 gap-2 mt-2">
+            {(["0.1 M","0.01 M","0.001 M"] as const).map((lab) => (
+              <div key={lab} className="p-3 rounded border border-gray-200 bg-gray-50">
+                <div className="font-medium">HCl {lab}</div>
+                <div className="text-lg font-semibold">{results[lab] != null ? `${results[lab].toFixed(2)} (${results[lab] < 7 ? 'Acidic' : results[lab] > 7 ? 'Basic' : 'Neutral'})` : 'No result'}</div>
+              </div>
+            ))}
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpenFor(null)}>Cancel</Button>
-            <Button onClick={confirmAddHcl} disabled={!!volumeError || Number.isNaN(parseFloat(volumeStr)) || parseFloat(volumeStr) < 10.0 || parseFloat(volumeStr) > 15.0}>Add Solution</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+
+        <div>
+          <h4 className="font-semibold">Analysis</h4>
+          <p className="text-sm text-gray-700">The pH values should increase as concentration decreases (less H+ per litre). Compare the measured pH values and discuss possible sources of error (indicator range, dilution accuracy, contamination, etc.).</p>
+        </div>
+
+        <div className="flex items-center justify-end space-x-2">
+          <Button variant="outline" onClick={() => setShowResultsModal(false)}>Close</Button>
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={() => setShowResultsModal(false)}>Close Analysis</Button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
     </TooltipProvider>
   );
 }
