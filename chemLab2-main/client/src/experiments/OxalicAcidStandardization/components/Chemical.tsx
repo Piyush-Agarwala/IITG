@@ -25,24 +25,52 @@ export const Chemical: React.FC<ChemicalProps> = ({
   disabled = false,
   molecularWeight,
 }) => {
-  const [dragAmount, setDragAmount] = React.useState(volume || 25);
+  // For distilled water we restrict the allowed range to 80-120 mL
+  const defaultMin = id === "distilled_water" ? 80 : 1;
+  const defaultMax = id === "distilled_water" ? 120 : (volume || 300);
+  const initial = id === "distilled_water" ? Math.min(100, defaultMax) : (volume && volume > 0 ? Math.min(25, volume) : 25);
+
+  const [dragAmount, setDragAmount] = React.useState<number>(initial);
 
   const handleDragStart = (e: React.DragEvent) => {
     if (disabled) {
       e.preventDefault();
       return;
     }
-    
-    e.dataTransfer.setData("text/plain", JSON.stringify({
-      id,
-      name,
-      formula,
-      color,
-      amount: dragAmount,
-      concentration,
-      molecularWeight,
-    }));
+
+    e.dataTransfer.setData(
+      "text/plain",
+      JSON.stringify({
+        id,
+        name,
+        formula,
+        color,
+        amount: dragAmount,
+        concentration,
+        molecularWeight,
+        volume,
+      })
+    );
     e.dataTransfer.effectAllowed = "copy";
+  };
+
+  const handleAddWaterClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (disabled) return;
+
+    // Dispatch a custom event that the WorkBench listens for to add distilled water
+    try {
+      const ev = new CustomEvent("addDistilledWater", {
+        detail: {
+          id,
+          name,
+          amount: dragAmount,
+        },
+      });
+      window.dispatchEvent(ev);
+    } catch (err) {
+      // fallback: nothing
+    }
   };
 
   return (
@@ -66,9 +94,7 @@ export const Chemical: React.FC<ChemicalProps> = ({
             style={{ backgroundColor: color }}
           />
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-sm truncate">
-              {name}
-            </h3>
+            <h3 className="font-semibold text-gray-900 text-sm truncate">{name}</h3>
             <p className="text-xs text-gray-600 font-mono">{formula}</p>
           </div>
         </div>
@@ -102,26 +128,34 @@ export const Chemical: React.FC<ChemicalProps> = ({
             <div className="flex items-center space-x-2">
               <input
                 type="range"
-                min="1"
-                max={volume}
+                min={defaultMin}
+                max={defaultMax}
                 value={dragAmount}
                 onChange={(e) => setDragAmount(Number(e.target.value))}
                 className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 onClick={(e) => e.stopPropagation()}
               />
-              <span className="text-xs font-medium w-12 text-right">
-                {dragAmount} mL
-              </span>
+              <span className="text-xs font-medium w-12 text-right">{dragAmount} mL</span>
             </div>
+          </div>
+        )}
+
+        {/* Add button specifically for distilled water so users can quickly add the chosen amount */}
+        {id === "distilled_water" && !disabled && (
+          <div className="mt-2 flex justify-center">
+            <button
+              onClick={handleAddWaterClick}
+              className="px-3 py-1 rounded-md bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium"
+            >
+              Add {dragAmount} mL
+            </button>
           </div>
         )}
 
         {/* Drag Indicator */}
         {!disabled && (
           <div className="text-center">
-            <p className="text-xs text-blue-600 mt-2">
-              {id === "oxalic_acid" ? "Drag to balance" : "Drag to add"}
-            </p>
+            <p className="text-xs text-blue-600 mt-2">{id === "oxalic_acid" ? "Drag to balance" : "Drag to add"}</p>
           </div>
         )}
       </div>
