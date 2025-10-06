@@ -35,6 +35,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   // UI state
   const [showToast, setShowToast] = useState<string | null>(null);
   const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
+  const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
 
   // Dialog state for adding HCl volumes
   const [dialogOpenFor, setDialogOpenFor] = useState<null | { id: string; label: string; molarity: number }>(null);
@@ -152,6 +153,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setLastMeasuredPH(null);
     setResults({});
     setEquipmentOnBench(prev => prev.map(e => e.id === 'universal-indicator' ? ({ ...(e as any), color: undefined } as any) : e));
+    setShouldBlinkReset(false);
     setShowToast('HCl reset');
     setTimeout(() => setShowToast(null), 1400);
   };
@@ -180,6 +182,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setShowToast(`Measured pH ≈ ${ph.toFixed(2)}`);
     setTimeout(() => setShowToast(null), 1800);
     setShouldBlinkMeasure(false);
+    setShouldBlinkReset(true);
 
     // Update indicator color
     let paperColor: string | undefined = undefined;
@@ -246,7 +249,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
                 {/* RESET HCL button placed below HCl bottles */}
                 <div className="mt-2">
-                  <Button onClick={resetHcl} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">RESET HCL</Button>
+                  <Button onClick={resetHcl} variant="outline" className={`w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100 ${shouldBlinkReset ? 'blink-until-pressed' : ''}`}>RESET HCL</Button>
                 </div>
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
