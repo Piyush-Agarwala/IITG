@@ -158,7 +158,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setHPlusMoles(0);
     setTestTubeColor(undefined);
     setLastMeasuredPH(null);
-    setResults({});
+    // Preserve previously recorded pH results in Live Analysis — do not clear setResults()
     setEquipmentOnBench(prev => prev.map(e => e.id === 'universal-indicator' ? ({ ...(e as any), color: undefined } as any) : e));
     setShouldBlinkReset(false);
     setLastUsedHclLabel(null);
