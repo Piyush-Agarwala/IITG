@@ -78,15 +78,18 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
   // messages shown on the workbench area (transient)
   const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
+  const [workbenchMessageVariant, setWorkbenchMessageVariant] = useState<'default' | 'colorful' | null>(null);
   const messageTimeoutRef = useRef<number | null>(null);
 
-  const showMessage = useCallback((text: string) => {
+  const showMessage = useCallback((text: string, variant: 'default' | 'colorful' = 'default') => {
     setWorkbenchMessage(text);
+    setWorkbenchMessageVariant(variant);
     if (messageTimeoutRef.current) {
       window.clearTimeout(messageTimeoutRef.current);
     }
     messageTimeoutRef.current = window.setTimeout(() => {
       setWorkbenchMessage(null);
+      setWorkbenchMessageVariant(null);
       messageTimeoutRef.current = null;
     }, 8000);
   }, []);
@@ -563,6 +566,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     });
 
     washAlignRef.current = true;
+    try { showMessage("Click on the Rinse Beaker button to clean the beaker!", 'colorful'); } catch (e) {}
   }, [equipmentPositions, step.id]);
 
   // Alignment helper that forces the beaker and wash bottle into the step-4 layout.
@@ -752,7 +756,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         </div>
 
         {workbenchMessage && (
-          <div role="status" aria-live="polite" className="fixed bottom-6 right-6 z-50 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3 rounded-md shadow-lg">
+          <div
+            role="status"
+            aria-live="polite"
+            className={`fixed bottom-6 right-6 z-50 text-sm px-4 py-3 rounded-md shadow-lg ${workbenchMessageVariant === 'colorful' ? 'bg-gradient-to-r from-pink-50 via-yellow-50 to-green-50 border border-transparent text-green-800' : 'bg-amber-50 border border-amber-200 text-amber-800'}`}
+          >
             {workbenchMessage}
           </div>
         )}
