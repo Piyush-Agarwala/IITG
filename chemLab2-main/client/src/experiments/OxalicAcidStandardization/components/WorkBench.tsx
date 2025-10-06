@@ -579,15 +579,53 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       const rect = surface.getBoundingClientRect();
 
       // Preferred positions copied from the step-4 targets
-      const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
-      const targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
-      const targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
-      const targetWashY = Math.max(2, targetBeakerY - 28);
+      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
+      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
+      let targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
+      let targetWashY = Math.max(2, targetBeakerY - 28);
+
+      // If there are weighing boats present, avoid overlapping them by nudging beaker/wash
+      const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
+
+      const isOverlapping = (x1: number, y1: number, x2: number, y2: number, threshold = 60) => {
+        return Math.hypot(x1 - x2, y1 - y2) < threshold;
+      };
+
+      if (boats.length > 0) {
+        const boat = boats[0];
+        if (isOverlapping(targetBeakerX, targetBeakerY, boat.x || 0, boat.y || 0, 80)) {
+          targetBeakerX = Math.max(16, (boat.x || 0) - 20);
+          targetBeakerY = (boat.y || 0) + 90; // place below the boat
+          targetBeakerX = Math.min(rect.width - 80, targetBeakerX);
+          targetBeakerY = Math.min(rect.height - 80, targetBeakerY);
+          targetWashX = Math.min(rect.width - 60, targetBeakerX + 80);
+          targetWashY = Math.max(8, targetBeakerY - 64);
+        }
+      }
+
+      // Also nudge positions if other equipment is near the targets
+      const occupied = equipmentPositions.filter(p => p.id !== beaker.id && p.id !== wash.id);
+      const adjustIfCollision = (x: number, y: number) => {
+        let nx = x;
+        let ny = y;
+        occupied.forEach(o => {
+          if (isOverlapping(nx, ny, o.x || 0, o.y || 0, 70)) {
+            ny += 80; // push down
+            nx += 30; // nudge right
+          }
+        });
+        nx = Math.max(8, Math.min(rect.width - 80, nx));
+        ny = Math.max(8, Math.min(rect.height - 80, ny));
+        return { nx, ny };
+      };
+
+      const beakerPos = adjustIfCollision(targetBeakerX, targetBeakerY);
+      const washPos = adjustIfCollision(targetWashX, targetWashY);
 
       setEquipmentPositions(prev => {
         const updated = prev.map(pos => {
-          if (pos.id === beaker.id) return { ...pos, x: targetBeakerX, y: targetBeakerY };
-          if (pos.id === wash.id) return { ...pos, x: targetWashX, y: targetWashY };
+          if (pos.id === beaker.id) return { ...pos, x: beakerPos.nx, y: beakerPos.ny };
+          if (pos.id === wash.id) return { ...pos, x: washPos.nx, y: washPos.ny };
           return pos;
         });
         // ensure beaker renders on top
