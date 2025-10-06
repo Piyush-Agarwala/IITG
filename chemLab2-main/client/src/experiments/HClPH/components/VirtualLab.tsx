@@ -31,6 +31,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [hPlusMoles, setHPlusMoles] = useState(0);
   const [lastMeasuredPH, setLastMeasuredPH] = useState<number | null>(null);
   const [results, setResults] = useState<Record<string, number>>({}); // map by label
+  const [lastUsedHclLabel, setLastUsedHclLabel] = useState<string | null>(null);
 
   // UI state
   const [showToast, setShowToast] = useState<string | null>(null);
