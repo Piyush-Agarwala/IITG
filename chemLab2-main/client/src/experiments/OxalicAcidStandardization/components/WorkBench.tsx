@@ -441,10 +441,16 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         setWashAnimation({ x: animX, y: animY, active: true });
         showMessage('Rinsing the beaker...');
 
-        // After animation completes, clear chemicals in the beaker visually
+        // After animation completes, clear chemicals in the beaker visually and remove the wash bottle for step 4
         window.setTimeout(() => {
           setEquipmentPositions(prev => prev.map(pos => pos.id === nearest.id ? { ...pos, chemicals: [] } : pos));
           setWashAnimation(null);
+          try {
+            if (step.id === 4) {
+              // remove the wash bottle used for rinsing from the workbench
+              setEquipmentPositions(prev => prev.filter(pos => pos.id !== bottle.id));
+            }
+          } catch (e) {}
           showMessage('Beaker rinsed.');
         }, 2200);
 
