@@ -246,7 +246,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
                 {/* RESET HCL button placed below HCl bottles */}
                 <div className="mt-2">
-                  <Button onClick={resetHcl} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100">RESET HCL</Button>
+                  <Button onClick={resetHcl} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">RESET HCL</Button>
                 </div>
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
