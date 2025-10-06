@@ -147,7 +147,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               </div>
               <span className="text-sm font-medium mt-2 text-center block">{name}</span>
             </div>
-          ) : (id === 'hcl-0-01m' || id === 'nh4oh-0-1m' || id === 'nh4cl-0-1m' || name.toLowerCase().includes('ammonium hydroxide') || name.toLowerCase().includes('ammonium chloride') || name.toLowerCase().includes('nh4oh') || name.toLowerCase().includes('nh4cl')) ? (
+          ) : (id === 'hcl-0-1m' || id === 'hcl-0-01m' || id === 'hcl-0-001m' || id === 'nh4oh-0-1m' || id === 'nh4cl-0-1m' || name.toLowerCase().includes('ammonium hydroxide') || name.toLowerCase().includes('ammonium chloride') || name.toLowerCase().includes('nh4oh') || name.toLowerCase().includes('nh4cl')) ? (
             <div className="flex flex-col items-center">
               <div className={`w-20 h-20 border-2 border-gray-300 relative overflow-hidden mb-2 shadow-sm ${bottleBgClass}`}>
                 <Droplets className={`w-7 h-7 absolute top-2 left-1/2 -translate-x-1/2 ${dropletColorClass} opacity-70`} />
