@@ -132,6 +132,11 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     const vL = v / 1000; // L
     const moles = dialogOpenFor.molarity * vL; // strong acid: [H+] from HCl
     setHPlusMoles((m) => m + moles);
+
+    // Record last used HCl concentration for result mapping
+    const shortLabel = dialogOpenFor.molarity === 0.1 ? '0.1 M' : dialogOpenFor.molarity === 0.01 ? '0.01 M' : '0.001 M';
+    setLastUsedHclLabel(shortLabel);
+
     setTestTubeVolume((vol) => Math.max(0, Math.min(25, vol + v)));
 
     // tint solution light-blue when HCl is added
