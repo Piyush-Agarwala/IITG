@@ -390,15 +390,21 @@ export const Equipment: React.FC<EquipmentProps> = ({
         return (
           <div className="text-center relative">
             {showCustomBeakerImage ? (
-              <TransparentImage
-                src={imageSrc}
-                alt={name}
-                className={`mx-auto mb-2 ${position ? "h-40" : "h-24"} w-auto object-contain mix-blend-multiply pointer-events-none select-none`}
-                tolerance={245}
-                colorDiff={8}
-                draggable={false}
-                onDragStart={(e) => e.preventDefault()}
-              />
+              (() => {
+                const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
+                const heightClass = position ? (stepId === 5 && hasWaterNow ? "h-56" : "h-40") : "h-24";
+                return (
+                  <TransparentImage
+                    src={imageSrc}
+                    alt={name}
+                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none`}
+                    tolerance={245}
+                    colorDiff={8}
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
+                  />
+                );
+              })()
             ) : (
               <Beaker className="w-8 h-8 mx-auto mb-2 text-gray-600" />
             )}
