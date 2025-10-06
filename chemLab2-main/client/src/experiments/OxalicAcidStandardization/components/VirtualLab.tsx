@@ -277,7 +277,7 @@ function OxalicAcidVirtualLab({
     }, 1000);
   }, [measurements.massWeighed, addResult]);
 
-  const handleStepAction = useCallback(() => {
+  const handleStepAction = useCallback((opts?: { skipAnimation?: boolean }) => {
     switch (step.id) {
       case 1:
         handleCalculation();
@@ -289,7 +289,12 @@ function OxalicAcidVirtualLab({
         handleDissolving();
         break;
       case 4:
-        handleTransfer();
+        if (opts && opts.skipAnimation) {
+          // directly mark transfer complete without showing transfer animation
+          handleTransferComplete();
+        } else {
+          handleTransfer();
+        }
         break;
       case 5:
         handleNearMark();
@@ -301,7 +306,7 @@ function OxalicAcidVirtualLab({
         handleFinalMixing();
         break;
     }
-  }, [step.id, handleCalculation, handleWeighing, handleDissolving, handleTransfer, handleNearMark, handleFinalVolume, handleFinalMixing]);
+  }, [step.id, handleCalculation, handleWeighing, handleDissolving, handleTransfer, handleTransferComplete, handleNearMark, handleFinalVolume, handleFinalMixing]);
 
   useEffect(() => {
     if (step.id !== 1) {
