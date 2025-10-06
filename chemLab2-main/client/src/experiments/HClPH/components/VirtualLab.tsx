@@ -280,6 +280,12 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               <Button onClick={() => { if (equipmentOnBench.length) { const id = equipmentOnBench[equipmentOnBench.length-1].id; handleRemove(id); } }} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
+
+              {/* View Results button inserted between Undo and Reset Experiment */}
+              {Object.keys(results).length > 0 && (
+                <Button onClick={() => setShowResultsModal(true)} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results &amp; Analysis</Button>
+              )}
+
               <Button onClick={() => { setEquipmentOnBench([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
             </div>
           </div>
