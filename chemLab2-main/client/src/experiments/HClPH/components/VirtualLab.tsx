@@ -386,39 +386,79 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
       </div>
 
       {/* Dialog for adding HCl volumes */}
-      <Dialog open={!!dialogOpenFor} onOpenChange={(open) => { if (!open) setDialogOpenFor(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter Volume</DialogTitle>
-            <DialogDescription>Enter the volume of {dialogOpenFor?.label} to add to the test tube.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Volume (mL)</label>
-            <input
-              type="number"
-              step={0.1}
-              min={10.0}
-              max={15.0}
-              value={volumeStr}
-              onChange={(e) => {
-                const val = e.target.value;
-                setVolumeStr(val);
-                const parsed = parseFloat(val);
-                if (Number.isNaN(parsed) || parsed < 10.0 || parsed > 15.0) setVolumeError("Please enter a value between 10.0 and 15.0 mL");
-                else setVolumeError(null);
-              }}
-              className="w-full border rounded-md px-3 py-2"
-              placeholder="Enter volume in mL"
-            />
-            {volumeError && <p className="text-xs text-red-600">{volumeError}</p>}
-            {!volumeError && <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>}
+  <Dialog open={!!dialogOpenFor} onOpenChange={(open) => { if (!open) setDialogOpenFor(null); }}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Enter Volume</DialogTitle>
+        <DialogDescription>Enter the volume of {dialogOpenFor?.label} to add to the test tube.</DialogDescription>
+      </DialogHeader>
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Volume (mL)</label>
+        <input
+          type="number"
+          step={0.1}
+          min={10.0}
+          max={15.0}
+          value={volumeStr}
+          onChange={(e) => {
+            const val = e.target.value;
+            setVolumeStr(val);
+            const parsed = parseFloat(val);
+            if (Number.isNaN(parsed) || parsed < 10.0 || parsed > 15.0) setVolumeError("Please enter a value between 10.0 and 15.0 mL");
+            else setVolumeError(null);
+          }}
+          className="w-full border rounded-md px-3 py-2"
+          placeholder="Enter volume in mL"
+        />
+        {volumeError && <p className="text-xs text-red-600">{volumeError}</p>}
+        {!volumeError && <p className="text-xs text-gray-500">Recommended range: 10.0 – 15.0 mL</p>}
+      </div>
+      <DialogFooter>
+        <Button variant="outline" onClick={() => setDialogOpenFor(null)}>Cancel</Button>
+        <Button onClick={confirmAddHcl} disabled={!!volumeError || Number.isNaN(parseFloat(volumeStr)) || parseFloat(volumeStr) < 10.0 || parseFloat(volumeStr) > 15.0}>Add Solution</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+
+  {/* Results & Analysis Modal (opens automatically when 0.001 M pH is recorded) */}
+  <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
+    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>Results & Analysis — HCl pH Measurement</DialogTitle>
+        <DialogDescription>Summary of measured pH values for each HCl concentration and suggested analysis.</DialogDescription>
+      </DialogHeader>
+
+      <div className="py-4 space-y-4 text-black">
+        <div>
+          <h4 className="font-semibold">Measured pH (latest)</h4>
+          <div className="text-2xl font-bold text-purple-700">{lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '--'}</div>
+          <div className="text-sm text-gray-600">{lastMeasuredPH != null ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement'}</div>
+        </div>
+
+        <div>
+          <h4 className="font-semibold">Recorded pH by concentration</h4>
+          <div className="grid grid-cols-1 gap-2 mt-2">
+            {(["0.1 M","0.01 M","0.001 M"] as const).map((lab) => (
+              <div key={lab} className="p-3 rounded border border-gray-200 bg-gray-50">
+                <div className="font-medium">HCl {lab}</div>
+                <div className="text-lg font-semibold">{results[lab] != null ? `${results[lab].toFixed(2)} (${results[lab] < 7 ? 'Acidic' : results[lab] > 7 ? 'Basic' : 'Neutral'})` : 'No result'}</div>
+              </div>
+            ))}
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpenFor(null)}>Cancel</Button>
-            <Button onClick={confirmAddHcl} disabled={!!volumeError || Number.isNaN(parseFloat(volumeStr)) || parseFloat(volumeStr) < 10.0 || parseFloat(volumeStr) > 15.0}>Add Solution</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+
+        <div>
+          <h4 className="font-semibold">Analysis</h4>
+          <p className="text-sm text-gray-700">The pH values should increase as concentration decreases (less H+ per litre). Compare the measured pH values and discuss possible sources of error (indicator range, dilution accuracy, contamination, etc.).</p>
+        </div>
+
+        <div className="flex items-center justify-end space-x-2">
+          <Button variant="outline" onClick={() => setShowResultsModal(false)}>Close</Button>
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={() => setShowResultsModal(false)}>Close Analysis</Button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
     </TooltipProvider>
   );
 }
