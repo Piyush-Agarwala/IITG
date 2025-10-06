@@ -585,12 +585,14 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         setEquipmentPositions(prev => {
           const boats = prev.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y));
           if (boats.length === 0) return prev;
+          // place boats in the top-left corner stacked vertically to match reference layout
+          const baseX = Math.max(8, Math.floor(rect.width * 0.08));
           return prev.map(pos => {
             const boatIndex = boats.findIndex(b => b.id === pos.id);
             if (boatIndex === -1) return pos;
-            const safeX = Math.max(8, Math.floor(rect.width - 120));
-            const safeY = Math.max(8, Math.floor(rect.height - 120 - boatIndex * 70));
-            return { ...pos, x: safeX, y: Math.min(rect.height - 80, Math.max(8, safeY)) };
+            const safeX = baseX;
+            const safeY = Math.max(8, Math.floor(rect.height * 0.08 + boatIndex * 70));
+            return { ...pos, x: Math.min(rect.width - 80, safeX), y: Math.min(rect.height - 80, safeY) };
           });
         });
       }
