@@ -581,17 +581,18 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       // If a volumetric flask was added, proactively move any weighing boat(s) out of the primary work area
       const flask = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('volumetric_flask') || (p.typeId ?? p.id).toString().toLowerCase().includes('volumetric_flask'));
       if (flask) {
-        const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y));
-        if (boats.length > 0) {
-          // place boats in the bottom-right corner stacked vertically to clear the central area
-          setEquipmentPositions(prev => prev.map(pos => {
+        // Use the latest positions (prev) when relocating boats so we don't rely on stale closure values
+        setEquipmentPositions(prev => {
+          const boats = prev.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y));
+          if (boats.length === 0) return prev;
+          return prev.map(pos => {
             const boatIndex = boats.findIndex(b => b.id === pos.id);
             if (boatIndex === -1) return pos;
             const safeX = Math.max(8, Math.floor(rect.width - 120));
             const safeY = Math.max(8, Math.floor(rect.height - 120 - boatIndex * 70));
             return { ...pos, x: safeX, y: Math.min(rect.height - 80, Math.max(8, safeY)) };
-          }));
-        }
+          });
+        });
       }
 
       // Preferred positions copied from the step-4 targets
