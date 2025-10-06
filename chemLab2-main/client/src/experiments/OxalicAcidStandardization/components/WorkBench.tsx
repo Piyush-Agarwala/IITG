@@ -508,7 +508,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     }
 
     // Avoid overlapping existing weighing boat(s). If a weighing boat is present near targets, shift beaker down below the boat
-    const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
+    const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y) && (p.x > 8 || p.y > 8));
 
     const isOverlapping = (x1: number, y1: number, x2: number, y2: number, threshold = 60) => {
       return Math.hypot(x1 - x2, y1 - y2) < threshold;
@@ -585,7 +585,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       let targetWashY = Math.max(2, targetBeakerY - 28);
 
       // If there are weighing boats present, avoid overlapping them by nudging beaker/wash
-      const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
+      const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y) && (p.x > 8 || p.y > 8));
 
       const isOverlapping = (x1: number, y1: number, x2: number, y2: number, threshold = 60) => {
         return Math.hypot(x1 - x2, y1 - y2) < threshold;
@@ -923,7 +923,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Chemical Equation</h4>
                 <div className="text-xs font-mono bg-gray-50 rounded-lg p-3 border text-center leading-relaxed">
                   <div>H₂C₂O₄·2H₂O (s) → H₂C₂O₄ (aq) + 2H₂O</div>
-                  <div className="mt-1">H₂C₂O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
+                  <div className="mt-1">H₂C₂O₄ (aq) �� 2H⁺ + C₂O₄²⁻</div>
                 </div>
               </div>
 
