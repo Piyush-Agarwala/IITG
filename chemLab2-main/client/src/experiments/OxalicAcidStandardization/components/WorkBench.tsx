@@ -220,8 +220,19 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           setWashAnimation(null);
           showMessage(`${amount} mL distilled water added to the beaker.`);
 
-          // If step 5, dispatch a specific event so other parts of the app can react (e.g., progress)
+          // If step 5, remove the distilled water bottle from the workspace (if present) and notify
           if (isStepFive) {
+            try {
+              setEquipmentPositions(prev => prev.filter(pos => {
+                const idLower = (pos.typeId || pos.id || '').toString().toLowerCase();
+                const hasDistilledChemical = Array.isArray(pos.chemicals) && pos.chemicals.some((c: any) => (c.id || '').toString().toLowerCase().includes('distilled'));
+                // remove if it's a bottle representing distilled water or contains distilled_water as chemical
+                if (pos.isBottle && hasDistilledChemical) return false;
+                if (idLower.includes('distilled_water') || idLower.includes('distilled-water') || idLower.includes('distilledwater')) return false;
+                return true;
+              }));
+            } catch (e) {}
+
             try { window.dispatchEvent(new CustomEvent('oxalic_beaker_image_shown')); } catch (e) {}
           }
         }, duration);
