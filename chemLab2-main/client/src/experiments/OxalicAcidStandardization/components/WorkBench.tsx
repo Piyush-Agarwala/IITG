@@ -753,7 +753,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       case 4:
         return "drag the beaker, wash bottle and volumetric flask into the workspace";
       case 5:
-        return "Add distilled water until near the 250 mL mark";
+        return "after setting the distilled water limit drag and drop the distilled water into the workspace";
       case 6:
         return "Use dropper to carefully reach the exact volume mark";
       case 7:
