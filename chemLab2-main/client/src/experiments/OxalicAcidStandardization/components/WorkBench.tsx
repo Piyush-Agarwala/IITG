@@ -449,6 +449,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             if (step.id === 4) {
               // remove the wash bottle used for rinsing from the workbench
               setEquipmentPositions(prev => prev.filter(pos => pos.id !== bottle.id));
+              // automatically trigger the step action for step 4 (transfer to flask)
+              try { if (typeof onStepAction === 'function') onStepAction(); } catch (e) {}
             }
           } catch (e) {}
           showMessage('Beaker rinsed.');
