@@ -181,14 +181,18 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         // Show a colorful hint telling the user where to add distilled water from
         showMessage(`Adding ${amount} mL distilled water into the beaker. Use the wash bottle or the Distilled Water bottle on the left.`, 'colorful');
 
-        // Start a brief wash-like animation above the beaker
+        // Start a wash-like animation above the beaker
         setWashAnimation({ x: animX, y: animY, active: true });
+
+        // If current step is 5, run a longer (6s) animation and then replace beaker image
+        const isStepFive = step.id === 5;
+        const duration = isStepFive ? 6000 : 1600;
 
         // After animation completes, actually add the water to the beaker's chemicals array
         window.setTimeout(() => {
           setEquipmentPositions(prev => prev.map(pos => {
             if (pos.id === target.id) {
-              return {
+              const updated = {
                 ...pos,
                 chemicals: [
                   ...pos.chemicals,
@@ -201,6 +205,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                   }
                 ]
               };
+
+              // For step 5, replace the beaker's image with the provided beaker image
+              if (isStepFive) {
+                updated.imageSrc = 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F0bb739e603924a21b1dd8cbd3342cbb8?format=webp&width=800';
+              }
+
+              return updated;
             }
             return pos;
           }));
@@ -208,7 +219,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           // stop animation and show confirmation
           setWashAnimation(null);
           showMessage(`${amount} mL distilled water added to the beaker.`);
-        }, 1600);
+
+          // If step 5, dispatch a specific event so other parts of the app can react (e.g., progress)
+          if (isStepFive) {
+            try { window.dispatchEvent(new CustomEvent('oxalic_beaker_image_shown')); } catch (e) {}
+          }
+        }, duration);
       } catch (err) {
         console.warn('addDistilledWater handler error', err);
       }
@@ -216,7 +232,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     window.addEventListener('addDistilledWater', addWaterHandler as EventListener);
     return () => window.removeEventListener('addDistilledWater', addWaterHandler as EventListener);
-  }, [equipmentPositions, setEquipmentPositions, showMessage]);
+  }, [equipmentPositions, setEquipmentPositions, showMessage, step.id]);
 
   useEffect(() => {
     if (isRunning) {
