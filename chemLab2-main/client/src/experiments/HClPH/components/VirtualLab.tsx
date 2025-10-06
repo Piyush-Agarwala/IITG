@@ -282,7 +282,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               </Button>
 
               {/* View Results button inserted between Undo and Reset Experiment */}
-              {Object.keys(results).length > 0 && (
+              {results['0.001 M'] != null && (
                 <Button onClick={() => setShowResultsModal(true)} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results &amp; Analysis</Button>
               )}
 
@@ -386,7 +386,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                 </div>
 
                 <div className="mt-3 flex justify-end">
-                  {Object.keys(results).length > 0 && (
+                  {results['0.001 M'] != null && (
                     <Button onClick={() => setShowResultsModal(true)} className="bg-blue-500 hover:bg-blue-600 text-white">View Results &amp; Analysis</Button>
                   )}
                 </div>
