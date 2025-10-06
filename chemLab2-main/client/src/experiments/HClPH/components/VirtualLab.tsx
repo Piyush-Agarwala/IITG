@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
-import { Beaker, Droplets, FlaskConical, TestTube, Undo2, CheckCircle } from "lucide-react";
+import { Beaker, Droplets, FlaskConical, TestTube, Undo2, CheckCircle, Home } from "lucide-react";
 import { Equipment as RenderEquipment } from "@/experiments/PHComparison/components/Equipment";
 import type { Experiment } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Link } from "wouter";
 
 interface VirtualLabProps {
   experiment: Experiment;
@@ -279,6 +280,12 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
               <Button onClick={() => { if (equipmentOnBench.length) { const id = equipmentOnBench[equipmentOnBench.length-1].id; handleRemove(id); } }} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center justify-center">
                 <Undo2 className="w-4 h-4 mr-2" /> UNDO
               </Button>
+
+              {/* View Results button inserted between Undo and Reset Experiment */}
+              {results['0.001 M'] != null && (
+                <Button onClick={() => setShowResultsModal(true)} className="w-full bg-blue-500 hover:bg-blue-600 text-white">View Results &amp; Analysis</Button>
+              )}
+
               <Button onClick={() => { setEquipmentOnBench([]); onReset(); }} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100">Reset Experiment</Button>
             </div>
           </div>
@@ -420,45 +427,81 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     </DialogContent>
   </Dialog>
 
-  {/* Results & Analysis Modal (opens automatically when 0.001 M pH is recorded) */}
-  <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
-    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle>Results & Analysis — HCl pH Measurement</DialogTitle>
-        <DialogDescription>Summary of measured pH values for each HCl concentration and suggested analysis.</DialogDescription>
-      </DialogHeader>
+      {/* Results modal (styled like Ethanoic Buffer results) */}
+      <Dialog open={showResultsModal} onOpenChange={setShowResultsModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Experiment Results & Analysis</DialogTitle>
+            <DialogDescription>Complete analysis of your HCl pH measurement experiment</DialogDescription>
+          </DialogHeader>
 
-      <div className="py-4 space-y-4 text-black">
-        <div>
-          <h4 className="font-semibold">Measured pH (latest)</h4>
-          <div className="text-2xl font-bold text-purple-700">{lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : '--'}</div>
-          <div className="text-sm text-gray-600">{lastMeasuredPH != null ? (lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral') : 'No measurement'}</div>
-        </div>
-
-        <div>
-          <h4 className="font-semibold">Recorded pH by concentration</h4>
-          <div className="grid grid-cols-1 gap-2 mt-2">
-            {(["0.1 M","0.01 M","0.001 M"] as const).map((lab) => (
-              <div key={lab} className="p-3 rounded border border-gray-200 bg-gray-50">
-                <div className="font-medium">HCl {lab}</div>
-                <div className="text-lg font-semibold">{results[lab] != null ? `${results[lab].toFixed(2)} (${results[lab] < 7 ? 'Acidic' : results[lab] > 7 ? 'Basic' : 'Neutral'})` : 'No result'}</div>
+          <div className="space-y-4 text-black">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border rounded bg-purple-50">
+                <div className="text-sm font-medium">Measured pH (latest)</div>
+                <div className="text-3xl font-semibold mt-2 text-purple-700">{lastMeasuredPH != null ? `${lastMeasuredPH.toFixed(2)} (${lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral'})` : 'No measurement'}</div>
               </div>
-            ))}
+
+              <div className="p-4 border rounded bg-gray-50">
+                <div className="text-sm font-medium">Latest Recorded Concentration</div>
+                <div className="text-lg font-semibold mt-2">{lastUsedHclLabel ? `${lastUsedHclLabel} — ${results[lastUsedHclLabel] != null ? `${results[lastUsedHclLabel].toFixed(2)} (${results[lastUsedHclLabel] < 7 ? 'Acidic' : results[lastUsedHclLabel] > 7 ? 'Basic' : 'Neutral'})` : 'No result'}` : '—'}</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">pH Comparison Analysis</h4>
+              <p className="text-sm text-gray-700">Measured pH values should increase as HCl concentration decreases. Review the recorded pH values below and consider sources of experimental error such as indicator range, dilution accuracy, or contamination.</p>
+
+              <div className="mt-3 p-3 bg-gray-50 border rounded text-sm">
+                <div className="font-medium mb-2">Recorded pH by concentration</div>
+                {(["0.1 M","0.01 M","0.001 M"] as const).map((lab) => (
+                  <div key={lab} className="mb-2 p-2 rounded border border-gray-200 bg-white">
+                    <div className="font-medium">HCl {lab}</div>
+                    <div className="text-sm mt-1">{results[lab] != null ? `${results[lab].toFixed(2)} (${results[lab] < 7 ? 'Acidic' : results[lab] > 7 ? 'Basic' : 'Neutral'})` : 'No result recorded'}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Action Timeline</h4>
+              <ol className="list-decimal list-inside text-sm text-gray-700">
+                <li>Added HCl solutions and recorded pH values where measured.</li>
+                <li>Recorded values: {Object.keys(results).length ? Object.entries(results).map(([k,v]) => `${k}: ${v.toFixed(2)}`).join(' • ') : 'No recorded values'}</li>
+              </ol>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Final Experimental State</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 border rounded">
+                  <div className="text-sm font-medium">Solution</div>
+                  <div className="text-sm mt-1">pH: {lastMeasuredPH != null ? lastMeasuredPH.toFixed(2) : 'N/A'}</div>
+                </div>
+                <div className="p-3 border rounded">
+                  <div className="text-sm font-medium">Notes</div>
+                  <div className="text-sm mt-1">Strong acid present; ensure proper dilution and indicator range when measuring.</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <h4 className="font-semibold">Analysis</h4>
-          <p className="text-sm text-gray-700">The pH values should increase as concentration decreases (less H+ per litre). Compare the measured pH values and discuss possible sources of error (indicator range, dilution accuracy, contamination, etc.).</p>
-        </div>
+          <DialogFooter>
+            <div className="w-full flex justify-between">
+              <div className="flex items-center space-x-2">
+                <Link href="/">
+                  <Button className="bg-gray-500 hover:bg-gray-600 text-white flex items-center space-x-2">
+                    <Home className="w-4 h-4" />
+                    <span>Return to Experiments</span>
+                  </Button>
+                </Link>
+              </div>
 
-        <div className="flex items-center justify-end space-x-2">
-          <Button variant="outline" onClick={() => setShowResultsModal(false)}>Close</Button>
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={() => setShowResultsModal(false)}>Close Analysis</Button>
-        </div>
-      </div>
-    </DialogContent>
-  </Dialog>
+              <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </TooltipProvider>
   );
 }
