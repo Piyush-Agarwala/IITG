@@ -147,6 +147,77 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     };
   }, [showMessage]);
 
+  // Listen for programmatic distilled water additions from the chemical palette
+  useEffect(() => {
+    const addWaterHandler = (e: any) => {
+      try {
+        const detail = e?.detail || {};
+        const amount = Number(detail.amount) || 100;
+
+        // Find a beaker on the workbench
+        const beakers = equipmentPositions.filter(p => ((p.typeId ?? p.id) + '').toLowerCase().includes('beaker'));
+        if (beakers.length === 0) {
+          showMessage('Place a beaker on the workbench to add distilled water.', 'colorful');
+          return;
+        }
+
+        // Choose the first beaker (nearest could be implemented later)
+        const target = beakers[0];
+
+        // Compute animation position using DOM if available
+        const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+        let animX = (target.x || 0) + 20;
+        let animY = (target.y || 0) - 60;
+        if (surfaceEl) {
+          const beakerEl = surfaceEl.querySelector(`[data-equipment-id="${target.id}"]`) as HTMLElement | null;
+          const surfaceRect = surfaceEl.getBoundingClientRect();
+          if (beakerEl) {
+            const beakerRect = beakerEl.getBoundingClientRect();
+            animX = beakerRect.left - surfaceRect.left + beakerRect.width * 0.6;
+            animY = beakerRect.top - surfaceRect.top - Math.max(40, beakerRect.height * 0.6);
+          }
+        }
+
+        // Show a colorful hint telling the user where to add distilled water from
+        showMessage(`Adding ${amount} mL distilled water into the beaker. Use the wash bottle or the Distilled Water bottle on the left.`, 'colorful');
+
+        // Start a brief wash-like animation above the beaker
+        setWashAnimation({ x: animX, y: animY, active: true });
+
+        // After animation completes, actually add the water to the beaker's chemicals array
+        window.setTimeout(() => {
+          setEquipmentPositions(prev => prev.map(pos => {
+            if (pos.id === target.id) {
+              return {
+                ...pos,
+                chemicals: [
+                  ...pos.chemicals,
+                  {
+                    id: 'distilled_water',
+                    name: 'Distilled Water',
+                    color: '#87CEEB',
+                    amount: amount,
+                    concentration: 'Pure'
+                  }
+                ]
+              };
+            }
+            return pos;
+          }));
+
+          // stop animation and show confirmation
+          setWashAnimation(null);
+          showMessage(`${amount} mL distilled water added to the beaker.`);
+        }, 1600);
+      } catch (err) {
+        console.warn('addDistilledWater handler error', err);
+      }
+    };
+
+    window.addEventListener('addDistilledWater', addWaterHandler as EventListener);
+    return () => window.removeEventListener('addDistilledWater', addWaterHandler as EventListener);
+  }, [equipmentPositions, setEquipmentPositions, showMessage]);
+
   useEffect(() => {
     if (isRunning) {
       const tempInterval = setInterval(() => {
