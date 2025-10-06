@@ -923,7 +923,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Chemical Equation</h4>
                 <div className="text-xs font-mono bg-gray-50 rounded-lg p-3 border text-center leading-relaxed">
                   <div>H₂C₂O₄·2H₂O (s) → H₂C₂O₄ (aq) + 2H₂O</div>
-                  <div className="mt-1">H₂C₂O₄ (aq) �� 2H⁺ + C₂O₄²⁻</div>
+                  <div className="mt-1">H₂C₂O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
                 </div>
               </div>
 
@@ -958,7 +958,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                         <Button
                           onClick={() => {
                             // Find a weighing boat on the workbench
-                            const boat = equipmentPositions.find(pos => (pos.typeId ?? pos.id).toLowerCase().includes('weighing_boat') || (pos.typeId === 'weighing_boat'));
+                            const boat = equipmentPositions.find(pos => ((pos.typeId ?? pos.id).toString().toLowerCase().includes('weighing_boat') || (pos.typeId === 'weighing_boat')) && typeof pos.x === 'number' && typeof pos.y === 'number');
                             if (!boat) {
                               showMessage('Place a weighing boat on the workbench first.');
                               return;
