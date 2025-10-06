@@ -211,6 +211,13 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     }
     setResults((r) => ({ ...r, [label as string]: ph }));
 
+    // If the 0.001 M result was just recorded, open the Results & Analysis modal
+    if (label === '0.001 M') {
+      setTimeout(() => {
+        setShowResultsModal(true);
+      }, 800);
+    }
+
     // Map to guided steps in the dataset
     if (currentStep === 3 || currentStep === 4) {
       if (!completedSteps.includes(currentStep)) onStepComplete(currentStep);
