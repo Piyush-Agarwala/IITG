@@ -50,6 +50,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setHPlusMoles(0);
     setLastMeasuredPH(null);
     setResults({});
+    setLastUsedHclLabel(null);
     setShowToast(null);
     setShouldBlinkMeasure(false);
   }, [experiment.id]);
