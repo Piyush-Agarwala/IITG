@@ -379,6 +379,12 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                   ))}
                 </div>
 
+                <div className="mt-3 flex justify-end">
+                  {Object.keys(results).length > 0 && (
+                    <Button onClick={() => setShowResultsModal(true)} className="bg-blue-500 hover:bg-blue-600 text-white">View Results &amp; Analysis</Button>
+                  )}
+                </div>
+
                 {showToast && <p className="text-xs text-blue-700 mt-2">{showToast}</p>}
               </div>
             </div>
