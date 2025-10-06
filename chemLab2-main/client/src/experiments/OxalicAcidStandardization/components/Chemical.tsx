@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 interface ChemicalProps {
   id: string;
@@ -11,6 +11,108 @@ interface ChemicalProps {
   volume?: number;
   disabled?: boolean;
   molecularWeight?: number;
+}
+
+type SliderProps = {
+  min: number;
+  max: number;
+  value: number;
+  step?: number;
+  onChange: (v: number) => void;
+  ariaLabel?: string;
+};
+
+function SmoothSlider({ min, max, value, step = 1, onChange, ariaLabel }: SliderProps) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const knobRef = useRef<HTMLButtonElement | null>(null);
+  const draggingRef = useRef(false);
+
+  useEffect(() => {
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!draggingRef.current || !trackRef.current) return;
+      const rect = trackRef.current.getBoundingClientRect();
+      const clientX = e.clientX;
+      const pct = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+      const raw = min + pct * (max - min);
+      const stepped = Math.round(raw / step) * step;
+      onChange(stepped);
+    };
+    const handlePointerUp = () => {
+      draggingRef.current = false;
+      document.body.style.userSelect = "";
+    };
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [min, max, step, onChange]);
+
+  const startDrag = (e: React.PointerEvent) => {
+    e.preventDefault();
+    draggingRef.current = true;
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    document.body.style.userSelect = "none";
+  };
+
+  const onTrackClick = (e: React.MouseEvent) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    const raw = min + pct * (max - min);
+    const stepped = Math.round(raw / step) * step;
+    onChange(stepped);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+      onChange(Math.max(min, value - step));
+      e.preventDefault();
+    } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+      onChange(Math.min(max, value + step));
+      e.preventDefault();
+    } else if (e.key === "Home") {
+      onChange(min);
+      e.preventDefault();
+    } else if (e.key === "End") {
+      onChange(max);
+      e.preventDefault();
+    }
+  };
+
+  const pct = Math.round(((value - min) / (max - min)) * 100);
+
+  return (
+    <div className="w-full flex items-center space-x-3">
+      <div
+        ref={trackRef}
+        role="presentation"
+        onClick={onTrackClick}
+        className="relative flex-1 h-2 rounded-full bg-gray-200 cursor-pointer"
+        aria-hidden={false}
+      >
+        <div
+          className="absolute left-0 top-0 h-2 rounded-full bg-sky-500"
+          style={{ width: `${pct}%`, transition: draggingRef.current ? "none" : "width 120ms linear" }}
+        />
+        <button
+          ref={knobRef}
+          role="slider"
+          tabIndex={0}
+          aria-label={ariaLabel || "slider"}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={value}
+          onKeyDown={onKeyDown}
+          onPointerDown={startDrag}
+          className="absolute -top-2 w-6 h-6 rounded-full bg-white border-2 border-sky-500 shadow-md transform -translate-x-1/2 focus:outline-none"
+          style={{ left: `${pct}%`, touchAction: "none" }}
+        />
+      </div>
+      <div className="w-16 text-right text-xs font-medium">{value} mL</div>
+    </div>
+  );
 }
 
 export const Chemical: React.FC<ChemicalProps> = ({
@@ -31,7 +133,7 @@ export const Chemical: React.FC<ChemicalProps> = ({
   const defaultMax = isWater ? 120 : (volume || 300);
   const initial = isWater ? Math.min(100, defaultMax) : (volume && volume > 0 ? Math.min(25, volume) : 25);
 
-  const [dragAmount, setDragAmount] = React.useState<number>(initial);
+  const [dragAmount, setDragAmount] = useState<number>(initial);
 
   const handleDragStart = (e: React.DragEvent) => {
     if (disabled) {
@@ -124,28 +226,25 @@ export const Chemical: React.FC<ChemicalProps> = ({
           <div className="amount-control space-y-1">
             <label className="text-xs text-gray-600">Amount to use:</label>
 
-            {/* For distilled water we place the slider and action inline for a compact control */}
+            {/* For distilled water we render a smooth custom slider */}
             {isWater ? (
-              <div className="flex items-center space-x-3">
-                <input
-                  type="range"
+              <div>
+                <SmoothSlider
                   min={defaultMin}
                   max={defaultMax}
                   value={dragAmount}
-                  onChange={(e) => setDragAmount(Number(e.target.value))}
-                  aria-label={`Select amount of ${name} in mL`}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  onClick={(e) => e.stopPropagation()}
+                  step={1}
+                  onChange={(v) => setDragAmount(v)}
+                  ariaLabel={`Distilled water amount in mL`}
                 />
 
-                <div className="distilled-actions flex items-center space-x-2">
-                  <div className="amount-display text-xs font-medium w-16 text-right">{dragAmount} mL</div>
+                <div className="mt-2 flex justify-center">
                   <button
                     onClick={handleAddWaterClick}
-                    className="add-water-btn px-3 py-1 rounded-md bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium"
+                    className="px-3 py-1 rounded-md bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium"
                     aria-label={`Add ${dragAmount} millilitres of ${name}`}
                   >
-                    Add
+                    Add {dragAmount} mL
                   </button>
                 </div>
               </div>
