@@ -37,6 +37,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [showToast, setShowToast] = useState<string | null>(null);
   const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
   const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
+  const [showResultsModal, setShowResultsModal] = useState(false);
 
   // Dialog state for adding HCl volumes
   const [dialogOpenFor, setDialogOpenFor] = useState<null | { id: string; label: string; molarity: number }>(null);
