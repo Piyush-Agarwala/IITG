@@ -202,10 +202,13 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
     setEquipmentOnBench((prev) => prev.map((e) => (e.id === "universal-indicator" ? ({ ...(e as any), color: paperColor } as any) : e)));
 
-    // Store by closest concentration label currently placed (priority: 0.1M, 0.01M, 0.001M)
-    const placed = equipmentOnBench.map((e) => e.id);
-    const label = placed.includes("hcl-0-1m") ? "0.1 M" : placed.includes("hcl-0-01m") ? "0.01 M" : placed.includes("hcl-0-001m") ? "0.001 M" : "Sample";
-    setResults((r) => ({ ...r, [label]: ph }));
+    // Store under the concentration actually used last; fall back to presence on bench
+    let label = lastUsedHclLabel;
+    if (!label) {
+      const placed = equipmentOnBench.map((e) => e.id);
+      label = placed.includes('hcl-0-1m') ? '0.1 M' : placed.includes('hcl-0-01m') ? '0.01 M' : placed.includes('hcl-0-001m') ? '0.001 M' : 'Sample';
+    }
+    setResults((r) => ({ ...r, [label as string]: ph }));
 
     // Map to guided steps in the dataset
     if (currentStep === 3 || currentStep === 4) {
