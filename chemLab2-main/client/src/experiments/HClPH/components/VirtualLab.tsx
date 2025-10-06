@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WorkBench } from "@/experiments/EquilibriumShift/components/WorkBench";
-import { Beaker, Droplets, FlaskConical, TestTube, Undo2, CheckCircle, Home } from "lucide-react";
+import { Beaker, Droplets, FlaskConical, TestTube, Undo2, CheckCircle, Home, ArrowLeft } from "lucide-react";
 import { Equipment as RenderEquipment } from "@/experiments/PHComparison/components/Equipment";
 import type { Experiment } from "@shared/schema";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -39,6 +40,11 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
   const [shouldBlinkMeasure, setShouldBlinkMeasure] = useState(false);
   const [shouldBlinkReset, setShouldBlinkReset] = useState(false);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [quizSelections, setQuizSelections] = useState<Record<string,string>>({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [score, setScore] = useState(0);
+  const allAnswered = ['q1','q2','q3','q4','q5'].every((k) => Boolean(quizSelections[k]));
 
   // Dialog state for adding HCl volumes
   const [dialogOpenFor, setDialogOpenFor] = useState<null | { id: string; label: string; molarity: number }>(null);
@@ -168,6 +174,26 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setTimeout(() => setShowToast(null), 1400);
   };
 
+  // Quiz handlers for Results modal
+  const handleSelect = (q: string, v: string) => {
+    setQuizSelections((s) => ({ ...s, [q]: v }));
+  };
+
+  const resetQuiz = () => {
+    setQuizSelections({});
+    setQuizSubmitted(false);
+    setScore(0);
+  };
+
+  const computeScore = () => {
+    const correct: Record<string,string> = { q1: 'B', q2: 'C', q3: 'C', q4: 'B', q5: 'B' };
+    let sc = 0;
+    (Object.keys(correct) as Array<keyof typeof correct>).forEach((k) => {
+      if (quizSelections[k] === correct[k]) sc += 1;
+    });
+    setScore(sc);
+  };
+
   function computePH(): number | null {
     const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
     const concH = hPlusMoles / totalVolL;
@@ -214,9 +240,10 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
     // If the 0.001 M result was just recorded, open the Results & Analysis modal
     if (label === '0.001 M') {
+      setShouldBlinkReset(false);
       setTimeout(() => {
         setShowResultsModal(true);
-      }, 800);
+      }, 5000);
     }
 
     // Map to guided steps in the dataset
@@ -495,6 +522,7 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                     <span>Return to Experiments</span>
                   </Button>
                 </Link>
+                <Button onClick={() => setShowQuizModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white">QUIZ</Button>
               </div>
 
               <Button onClick={() => setShowResultsModal(false)} className="bg-blue-500 hover:bg-blue-600 text-white">Close Analysis</Button>
@@ -502,6 +530,214 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Quiz Modal */}
+      <Dialog open={showQuizModal} onOpenChange={setShowQuizModal}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto text-black">
+          <Card className="shadow-md">
+            <CardHeader>
+              <div className="flex items-center justify-between w-full">
+                <CardTitle className="text-2xl">HCl pH — Quiz</CardTitle>
+                {quizSubmitted && (
+                  <div className="text-blue-600 font-semibold">Marks obtained ({score} / 5)</div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6 quiz-content">
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">1. Which of the following correctly explains why hydrochloric acid shows a lower pH than acetic acid of the same molar concentration?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'A'} onChange={() => handleSelect('q1','A')} />
+                      <span>A. HCl partially ionizes in water, while CH₃COOH completely ionizes.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'B'} onChange={() => handleSelect('q1','B')} />
+                      <span>B. HCl completely ionizes in water, while CH₃COOH partially ionizes.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'C'} onChange={() => handleSelect('q1','C')} />
+                      <span>C. Both ionize completely, but HCl has more hydrogen atoms.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q1" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q1 === 'D'} onChange={() => handleSelect('q1','D')} />
+                      <span>D. pH depends only on color of the indicator, not on ionization.</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q1;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) HCl completely ionizes in water, while CH₃COOH partially ionizes.</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">2. If the concentration of HCl solution is decreased from 0.1 M to 0.001 M, the pH value will—</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'A'} onChange={() => handleSelect('q2','A')} />
+                      <span>A. Increase by 1</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'B'} onChange={() => handleSelect('q2','B')} />
+                      <span>B. Decrease by 1</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'C'} onChange={() => handleSelect('q2','C')} />
+                      <span>C. Increase by 2</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q2" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q2 === 'D'} onChange={() => handleSelect('q2','D')} />
+                      <span>D. Decrease by 2</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'C';
+                    const selected = quizSelections.q2;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) Increase by 2</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">3. Which of the following statements about universal indicator is true?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'A'} onChange={() => handleSelect('q3','A')} />
+                      <span>A. It gives the same color for all acids.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'B'} onChange={() => handleSelect('q3','B')} />
+                      <span>B. It changes color only in basic solutions.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'C'} onChange={() => handleSelect('q3','C')} />
+                      <span>C. It is a mixture of several pH indicators that cover a wide range of pH values.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q3" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q3 === 'D'} onChange={() => handleSelect('q3','D')} />
+                      <span>D. It is used only for very strong acids and bases.</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'C';
+                    const selected = quizSelections.q3;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: C) It is a mixture of several pH indicators that cover a wide range of pH values.</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">4. When using pH paper to determine the acidity of a solution, accuracy is limited because—</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'A'} onChange={() => handleSelect('q4','A')} />
+                      <span>A. The paper reacts chemically with the acid.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'B'} onChange={() => handleSelect('q4','B')} />
+                      <span>B. The pH color chart gives only approximate readings.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'C'} onChange={() => handleSelect('q4','C')} />
+                      <span>C. The pH paper dissolves in acid.</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q4" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q4 === 'D'} onChange={() => handleSelect('q4','D')} />
+                      <span>D. The paper measures temperature instead of pH.</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q4;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) The pH color chart gives only approximate readings.</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <section className="quiz-item">
+                  <h3 className="font-semibold">5. Why must acid always be added to water during dilution and not the reverse?</h3>
+                  <div className="mt-2 space-y-2">
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="A" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'A'} onChange={() => handleSelect('q5','A')} />
+                      <span>A. To reduce the freezing point of the mixture</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="B" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'B'} onChange={() => handleSelect('q5','B')} />
+                      <span>B. To prevent violent splashing due to exothermic reaction</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="C" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'C'} onChange={() => handleSelect('q5','C')} />
+                      <span>C. To avoid dilution errors</span>
+                    </label>
+                    <label className="quiz-option flex items-start space-x-2">
+                      <input type="radio" name="q5" value="D" className="mt-1" disabled={quizSubmitted} checked={quizSelections.q5 === 'D'} onChange={() => handleSelect('q5','D')} />
+                      <span>D. To keep the color of the solution unchanged</span>
+                    </label>
+                  </div>
+                  {quizSubmitted && (() => {
+                    const correct = 'B';
+                    const selected = quizSelections.q5;
+                    const yourClass = selected === correct ? 'mt-2 text-sm text-green-700 font-medium' : 'mt-2 text-sm text-red-600 font-medium';
+                    return (
+                      <>
+                        <div className={yourClass}>Your answer: {selected}</div>
+                        <div className="mt-2 text-sm text-green-700 font-medium">Answer: B) To prevent violent splashing due to exothermic reaction</div>
+                      </>
+                    );
+                  })()}
+                </section>
+
+                <div className="flex items-center justify-between space-x-4">
+                  <div className="flex items-center space-x-2">
+                  <Button variant="outline" className="flex items-center" onClick={() => { setShowQuizModal(false); setShowResultsModal(true); }}>
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                  </Button>
+                  <Link href="/">
+                    <Button className="bg-gray-700 text-white">Return to Experiments</Button>
+                  </Link>
+                </div>
+
+                  <div>
+                    {!quizSubmitted && allAnswered && (
+                      <Button onClick={() => { setQuizSubmitted(true); computeScore(); }} className="bg-amber-600 hover:bg-amber-700 text-white mr-2">Submit</Button>
+                    )}
+                    {!quizSubmitted && !allAnswered && (
+                      <Button disabled className="opacity-50 cursor-not-allowed mr-2">Submit</Button>
+                    )}
+                    <Button variant="outline" onClick={resetQuiz}>Reset</Button>
+                  </div>
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
+        </DialogContent>
+      </Dialog>
+
     </TooltipProvider>
   );
 }
