@@ -389,7 +389,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
 
         return (
           <div className="text-center relative">
-            {imageSrc && stepId === 4 ? (
+            {showCustomBeakerImage ? (
               <TransparentImage
                 src={imageSrc}
                 alt={name}
