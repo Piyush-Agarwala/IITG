@@ -508,7 +508,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
     }
 
     // Avoid overlapping existing weighing boat(s). If a weighing boat is present near targets, shift beaker down below the boat
-    const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
+    const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y) && (p.x > 8 || p.y > 8));
 
     const isOverlapping = (x1: number, y1: number, x2: number, y2: number, threshold = 60) => {
       return Math.hypot(x1 - x2, y1 - y2) < threshold;
@@ -578,14 +578,36 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       if (!surface) return;
       const rect = surface.getBoundingClientRect();
 
-      // Preferred positions copied from the step-4 targets
-      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.42));
-      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.36));
-      let targetWashX = Math.min(rect.width - 60, targetBeakerX + 28);
-      let targetWashY = Math.max(2, targetBeakerY - 28);
+      // If a volumetric flask was added, proactively move any weighing boat(s) out of the primary work area
+      const flask = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('volumetric_flask') || (p.typeId ?? p.id).toString().toLowerCase().includes('volumetric_flask'));
+      if (flask) {
+        // Use the latest positions (prev) when relocating boats so we don't rely on stale closure values
+        setEquipmentPositions(prev => {
+          const boats = prev.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y));
+          if (boats.length === 0) return prev;
+          // place boats in the top-left corner stacked vertically to match reference layout
+          const baseX = Math.max(8, Math.floor(rect.width * 0.08));
+          return prev.map(pos => {
+            const boatIndex = boats.findIndex(b => b.id === pos.id);
+            if (boatIndex === -1) return pos;
+            const safeX = baseX;
+            const safeY = Math.max(8, Math.floor(rect.height * 0.08 + boatIndex * 70));
+            return { ...pos, x: Math.min(rect.width - 80, safeX), y: Math.min(rect.height - 80, safeY) };
+          });
+        });
+        // Re-run alignment shortly after moving boats to ensure beaker/wash are placed correctly
+        setTimeout(() => alignBeakerAndWash(true), 80);
+      }
+
+      // Preferred positions copied from the step-4 targets (adjusted to match reference image)
+      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.5 - 40));
+      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.44));
+      // place wash bottle to the right of the beaker and slightly higher
+      let targetWashX = Math.min(rect.width - 60, targetBeakerX + Math.floor(rect.width * 0.18));
+      let targetWashY = Math.max(2, targetBeakerY - Math.floor(rect.height * 0.06));
 
       // If there are weighing boats present, avoid overlapping them by nudging beaker/wash
-      const boats = equipmentPositions.filter(p => normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat'));
+      const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y) && (p.x > 8 || p.y > 8));
 
       const isOverlapping = (x1: number, y1: number, x2: number, y2: number, threshold = 60) => {
         return Math.hypot(x1 - x2, y1 - y2) < threshold;
@@ -958,7 +980,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                         <Button
                           onClick={() => {
                             // Find a weighing boat on the workbench
-                            const boat = equipmentPositions.find(pos => (pos.typeId ?? pos.id).toLowerCase().includes('weighing_boat') || (pos.typeId === 'weighing_boat'));
+                            const boat = equipmentPositions.find(pos => ((pos.typeId ?? pos.id).toString().toLowerCase().includes('weighing_boat') || (pos.typeId === 'weighing_boat')) && typeof pos.x === 'number' && typeof pos.y === 'number');
                             if (!boat) {
                               showMessage('Place a weighing boat on the workbench first.');
                               return;
