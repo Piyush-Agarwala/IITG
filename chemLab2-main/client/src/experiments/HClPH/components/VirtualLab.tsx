@@ -145,6 +145,17 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
     setDialogOpenFor(null);
   };
 
+  const resetHcl = () => {
+    setTestTubeVolume(0);
+    setHPlusMoles(0);
+    setTestTubeColor(undefined);
+    setLastMeasuredPH(null);
+    setResults({});
+    setEquipmentOnBench(prev => prev.map(e => e.id === 'universal-indicator' ? ({ ...(e as any), color: undefined } as any) : e));
+    setShowToast('HCl reset');
+    setTimeout(() => setShowToast(null), 1400);
+  };
+
   function computePH(): number | null {
     const totalVolL = Math.max(1e-6, testTubeVolume / 1000);
     const concH = hPlusMoles / totalVolL;
@@ -230,9 +241,13 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
                   <div key={eq.id} className="equipment-card" draggable onDragStart={(e) => { e.dataTransfer.setData('equipment', eq.id); }} onDoubleClick={() => { if (eq.id.startsWith('hcl-')) openHclDialog(eq.id); }}>
                     <div className="equipment-icon"><div className="equipment-icon-inner">{eq.icon}</div></div>
                     <div className="equipment-name mt-2">{eq.name}</div>
-                    
                   </div>
                 ))}
+
+                {/* RESET HCL button placed below HCl bottles */}
+                <div className="mt-2">
+                  <Button onClick={resetHcl} variant="outline" className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-100">RESET HCL</Button>
+                </div>
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                 <p className="text-xs text-blue-700"><strong>Tip:</strong> Drag equipment to the workbench following the steps.</p>
