@@ -595,6 +595,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             return { ...pos, x: Math.min(rect.width - 80, safeX), y: Math.min(rect.height - 80, safeY) };
           });
         });
+        // Re-run alignment shortly after moving boats to ensure beaker/wash are placed correctly
+        setTimeout(() => alignBeakerAndWash(true), 80);
       }
 
       // Preferred positions copied from the step-4 targets (adjusted to match reference image)
