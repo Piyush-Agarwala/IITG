@@ -370,7 +370,7 @@ function OxalicAcidVirtualLab({
     );
 
     // If the alternate flow is satisfied, mark the oxalic acid as added and advance the step
-    if (hasSpatula && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
+    if (hasStirrer && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
       stepTwoAlignedRef.current = true;
       setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
       // small delay so UI updates (e.g., placement) are visible before advancing
@@ -478,7 +478,7 @@ function OxalicAcidVirtualLab({
     );
 
     // If the alternate flow is satisfied, mark the oxalic acid as added and advance the step
-    if (hasSpatula && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
+    if (hasStirrer && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
       stepTwoAlignedRef.current = true;
       setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
       // small delay so UI updates (e.g., placement) are visible before advancing
