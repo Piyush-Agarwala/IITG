@@ -1330,6 +1330,18 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                   </div>
                 )}
 
+                {/* Additional control for Step 7: pour into flask */}
+                {step.id === 7 && (
+                  <div className="space-y-2">
+                    <Button onClick={() => {
+                      try { window.dispatchEvent(new CustomEvent('oxalic_step7_pour')); } catch (e) {}
+                      showMessage('Pouring solution into volumetric flask...', 'colorful');
+                    }} className="w-full bg-blue-400 hover:bg-blue-500 text-white">
+                      Click to pour!
+                    </Button>
+                  </div>
+                )}
+
                 {/* default Undo/Reset when not in step 3 */}
                 {step.id !== 3 && (
                   <div className="space-y-2">
