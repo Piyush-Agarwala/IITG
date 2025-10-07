@@ -364,7 +364,7 @@ function OxalicAcidVirtualLab({
     const hasBoat = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("weighing_boat"));
 
     // Also detect alternate workflow requested by user: spatula + oxalic acid bottle
-    const hasSpatula = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("spatula"));
+    const hasStirrer = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("stirrer"));
     const hasOxalicBottle = equipmentPositions.some(pos =>
       Array.isArray(pos.chemicals) && pos.chemicals.some(c => normalize((c as any).id) === "oxalic_acid")
     );
@@ -472,7 +472,7 @@ function OxalicAcidVirtualLab({
     const hasBoat = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("weighing_boat"));
 
     // Also detect alternate workflow requested by user: spatula + oxalic acid bottle
-    const hasSpatula = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("spatula"));
+    const hasStirrer = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("stirrer"));
     const hasOxalicBottle = equipmentPositions.some(pos =>
       Array.isArray(pos.chemicals) && pos.chemicals.some(c => normalize((c as any).id) === "oxalic_acid")
     );
