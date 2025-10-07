@@ -367,6 +367,34 @@ export const Equipment: React.FC<EquipmentProps> = ({
           </div>
         );
 
+      case "stirrer":
+        return (
+          <div className="relative flex flex-col items-center">
+            {imageSrc ? (
+              <TransparentImage
+                src={imageSrc}
+                alt={name}
+                className={position ? "h-40 w-auto object-contain pointer-events-none select-none" : "h-24 w-auto object-contain pointer-events-none select-none"}
+                tolerance={245}
+                colorDiff={8}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+              />
+            ) : (
+              icon
+            )}
+            <div className="mt-2">
+              <button
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); onAction?.("stir", id); }}
+                className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+              >
+                Use Stirrer
+              </button>
+            </div>
+          </div>
+        );
+
       case "oxalic_acid":
         return (
           <div className="relative flex justify-center">
