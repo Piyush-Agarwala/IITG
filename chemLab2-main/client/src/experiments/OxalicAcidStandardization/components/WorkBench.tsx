@@ -491,10 +491,107 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const handleEquipmentAction = (action: string, equipmentId?: string) => {
     switch (action) {
       case "weigh":
-      case "stir":
-      case "adjust_volume":
+        // default weighing behaviour: trigger the step action which starts weighing animation in the lab
         onStepAction();
         break;
+
+      case "stir": {
+        // If this is the final mixing step (step 6), perform a visual mixing animation where
+        // acid from the weighing boat is mixed into the beaker for ~7 seconds, replace the
+        // beaker image with the provided mixed-beaker image, then remove the stirrer and
+        // weighing boat from the workspace and complete the step.
+        if (step.id === 6) {
+          // Find beaker and weighing boat positions
+          const beaker = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('beaker'));
+          const boat = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing_boat') || ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing-boat'));
+
+          if (!beaker) {
+            showMessage('Place a beaker on the workbench to mix the solution.');
+            return;
+          }
+          if (!boat) {
+            showMessage('Place the weighing boat containing the acid on the workbench first.');
+            return;
+          }
+
+          // Compute approximate animation start position using DOM if available
+          const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+          let animX = (boat.x || 0) + 20;
+          let animY = (boat.y || 0) - 60;
+          if (surfaceEl) {
+            const boatEl = surfaceEl.querySelector(`[data-equipment-id="${boat.id}"]`) as HTMLElement | null;
+            if (boatEl) {
+              const surfaceRect = surfaceEl.getBoundingClientRect();
+              const boatRect = boatEl.getBoundingClientRect();
+              animX = boatRect.left - surfaceRect.left + boatRect.width * 0.5;
+              animY = boatRect.top - surfaceRect.top - Math.max(40, boatRect.height * 0.6);
+            }
+          }
+
+          // Start a visual wash-like animation from the boat towards the beaker
+          setWashAnimation({ x: animX, y: animY, active: true });
+          showMessage('Mixing acid into the beaker...');
+
+          // Duration of mixing animation (7000ms as requested)
+          const MIX_DURATION = 7000;
+
+          // Clear any existing timeouts
+          if (pourTimeoutRef.current) {
+            window.clearTimeout(pourTimeoutRef.current);
+            pourTimeoutRef.current = null;
+          }
+
+          // After animation completes, update the beaker image, remove stirrer & boat, and complete the step
+          pourTimeoutRef.current = window.setTimeout(() => {
+            try {
+              const mixedBeakerImage = 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F27074cd0bd354b7d80f9c4b4916c55b8?format=webp&width=800';
+
+              setEquipmentPositions(prev => {
+                // replace beaker image and filter out stirrer and weighing boats
+                const next = prev
+                  .map(pos => {
+                    const key = (pos.typeId ?? pos.id || '').toString().toLowerCase();
+                    if (key.includes('beaker')) {
+                      return { ...pos, imageSrc: mixedBeakerImage };
+                    }
+                    return pos;
+                  })
+                  .filter(pos => {
+                    const key = (pos.typeId ?? pos.id || '').toString().toLowerCase();
+                    // remove any weighing boat or stirrer positions from the workspace
+                    if (key.includes('weighing_boat') || key.includes('weighing-boat') || key.includes('stirrer')) return false;
+                    return true;
+                  });
+
+                return next;
+              });
+
+              // stop animation overlay
+              setWashAnimation(null);
+
+              // Inform user and complete the step action (which will update preparation state in VirtualLab)
+              showMessage('Mixing complete. Final beaker image updated.');
+
+              // Notify other listeners that beaker image was shown (keeps parity with other flows)
+              try { window.dispatchEvent(new CustomEvent('oxalic_beaker_image_shown')); } catch (e) {}
+
+              // Trigger the step action to mark step progression
+              try { if (typeof onStepAction === 'function') onStepAction(); } catch (e) {}
+            } catch (err) {
+              console.warn('Mixing completion error', err);
+            }
+
+            // Clear timeout ref
+            if (pourTimeoutRef.current) { window.clearTimeout(pourTimeoutRef.current); pourTimeoutRef.current = null; }
+          }, MIX_DURATION);
+
+          return;
+        }
+
+        // Default behaviour for non-step-6 stirring: simply trigger the step action
+        onStepAction();
+        break;
+      }
       case "rinse": {
         if (!equipmentId) {
           showMessage('No wash bottle selected.');
