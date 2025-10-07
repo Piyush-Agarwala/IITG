@@ -37,7 +37,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
       id: 2,
       title: "Weigh Oxalic Acid",
       description:
-        "drag the oxalic acid dihydrate and spatula into the workspace",
+        "drag the oxalic acid dihydrate and stirrer into the workspace",
       duration: "8 minutes",
       safety: "Handle with care, avoid skin contact",
       completed: false,
