@@ -402,7 +402,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             {showCustomBeakerImage ? (
               (() => {
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
-                const heightClass = position ? (stepId === 6 ? "h-96 md:h-[28rem]" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")) : "h-24";
+                const heightClass = position ? (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")) : "h-24";
                 return (
                   <TransparentImage
                     src={imageSrc}
