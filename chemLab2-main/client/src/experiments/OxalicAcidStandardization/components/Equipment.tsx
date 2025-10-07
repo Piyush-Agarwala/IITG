@@ -342,7 +342,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
                   }}
                 />
               )}
-              {isAtMark && (
+              {isAtMark && stepId !== 7 && (
                 <div className="text-green-600 font-bold">At Mark!</div>
               )}
             </div>
