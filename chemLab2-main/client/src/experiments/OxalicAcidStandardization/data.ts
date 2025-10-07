@@ -37,7 +37,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
       id: 2,
       title: "Weigh Oxalic Acid",
       description:
-        "drag the oxalic acid dihydrate and spatula into the workspace",
+        "drag the oxalic acid dihydrate and stirrer into the workspace",
       duration: "8 minutes",
       safety: "Handle with care, avoid skin contact",
       completed: false,
@@ -70,7 +70,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
       id: 6,
       title: "Mixing of acid with distilled water",
       description:
-        "Using a dropper, carefully add distilled water drop by drop until the bottom of the meniscus aligns with the 250 mL graduation mark.",
+        "drag and drop the stirrer to the workspace and click on the stirrer to mix distilled water with the acid in the weighing boat",
       duration: "5 minutes",
       completed: false,
     },

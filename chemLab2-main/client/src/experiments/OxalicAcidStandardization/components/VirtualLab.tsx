@@ -363,14 +363,14 @@ function OxalicAcidVirtualLab({
     const hasBalance = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("analytical_balance"));
     const hasBoat = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("weighing_boat"));
 
-    // Also detect alternate workflow requested by user: spatula + oxalic acid bottle
-    const hasSpatula = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("spatula"));
+    // Also detect alternate workflow requested by user: stirrer + oxalic acid bottle
+    const hasStirrer = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("stirrer"));
     const hasOxalicBottle = equipmentPositions.some(pos =>
       Array.isArray(pos.chemicals) && pos.chemicals.some(c => normalize((c as any).id) === "oxalic_acid")
     );
 
     // If the alternate flow is satisfied, mark the oxalic acid as added and advance the step
-    if (hasSpatula && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
+    if (hasStirrer && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
       stepTwoAlignedRef.current = true;
       setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
       // small delay so UI updates (e.g., placement) are visible before advancing
@@ -471,14 +471,14 @@ function OxalicAcidVirtualLab({
     const hasBalance = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("analytical_balance"));
     const hasBoat = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("weighing_boat"));
 
-    // Also detect alternate workflow requested by user: spatula + oxalic acid bottle
-    const hasSpatula = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("spatula"));
+    // Also detect alternate workflow requested by user: stirrer + oxalic acid bottle
+    const hasStirrer = equipmentPositions.some(pos => normalize(pos.typeId ?? pos.id).includes("stirrer"));
     const hasOxalicBottle = equipmentPositions.some(pos =>
       Array.isArray(pos.chemicals) && pos.chemicals.some(c => normalize((c as any).id) === "oxalic_acid")
     );
 
     // If the alternate flow is satisfied, mark the oxalic acid as added and advance the step
-    if (hasSpatula && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
+    if (hasStirrer && hasOxalicBottle && !preparationState.oxalicAcidAdded) {
       stepTwoAlignedRef.current = true;
       setPreparationState(prev => ({ ...prev, oxalicAcidAdded: true }));
       // small delay so UI updates (e.g., placement) are visible before advancing

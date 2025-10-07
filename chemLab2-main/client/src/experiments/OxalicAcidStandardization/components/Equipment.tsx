@@ -522,7 +522,8 @@ export const Equipment: React.FC<EquipmentProps> = ({
         }
         break;
       case "volumetric_flask":
-        if (preparationState?.nearMark && !preparationState?.finalVolume) {
+        // Do not show the mixing label on the volumetric flask image during step 6
+        if (stepId !== 6 && preparationState?.nearMark && !preparationState?.finalVolume) {
           return (
             <button
               onMouseDown={(e) => e.stopPropagation()}
