@@ -89,19 +89,6 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
       style={{ width: containerWidth, height: containerHeight }}
     >
       {/* Solution background with swirl effect */}
-      <motion.div
-        className="absolute inset-0 rounded-lg"
-        style={{
-          background: `conic-gradient(from ${stirringAngle}deg, ${solutionColor}80, transparent, ${solutionColor}80)`,
-        }}
-        animate={{
-          rotate: stirringAngle,
-        }}
-        transition={{
-          duration: 0,
-          ease: "linear",
-        }}
-      />
 
       {/* Particle system */}
       {particles.map((particle) => (
