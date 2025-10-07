@@ -651,9 +651,9 @@ function OxalicAcidVirtualLab({
     };
   }, [equipmentPositions, step.id]);
 
-  // Listen for the workbench image shown event and auto-complete step 3
+  // Listen for the workbench image shown events and auto-complete relevant steps
   useEffect(() => {
-    const handler = () => {
+    const handlerForImage = () => {
       if (step.id === 3) {
         setPreparationState(prev => ({ ...prev, dissolved: true }));
         setTimeout(() => {
@@ -661,8 +661,23 @@ function OxalicAcidVirtualLab({
         }, 300);
       }
     };
-    window.addEventListener('oxalic_image_shown', handler);
-    return () => window.removeEventListener('oxalic_image_shown', handler);
+
+    const handlerForBeaker = () => {
+      if (step.id === 5) {
+        // mark nearMark so step 5 can proceed and then auto-advance
+        setPreparationState(prev => ({ ...prev, nearMark: true }));
+        setTimeout(() => {
+          try { onStepComplete(); } catch (e) {}
+        }, 300);
+      }
+    };
+
+    window.addEventListener('oxalic_image_shown', handlerForImage);
+    window.addEventListener('oxalic_beaker_image_shown', handlerForBeaker);
+    return () => {
+      window.removeEventListener('oxalic_image_shown', handlerForImage);
+      window.removeEventListener('oxalic_beaker_image_shown', handlerForBeaker);
+    };
   }, [step.id, onStepComplete]);
 
 
