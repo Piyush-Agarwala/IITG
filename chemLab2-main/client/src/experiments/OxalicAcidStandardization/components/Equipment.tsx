@@ -342,7 +342,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
                   }}
                 />
               )}
-              {isAtMark && (
+              {isAtMark && stepId !== 7 && (
                 <div className="text-green-600 font-bold">At Mark!</div>
               )}
             </div>
@@ -364,6 +364,34 @@ export const Equipment: React.FC<EquipmentProps> = ({
             ) : (
               icon
             )}
+          </div>
+        );
+
+      case "stirrer":
+        return (
+          <div className="relative flex flex-col items-center">
+            {imageSrc ? (
+              <TransparentImage
+                src={imageSrc}
+                alt={name}
+                className={position ? "h-40 w-auto object-contain pointer-events-none select-none" : "h-24 w-auto object-contain pointer-events-none select-none"}
+                tolerance={245}
+                colorDiff={8}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+              />
+            ) : (
+              icon
+            )}
+            <div className="mt-2">
+              <button
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); onAction?.("stir", id); }}
+                className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+              >
+                Use Stirrer
+              </button>
+            </div>
           </div>
         );
 
@@ -395,19 +423,25 @@ export const Equipment: React.FC<EquipmentProps> = ({
       case "beaker":
         const hasOxalicAcid = chemicals.some(c => c.id === "oxalic_acid");
         const hasWater = chemicals.some(c => c.id === "distilled_water");
-        const showCustomBeakerImage = !!imageSrc && (stepId === 4 || stepId === 6 || !!position);
+        const showCustomBeakerImage = !!imageSrc && (stepId === 4 || stepId === 6 || stepId === 7 || !!position);
 
         return (
           <div className="text-center relative">
             {showCustomBeakerImage ? (
               (() => {
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
-                const heightClass = position ? (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")) : "h-24";
+                // Use reasonable sizes for step 7 (smaller than before) and keep step 6 moderately large during mixing
+                const heightClass = position
+                  ? (stepId === 7 ? "h-48 md:h-56" : (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")))
+                  : (stepId === 7 ? "h-32" : "h-24");
+
+                const scaleClass = stepId === 7 ? 'scale-100 md:scale-105' : (stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : ''));
+
                 return (
                   <TransparentImage
                     src={imageSrc}
                     alt={name}
-                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 ${stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : '')}`}
+                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 ${scaleClass}`}
                     tolerance={245}
                     colorDiff={8}
                     draggable={false}

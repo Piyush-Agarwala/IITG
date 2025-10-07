@@ -89,19 +89,6 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
       style={{ width: containerWidth, height: containerHeight }}
     >
       {/* Solution background with swirl effect */}
-      <motion.div
-        className="absolute inset-0 rounded-lg"
-        style={{
-          background: `conic-gradient(from ${stirringAngle}deg, ${solutionColor}80, transparent, ${solutionColor}80)`,
-        }}
-        animate={{
-          rotate: stirringAngle,
-        }}
-        transition={{
-          duration: 0,
-          ease: "linear",
-        }}
-      />
 
       {/* Particle system */}
       {particles.map((particle) => (
@@ -127,16 +114,16 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
 
       {/* Glass rod */}
       <motion.div
-        className="absolute bg-gray-300 rounded-full"
+        className="absolute bg-gray-400 rounded-full"
         style={{
-          width: 3,
-          height: containerHeight * 0.8,
-          left: centerX - 1.5,
-          top: containerHeight * 0.1,
-          transformOrigin: `1.5px ${containerHeight * 0.7}px`,
+          width: 4,
+          height: containerHeight * 0.7,
+          left: centerX - 2,
+          top: containerHeight * 0.15,
+          transformOrigin: `2px ${containerHeight * 0.65}px`,
         }}
         animate={{
-          rotate: [0, 10, -10, 0],
+          rotate: [0, 12, -12, 0],
         }}
         transition={{
           duration: speedConfig[stirringSpeed].duration,
@@ -147,7 +134,7 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
 
       {/* Vortex effect */}
       <motion.div
-        className="absolute rounded-full border-2 border-blue-300 opacity-50"
+        className="absolute rounded-full border-2 border-gray-300 opacity-20"
         style={{
           width: 40,
           height: 40,
@@ -155,8 +142,8 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
           top: centerY - 20,
         }}
         animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.1, 0.3],
+          scale: [1, 1.08, 1],
+          opacity: [0.25, 0.08, 0.25],
         }}
         transition={{
           duration: speedConfig[stirringSpeed].duration,

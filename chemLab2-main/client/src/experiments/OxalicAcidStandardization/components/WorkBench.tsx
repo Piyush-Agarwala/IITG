@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Equipment } from "./Equipment";
 import { Chemical } from "./Chemical";
 import { Play, Pause, RotateCcw, Calculator, FlaskConical } from "lucide-react";
+import StirringAnimation from "./StirringAnimation";
 import type {
   EquipmentPosition,
   SolutionPreparationState,
@@ -74,6 +75,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   // pouring animation state when adding acid into the weighing boat
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
   const [washAnimation, setWashAnimation] = useState<{ x: number; y: number; active: boolean } | null>(null);
+  const [mixingAnimation, setMixingAnimation] = useState<{ x: number; y: number; width?: number; height?: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
 
   // messages shown on the workbench area (transient)
@@ -491,10 +493,116 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const handleEquipmentAction = (action: string, equipmentId?: string) => {
     switch (action) {
       case "weigh":
-      case "stir":
-      case "adjust_volume":
+        // default weighing behaviour: trigger the step action which starts weighing animation in the lab
         onStepAction();
         break;
+
+      case "stir": {
+        // If this is the final mixing step (step 6), perform a visual mixing animation where
+        // acid from the weighing boat is mixed into the beaker for ~7 seconds, replace the
+        // beaker image with the provided mixed-beaker image, then remove the stirrer and
+        // weighing boat from the workspace and complete the step.
+        if (step.id === 6) {
+          // Find beaker and weighing boat positions
+          const beaker = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('beaker'));
+          const boat = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing_boat') || ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing-boat'));
+
+          if (!beaker) {
+            showMessage('Place a beaker on the workbench to mix the solution.');
+            return;
+          }
+          if (!boat) {
+            showMessage('Place the weighing boat containing the acid on the workbench first.');
+            return;
+          }
+
+          // Compute approximate animation position centered above the beaker using DOM when available
+          const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+          let animX = (beaker.x || 0) + 20;
+          let animY = (beaker.y || 0) - 60;
+          let animW = 80;
+          let animH = 100;
+          if (surfaceEl) {
+            const beakerEl = surfaceEl.querySelector(`[data-equipment-id="${beaker.id}"]`) as HTMLElement | null;
+            if (beakerEl) {
+              const surfaceRect = surfaceEl.getBoundingClientRect();
+              const beakerRect = beakerEl.getBoundingClientRect();
+              // Make overlay cover the upper interior of the beaker so the stirrer appears inside it
+              animW = Math.max(48, Math.floor(beakerRect.width * 0.6));
+              animH = Math.max(48, Math.floor(beakerRect.height * 0.6));
+
+              // Center horizontally inside the beaker
+              animX = beakerRect.left - surfaceRect.left + (beakerRect.width - animW) / 2;
+
+              // Position vertically so the overlay sits inside the beaker (a bit below the rim)
+              animY = beakerRect.top - surfaceRect.top + Math.max(8, Math.floor(beakerRect.height * 0.15));
+            }
+          }
+
+          // Start a stirring animation overlay positioned above the beaker
+          setMixingAnimation({ x: animX, y: animY, width: animW, height: animH, active: true });
+          showMessage('Stirring the beaker to mix the acid...');
+
+          // Duration of mixing animation (7000ms as requested)
+          const MIX_DURATION = 7000;
+
+          // Clear any existing timeouts
+          if (pourTimeoutRef.current) {
+            window.clearTimeout(pourTimeoutRef.current);
+            pourTimeoutRef.current = null;
+          }
+
+          // After animation completes, update the beaker image, remove stirrer & boat, and complete the step
+          pourTimeoutRef.current = window.setTimeout(() => {
+            try {
+              const mixedBeakerImage = 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F27074cd0bd354b7d80f9c4b4916c55b8?format=webp&width=800';
+
+              setEquipmentPositions(prev => {
+                // replace beaker image and filter out stirrer and weighing boats
+                const next = prev
+                  .map(pos => {
+                    const key = ((pos.typeId ?? pos.id) || '').toString().toLowerCase();
+                    if (key.includes('beaker')) {
+                      return { ...pos, imageSrc: mixedBeakerImage };
+                    }
+                    return pos;
+                  })
+                  .filter(pos => {
+                    const key = ((pos.typeId ?? pos.id) || '').toString().toLowerCase();
+                    // remove any weighing boat or stirrer positions from the workspace
+                    if (key.includes('weighing_boat') || key.includes('weighing-boat') || key.includes('stirrer')) return false;
+                    return true;
+                  });
+
+                return next;
+              });
+
+              // stop mixing animation overlay
+              setMixingAnimation(null);
+
+              // Inform user and complete the step action (which will update preparation state in VirtualLab)
+              showMessage('Mixing complete. Final beaker image updated.');
+
+              // Notify other listeners that beaker image was shown (keeps parity with other flows)
+              try { window.dispatchEvent(new CustomEvent('oxalic_beaker_image_shown')); } catch (e) {}
+
+              // Trigger the step action to mark step progression
+              try { if (typeof onStepAction === 'function') onStepAction(); } catch (e) {}
+            } catch (err) {
+              console.warn('Mixing completion error', err);
+            }
+
+            // Clear timeout ref
+            if (pourTimeoutRef.current) { window.clearTimeout(pourTimeoutRef.current); pourTimeoutRef.current = null; }
+          }, MIX_DURATION);
+
+          return;
+        }
+
+        // Default behaviour for non-step-6 stirring: simply trigger the step action
+        onStepAction();
+        break;
+      }
       case "rinse": {
         if (!equipmentId) {
           showMessage('No wash bottle selected.');
@@ -1003,6 +1111,24 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               </div>
             )}
 
+            {mixingAnimation && mixingAnimation.active && (
+              <div
+                aria-hidden
+                className="mixing-animation-wrapper"
+                style={{ left: mixingAnimation.x, top: mixingAnimation.y, position: 'absolute', zIndex: 80 }}
+              >
+                <div style={{ width: mixingAnimation.width || 80, height: mixingAnimation.height || 100 }}>
+                  <StirringAnimation
+                    isActive={true}
+                    containerWidth={mixingAnimation.width || 80}
+                    containerHeight={mixingAnimation.height || 100}
+                    stirringSpeed="medium"
+                    solutionColor="#87ceeb"
+                  />
+                </div>
+              </div>
+            )}
+
             {washAnimation && washAnimation.active && (
               <div
                 aria-hidden
@@ -1292,7 +1418,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 </div>
               </div>
               <div className="text-xs text-gray-600 space-y-1">
-                <p><strong>Formula:</strong> m = M × V × MW</p>
+                <p><strong>Formula:</strong> m = M × V �� MW</p>
                 <p><strong>Calculation:</strong> {(0.05 * 0.25 * 126.07).toFixed(4)} g = 0.05 M × 0.250 L �� 126.07 g/mol</p>
               </div>
             </CardContent>
