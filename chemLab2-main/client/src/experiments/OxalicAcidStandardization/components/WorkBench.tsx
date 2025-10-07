@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Equipment } from "./Equipment";
 import { Chemical } from "./Chemical";
 import { Play, Pause, RotateCcw, Calculator, FlaskConical } from "lucide-react";
+import StirringAnimation from "./StirringAnimation";
 import type {
   EquipmentPosition,
   SolutionPreparationState,
