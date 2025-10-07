@@ -464,12 +464,12 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
           <div className="space-y-4 text-black">
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 border rounded bg-white">
+              <div className="p-4 border rounded bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
                 <div className="text-sm font-medium text-black">Measured pH (latest)</div>
                 <div className="text-3xl font-semibold mt-2 text-black">{lastMeasuredPH != null ? `${lastMeasuredPH.toFixed(2)} (${lastMeasuredPH < 7 ? 'Acidic' : lastMeasuredPH > 7 ? 'Basic' : 'Neutral'})` : 'No measurement'}</div>
               </div>
 
-              <div className="p-4 border rounded bg-white">
+              <div className="p-4 border rounded bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
                 <div className="text-sm font-medium text-black">Latest Recorded Concentration</div>
                 <div className="text-lg font-semibold mt-2 text-black">{lastUsedHclLabel ? `${lastUsedHclLabel} — ${results[lastUsedHclLabel] != null ? `${results[lastUsedHclLabel].toFixed(2)} (${results[lastUsedHclLabel] < 7 ? 'Acidic' : results[lastUsedHclLabel] > 7 ? 'Basic' : 'Neutral'})` : 'No result'}` : '—'}</div>
               </div>
@@ -481,24 +481,34 @@ export default function VirtualLab({ experiment, experimentStarted, onStartExper
 
               <div className="mt-3 p-3 bg-white border rounded text-sm text-black">
                 <div className="font-medium mb-2 text-black">Recorded pH by concentration (measured vs expected)</div>
-                {(["0.1 M","0.01 M","0.001 M"] as const).map((lab) => {
-                  const expected = lab === '0.1 M' ? 1.00 : lab === '0.01 M' ? 2.00 : 3.00;
-                  const measured = results[lab];
-                  const deviation = measured != null ? (measured - expected).toFixed(2) : '-';
-                  const status = measured == null ? 'No measurement' : Math.abs(Number(deviation)) < 0.2 ? 'Good agreement' : Math.abs(Number(deviation)) < 0.6 ? 'Moderate deviation' : 'Significant deviation';
-                  return (
-                    <div key={lab} className="mb-2 p-2 rounded border border-gray-200 bg-white text-black">
-                      <div className="font-medium text-black">HCl {lab}</div>
-                      <div className="text-sm mt-1 text-black">Expected (ideal): pH {expected.toFixed(2)}</div>
-                      <div className="text-sm mt-1 text-black">Measured: {measured != null ? `${measured.toFixed(2)} (${measured < 7 ? 'Acidic' : measured > 7 ? 'Basic' : 'Neutral'})` : 'No result recorded'}</div>
-                      <div className="text-sm mt-1 text-black">Deviation: {deviation === '-' ? '-' : `${deviation} pH units`} — {status}</div>
-                      <div className="text-xs mt-1 text-black">Notes: {measured == null ? 'No data to assess.' : status === 'Good agreement' ? 'Measured value is within experimental uncertainty of the theoretical value.' : status === 'Moderate deviation' ? 'Check dilution accuracy, indicator range and reading technique.' : 'Large deviation — inspect contamination, indicator limitations, or instrument calibration.'}</div>
-                    </div>
-                  );
-                })}
+                {(() => {
+                  const colorMap: Record<string,string> = {
+                    '0.1 M': 'bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200',
+                    '0.01 M': 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200',
+                    '0.001 M': 'bg-gradient-to-r from-green-50 to-green-100 border-green-200',
+                  };
+
+                  return (["0.1 M","0.01 M","0.001 M"] as const).map((lab) => {
+                    const expected = lab === '0.1 M' ? 1.00 : lab === '0.01 M' ? 2.00 : 3.00;
+                    const measured = results[lab];
+                    const deviation = measured != null ? (measured - expected).toFixed(2) : '-';
+                    const status = measured == null ? 'No measurement' : Math.abs(Number(deviation)) < 0.2 ? 'Good agreement' : Math.abs(Number(deviation)) < 0.6 ? 'Moderate deviation' : 'Significant deviation';
+                    const cls = colorMap[lab] || 'bg-white border-gray-200';
+
+                    return (
+                      <div key={lab} className={`mb-2 p-2 rounded border ${cls} text-black`}>
+                        <div className="font-medium text-black">HCl {lab}</div>
+                        <div className="text-sm mt-1 text-black">Expected (ideal): pH {expected.toFixed(2)}</div>
+                        <div className="text-sm mt-1 text-black">Measured: {measured != null ? `${measured.toFixed(2)} (${measured < 7 ? 'Acidic' : measured > 7 ? 'Basic' : 'Neutral'})` : 'No result recorded'}</div>
+                        <div className="text-sm mt-1 text-black">Deviation: {deviation === '-' ? '-' : `${deviation} pH units`} — {status}</div>
+                        <div className="text-xs mt-1 text-black">Notes: {measured == null ? 'No data to assess.' : status === 'Good agreement' ? 'Measured value is within experimental uncertainty of the theoretical value.' : status === 'Moderate deviation' ? 'Check dilution accuracy, indicator range and reading technique.' : 'Large deviation — inspect contamination, indicator limitations, or instrument calibration.'}</div>
+                      </div>
+                    );
+                  });
+                })()}
 
                 {/* Summary interpretation */}
-                <div className="mt-3 p-3 border rounded bg-white text-black">
+                <div className="mt-3 p-3 border rounded bg-gradient-to-r from-yellow-50 to-white text-black">
                   <div className="font-medium text-black">Interpretation</div>
                   <div className="text-sm mt-1 text-black">Theoretical pH values for strong HCl are calculated as pH = -log10([H+]). For ideal dilutions: 0.1 M → pH 1.00, 0.01 M → pH 2.00, 0.001 M → pH 3.00. Measured values differing from these indicate experimental errors (dilution inaccuracies, indicator/color reading subjectivity, contamination) or limitations of pH paper/universal indicator at extreme pH ranges.</div>
                 </div>
