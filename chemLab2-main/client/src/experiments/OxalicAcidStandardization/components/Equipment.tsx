@@ -104,6 +104,16 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const [showCalculatorReminder, setShowCalculatorReminder] = useState(false);
   const equipmentRef = useRef<HTMLDivElement>(null);
   const equipmentIdentifier = typeId ?? id;
+  const [enlargeAfterAnimation, setEnlargeAfterAnimation] = useState(false);
+  useEffect(() => {
+    if (equipmentIdentifier !== "beaker") return;
+    const handler = () => setEnlargeAfterAnimation(true);
+    window.addEventListener('oxalic_beaker_image_shown', handler as EventListener);
+    return () => window.removeEventListener('oxalic_beaker_image_shown', handler as EventListener);
+  }, [equipmentIdentifier]);
+  useEffect(() => {
+    if (stepId !== 5) setEnlargeAfterAnimation(false);
+  }, [stepId]);
   const isAnalytical = equipmentIdentifier === "analytical_balance";
   const isWeighingBoat = equipmentIdentifier === "weighing_boat";
 
@@ -392,7 +402,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             {showCustomBeakerImage ? (
               (() => {
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
-                const heightClass = position ? (stepId === 5 && hasWaterNow ? "h-72" : "h-40") : "h-24";
+                const heightClass = position ? (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40") : "h-24";
                 return (
                   <TransparentImage
                     src={imageSrc}
