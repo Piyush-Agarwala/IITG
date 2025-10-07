@@ -392,7 +392,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
             {showCustomBeakerImage ? (
               (() => {
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
-                const heightClass = position ? (stepId === 5 && hasWaterNow ? "h-56" : "h-40") : "h-24";
+                const heightClass = position ? (stepId === 5 && hasWaterNow ? "h-72" : "h-40") : "h-24";
                 return (
                   <TransparentImage
                     src={imageSrc}
