@@ -76,7 +76,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
     },
     {
       id: 7,
-      title: "Final Mixing and Calculation",
+      title: "final mixing and result",
       description:
         "Cap the flask and invert it 20-25 times to ensure complete mixing. Calculate the exact molarity using the actual mass weighed.",
       duration: "5 minutes",

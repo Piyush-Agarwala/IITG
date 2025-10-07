@@ -681,6 +681,52 @@ function OxalicAcidVirtualLab({
   }, [step.id, onStepComplete]);
 
 
+  // Listen for a programmatic pour action specifically for step 7 (final mixing -> pour into flask)
+  useEffect(() => {
+    const handler = () => {
+      try {
+        // Ensure there is at least one beaker and a volumetric flask on the workbench
+        const beakers = equipmentPositions.filter(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('beaker'));
+        const flask = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('volumetric_flask') || (p.name || '').toLowerCase().includes('volumetric flask'));
+        if (!flask || beakers.length === 0) {
+          try { window.dispatchEvent(new CustomEvent('oxalic_pour_failed')); } catch (e) {}
+          return;
+        }
+
+        // Start transfer animation (VirtualLab's TransferAnimation listens to showTransfer)
+        setShowTransfer(true);
+
+        const POUR_DURATION = 5000;
+        window.setTimeout(() => {
+          const coloredFlaskImage = 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Ff4609eccc6b848f89b5c33ec2182757c?format=webp&width=800';
+
+          setEquipmentPositions(prev => {
+            // replace flask image
+            const updated = prev.map(pos => {
+              if (pos.id === flask.id) return { ...pos, imageSrc: coloredFlaskImage };
+              return pos;
+            });
+            // remove beaker(s)
+            const filtered = updated.filter(pos => !((pos.typeId ?? pos.id) + '').toString().toLowerCase().includes('beaker'));
+            return filtered;
+          });
+
+          // stop transfer animation
+          setShowTransfer(false);
+
+          // notify and mark transfer complete in the virtual lab
+          try { handleTransferComplete(); } catch (e) {}
+        }, POUR_DURATION);
+      } catch (err) {
+        console.warn('step7 pour handler error', err);
+      }
+    };
+
+    window.addEventListener('oxalic_step7_pour', handler as EventListener);
+    return () => window.removeEventListener('oxalic_step7_pour', handler as EventListener);
+  }, [equipmentPositions, setEquipmentPositions, handleTransferComplete]);
+
+
   // Remove analytical balance from the workspace only when advancing from step 3 to step 4.
   // Do NOT notify the parent so the equipment palette remains unchanged.
   const prevStepRef = useRef<number | null>(null);
