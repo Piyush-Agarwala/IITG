@@ -516,23 +516,27 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             return;
           }
 
-          // Compute approximate animation start position using DOM if available
+          // Compute approximate animation position centered above the beaker using DOM when available
           const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
-          let animX = (boat.x || 0) + 20;
-          let animY = (boat.y || 0) - 60;
+          let animX = (beaker.x || 0) + 20;
+          let animY = (beaker.y || 0) - 60;
+          let animW = 80;
+          let animH = 100;
           if (surfaceEl) {
-            const boatEl = surfaceEl.querySelector(`[data-equipment-id="${boat.id}"]`) as HTMLElement | null;
-            if (boatEl) {
+            const beakerEl = surfaceEl.querySelector(`[data-equipment-id="${beaker.id}"]`) as HTMLElement | null;
+            if (beakerEl) {
               const surfaceRect = surfaceEl.getBoundingClientRect();
-              const boatRect = boatEl.getBoundingClientRect();
-              animX = boatRect.left - surfaceRect.left + boatRect.width * 0.5;
-              animY = boatRect.top - surfaceRect.top - Math.max(40, boatRect.height * 0.6);
+              const beakerRect = beakerEl.getBoundingClientRect();
+              animX = beakerRect.left - surfaceRect.left + beakerRect.width * 0.5 - 40; // center - half width
+              animY = beakerRect.top - surfaceRect.top - Math.max(48, beakerRect.height * 0.6);
+              animW = Math.max(64, Math.floor(beakerRect.width * 0.9));
+              animH = Math.max(56, Math.floor(beakerRect.height * 0.9));
             }
           }
 
-          // Start a visual wash-like animation from the boat towards the beaker
-          setWashAnimation({ x: animX, y: animY, active: true });
-          showMessage('Mixing acid into the beaker...');
+          // Start a stirring animation overlay positioned above the beaker
+          setMixingAnimation({ x: animX, y: animY, width: animW, height: animH, active: true });
+          showMessage('Stirring the beaker to mix the acid...');
 
           // Duration of mixing animation (7000ms as requested)
           const MIX_DURATION = 7000;
