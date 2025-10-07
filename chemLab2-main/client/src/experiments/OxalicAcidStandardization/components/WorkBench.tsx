@@ -782,7 +782,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       case 5:
         return "after setting the distilled water limit click on the distilled water button to add water";
       case 6:
-        return "Use dropper to carefully reach the exact volume mark";
+        return "drag and drop the stirrer to the workspace and click on the stirrer to mix distilled water with the acid in the weighing boat";
       case 7:
         return "Mix the solution thoroughly by inversion";
       default:
