@@ -527,10 +527,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             if (beakerEl) {
               const surfaceRect = surfaceEl.getBoundingClientRect();
               const beakerRect = beakerEl.getBoundingClientRect();
-              animX = beakerRect.left - surfaceRect.left + beakerRect.width * 0.5 - 40; // center - half width
-              animY = beakerRect.top - surfaceRect.top - Math.max(48, beakerRect.height * 0.6);
               animW = Math.max(64, Math.floor(beakerRect.width * 0.9));
               animH = Math.max(56, Math.floor(beakerRect.height * 0.9));
+              // Position the overlay so it is exactly centered above the beaker
+              animX = beakerRect.left - surfaceRect.left + (beakerRect.width - animW) / 2;
+              // place the overlay just above the beaker with a small margin
+              animY = beakerRect.top - surfaceRect.top - animH - 8;
             }
           }
 
