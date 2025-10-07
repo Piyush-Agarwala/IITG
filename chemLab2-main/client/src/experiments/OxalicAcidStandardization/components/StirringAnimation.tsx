@@ -134,7 +134,7 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
 
       {/* Vortex effect */}
       <motion.div
-        className="absolute rounded-full border-2 border-blue-300 opacity-50"
+        className="absolute rounded-full border-2 border-gray-300 opacity-20"
         style={{
           width: 40,
           height: 40,
@@ -142,8 +142,8 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
           top: centerY - 20,
         }}
         animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.1, 0.3],
+          scale: [1, 1.08, 1],
+          opacity: [0.25, 0.08, 0.25],
         }}
         transition={{
           duration: speedConfig[stirringSpeed].duration,
