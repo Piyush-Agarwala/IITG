@@ -759,6 +759,8 @@ function OxalicAcidVirtualLab({
           targetVolume={250}
           currentVolume={245}
           onVolumeReached={handleFinalVolume}
+          flaskHeight={step.id === 6 ? 260 : 150}
+          flaskWidth={step.id === 6 ? 140 : 80}
         />
 
         <MolecularVisualization
