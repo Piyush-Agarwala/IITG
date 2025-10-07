@@ -1106,6 +1106,24 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               </div>
             )}
 
+            {mixingAnimation && mixingAnimation.active && (
+              <div
+                aria-hidden
+                className="mixing-animation-wrapper"
+                style={{ left: mixingAnimation.x, top: mixingAnimation.y, position: 'absolute', zIndex: 80 }}
+              >
+                <div style={{ width: mixingAnimation.width || 80, height: mixingAnimation.height || 100 }}>
+                  <StirringAnimation
+                    isActive={true}
+                    containerWidth={mixingAnimation.width || 80}
+                    containerHeight={mixingAnimation.height || 100}
+                    stirringSpeed="medium"
+                    solutionColor="#87ceeb"
+                  />
+                </div>
+              </div>
+            )}
+
             {washAnimation && washAnimation.active && (
               <div
                 aria-hidden
@@ -1395,7 +1413,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 </div>
               </div>
               <div className="text-xs text-gray-600 space-y-1">
-                <p><strong>Formula:</strong> m = M × V × MW</p>
+                <p><strong>Formula:</strong> m = M × V �� MW</p>
                 <p><strong>Calculation:</strong> {(0.05 * 0.25 * 126.07).toFixed(4)} g = 0.05 M × 0.250 L �� 126.07 g/mol</p>
               </div>
             </CardContent>
