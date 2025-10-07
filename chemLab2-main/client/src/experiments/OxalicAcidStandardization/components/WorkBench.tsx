@@ -550,14 +550,14 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 // replace beaker image and filter out stirrer and weighing boats
                 const next = prev
                   .map(pos => {
-                    const key = (pos.typeId ?? pos.id || '').toString().toLowerCase();
+                    const key = ((pos.typeId ?? pos.id) || '').toString().toLowerCase();
                     if (key.includes('beaker')) {
                       return { ...pos, imageSrc: mixedBeakerImage };
                     }
                     return pos;
                   })
                   .filter(pos => {
-                    const key = (pos.typeId ?? pos.id || '').toString().toLowerCase();
+                    const key = ((pos.typeId ?? pos.id) || '').toString().toLowerCase();
                     // remove any weighing boat or stirrer positions from the workspace
                     if (key.includes('weighing_boat') || key.includes('weighing-boat') || key.includes('stirrer')) return false;
                     return true;
