@@ -423,19 +423,25 @@ export const Equipment: React.FC<EquipmentProps> = ({
       case "beaker":
         const hasOxalicAcid = chemicals.some(c => c.id === "oxalic_acid");
         const hasWater = chemicals.some(c => c.id === "distilled_water");
-        const showCustomBeakerImage = !!imageSrc && (stepId === 4 || stepId === 6 || !!position);
+        const showCustomBeakerImage = !!imageSrc && (stepId === 4 || stepId === 6 || stepId === 7 || !!position);
 
         return (
           <div className="text-center relative">
             {showCustomBeakerImage ? (
               (() => {
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
-                const heightClass = position ? (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")) : "h-24";
+                // Increase size for step 7 after mixing; keep step 6 moderately large during mixing
+                const heightClass = position
+                  ? (stepId === 7 ? "h-96 md:h-112" : (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")))
+                  : (stepId === 7 ? "h-56" : "h-24");
+
+                const scaleClass = stepId === 7 ? 'scale-115 md:scale-125' : (stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : ''));
+
                 return (
                   <TransparentImage
                     src={imageSrc}
                     alt={name}
-                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 ${stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : '')}`}
+                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 ${scaleClass}`}
                     tolerance={245}
                     colorDiff={8}
                     draggable={false}
