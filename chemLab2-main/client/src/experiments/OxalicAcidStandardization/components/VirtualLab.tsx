@@ -755,12 +755,12 @@ function OxalicAcidVirtualLab({
         />
 
         <MeniscusGuide
-          isActive={showMeniscus || step.id === 6}
+          isActive={showMeniscus}
           targetVolume={250}
           currentVolume={245}
           onVolumeReached={handleFinalVolume}
-          flaskHeight={step.id === 6 ? 320 : 150}
-          flaskWidth={step.id === 6 ? 200 : 80}
+          flaskHeight={150}
+          flaskWidth={80}
         />
 
         <MolecularVisualization
