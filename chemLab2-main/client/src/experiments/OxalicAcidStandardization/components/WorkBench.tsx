@@ -1065,7 +1065,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
               <div className="flex flex-col justify-between">
                 {canProceed && (
-                  <Button onClick={onStepAction} className="w-full mb-2" variant="default">
+                  <Button onClick={() => onStepAction()} className="w-full mb-2" variant="default">
                     <FlaskConical className="w-4 h-4 mr-2" /> Complete Step {stepNumber}
                   </Button>
                 )}
