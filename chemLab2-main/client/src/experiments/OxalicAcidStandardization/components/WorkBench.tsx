@@ -75,6 +75,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   // pouring animation state when adding acid into the weighing boat
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
   const [washAnimation, setWashAnimation] = useState<{ x: number; y: number; active: boolean } | null>(null);
+  const [mixingAnimation, setMixingAnimation] = useState<{ x: number; y: number; width?: number; height?: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
 
   // messages shown on the workbench area (transient)
