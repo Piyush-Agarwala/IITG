@@ -114,16 +114,16 @@ export const StirringAnimation: React.FC<StirringAnimationProps> = ({
 
       {/* Glass rod */}
       <motion.div
-        className="absolute bg-gray-300 rounded-full"
+        className="absolute bg-gray-400 rounded-full"
         style={{
-          width: 3,
-          height: containerHeight * 0.8,
-          left: centerX - 1.5,
-          top: containerHeight * 0.1,
-          transformOrigin: `1.5px ${containerHeight * 0.7}px`,
+          width: 4,
+          height: containerHeight * 0.7,
+          left: centerX - 2,
+          top: containerHeight * 0.15,
+          transformOrigin: `2px ${containerHeight * 0.65}px`,
         }}
         animate={{
-          rotate: [0, 10, -10, 0],
+          rotate: [0, 12, -12, 0],
         }}
         transition={{
           duration: speedConfig[stirringSpeed].duration,
