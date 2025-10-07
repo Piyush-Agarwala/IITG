@@ -572,8 +572,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 return next;
               });
 
-              // stop animation overlay
-              setWashAnimation(null);
+              // stop mixing animation overlay
+              setMixingAnimation(null);
 
               // Inform user and complete the step action (which will update preparation state in VirtualLab)
               showMessage('Mixing complete. Final beaker image updated.');
