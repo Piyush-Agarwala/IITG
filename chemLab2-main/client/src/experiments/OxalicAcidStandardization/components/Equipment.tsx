@@ -430,12 +430,12 @@ export const Equipment: React.FC<EquipmentProps> = ({
             {showCustomBeakerImage ? (
               (() => {
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
-                // Increase size for step 7 after mixing; keep step 6 moderately large during mixing
+                // Use reasonable sizes for step 7 (smaller than before) and keep step 6 moderately large during mixing
                 const heightClass = position
-                  ? (stepId === 7 ? "h-64 md:h-80" : (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")))
-                  : (stepId === 7 ? "h-40" : "h-24");
+                  ? (stepId === 7 ? "h-48 md:h-56" : (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")))
+                  : (stepId === 7 ? "h-32" : "h-24");
 
-                const scaleClass = stepId === 7 ? 'scale-105 md:scale-110' : (stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : ''));
+                const scaleClass = stepId === 7 ? 'scale-100 md:scale-105' : (stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : ''));
 
                 return (
                   <TransparentImage
