@@ -947,7 +947,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
       const hasTestTubeNearby = () => {
         if (!position) return false;
         const testTube = allEquipmentPositions.find(
-          (pos) => pos.id === "test_tubes" || id === "test-tube" || pos.id === "test-tube",
+          (pos) => pos.id === "test_tubes" || pos.id === "test-tube" || pos.id === "test_tube",
         );
         if (!testTube) return false;
         const distance = Math.sqrt(

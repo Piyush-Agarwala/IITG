@@ -104,6 +104,16 @@ export const Equipment: React.FC<EquipmentProps> = ({
   const [showCalculatorReminder, setShowCalculatorReminder] = useState(false);
   const equipmentRef = useRef<HTMLDivElement>(null);
   const equipmentIdentifier = typeId ?? id;
+  const [enlargeAfterAnimation, setEnlargeAfterAnimation] = useState(false);
+  useEffect(() => {
+    if (equipmentIdentifier !== "beaker") return;
+    const handler = () => setEnlargeAfterAnimation(true);
+    window.addEventListener('oxalic_beaker_image_shown', handler as EventListener);
+    return () => window.removeEventListener('oxalic_beaker_image_shown', handler as EventListener);
+  }, [equipmentIdentifier]);
+  useEffect(() => {
+    if (stepId !== 5) setEnlargeAfterAnimation(false);
+  }, [stepId]);
   const isAnalytical = equipmentIdentifier === "analytical_balance";
   const isWeighingBoat = equipmentIdentifier === "weighing_boat";
 
@@ -385,19 +395,19 @@ export const Equipment: React.FC<EquipmentProps> = ({
       case "beaker":
         const hasOxalicAcid = chemicals.some(c => c.id === "oxalic_acid");
         const hasWater = chemicals.some(c => c.id === "distilled_water");
-        const showCustomBeakerImage = !!imageSrc && (stepId === 4 || !!position);
+        const showCustomBeakerImage = !!imageSrc && (stepId === 4 || stepId === 6 || !!position);
 
         return (
           <div className="text-center relative">
             {showCustomBeakerImage ? (
               (() => {
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
-                const heightClass = position ? (stepId === 5 && hasWaterNow ? "h-56" : "h-40") : "h-24";
+                const heightClass = position ? (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")) : "h-24";
                 return (
                   <TransparentImage
                     src={imageSrc}
                     alt={name}
-                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none`}
+                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 ${stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : '')}`}
                     tolerance={245}
                     colorDiff={8}
                     draggable={false}
