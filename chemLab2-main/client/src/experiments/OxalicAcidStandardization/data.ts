@@ -68,7 +68,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
     },
     {
       id: 6,
-      title: "Make to Mark",
+      title: "Mixing of acid with distilled water",
       description:
         "Using a dropper, carefully add distilled water drop by drop until the bottom of the meniscus aligns with the 250 mL graduation mark.",
       duration: "5 minutes",
