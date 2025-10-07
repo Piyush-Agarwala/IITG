@@ -407,7 +407,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
                   <TransparentImage
                     src={imageSrc}
                     alt={name}
-                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 ${stepId === 6 ? 'scale-125 md:scale-150' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : '')}`}
+                    className={`mx-auto mb-2 ${heightClass} w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 ${stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : '')}`}
                     tolerance={245}
                     colorDiff={8}
                     draggable={false}
