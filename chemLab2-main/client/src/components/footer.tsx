@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <FlaskRound className="text-2xl text-science-blue" />
-              <h4 className="text-xl font-bold">ChemLab Virtual</h4>
+              <h4 className="text-xl font-bold">ChemVerse IlTG</h4>
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
               Empowering chemistry education through interactive virtual experiments. 
