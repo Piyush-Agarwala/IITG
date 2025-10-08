@@ -653,10 +653,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           setEquipmentPositions(prev => prev.map(pos => pos.id === nearest.id ? { ...pos, chemicals: [] } : pos));
           setWashAnimation(null);
           try {
-            if (stepNumber === 3) {
+            if (stepNumber === 4) {
               // remove the wash bottle used for rinsing from the workbench
               setEquipmentPositions(prev => prev.filter(pos => pos.id !== bottle.id));
-              // automatically trigger the step action for step 4 (transfer to flask)
+              // Dispatch beaker image shown so other listeners can react
+              try { window.dispatchEvent(new CustomEvent('oxalic_beaker_image_shown')); } catch (e) {}
+              // automatically trigger the step action to advance to the next step (skip animations where appropriate)
               try { if (typeof onStepAction === 'function') onStepAction({ skipAnimation: true }); } catch (e) {}
             }
           } catch (e) {}
