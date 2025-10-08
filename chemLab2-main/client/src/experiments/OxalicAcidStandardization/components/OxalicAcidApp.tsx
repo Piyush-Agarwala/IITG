@@ -77,6 +77,12 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
     setTimer(0);
   };
 
+  // Auto-start timer when this component mounts for the Oxalic Acid experiment
+  useEffect(() => {
+    handleStartExperiment(true);
+    // run only once on mount
+  }, []);
+
   const handleResetTimer = () => {
     setTimer(0);
     setIsRunning(false);

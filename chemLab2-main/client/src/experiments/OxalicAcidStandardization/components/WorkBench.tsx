@@ -187,7 +187,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         setWashAnimation({ x: animX, y: animY, active: true });
 
         // If current step is 5, run a longer (6s) animation and then replace beaker image
-        const isStepFive = step.id === 5;
+        const isStepFive = stepNumber === 4;
         const duration = isStepFive ? 6000 : 1600;
 
         // After animation completes, actually add the water to the beaker's chemicals array
@@ -245,7 +245,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     window.addEventListener('addDistilledWater', addWaterHandler as EventListener);
     return () => window.removeEventListener('addDistilledWater', addWaterHandler as EventListener);
-  }, [equipmentPositions, setEquipmentPositions, showMessage, step.id]);
+  }, [equipmentPositions, setEquipmentPositions, showMessage, stepNumber]);
 
   useEffect(() => {
     if (isRunning) {
@@ -285,7 +285,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     // support multiple drag data formats for robustness
     const raw = e.dataTransfer.getData("application/json") || e.dataTransfer.getData("equipment") || e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list") || "";
-    const isStepOne = step.id === 1;
+    const isStepOne = stepNumber === 1;
     const allowedStepOneEquipment = new Set(["analytical_balance", "weighing_boat"]);
     const normalizeId = (value?: string) => (value ? value.toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
     const notThisStepMessage = "These equipments not necessary in this current step.";
@@ -346,7 +346,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
       // If oxalic acid bottle was added during quantitative analysis step, show reminder and dispatch event
       try {
-        if (payload && payload.id === 'oxalic_acid' && step.id === 3) {
+        if (payload && payload.id === 'oxalic_acid' && stepNumber === 2) {
           showMessage('Click the calculator once to see the amount of acid required');
           try { window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder')); } catch {}
         }
@@ -373,7 +373,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: data.id,
           name: data.name,
-          imageSrc: (step.id === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
+          imageSrc: (stepNumber === 3 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
             ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1782add6aa7c40cc992b82016876895e?format=webp&width=800'
             : data.imageSrc,
         }
@@ -425,7 +425,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: eq.id,
           name: eq.name,
-          imageSrc: (step.id === 4 && eq.id === 'volumetric_flask')
+          imageSrc: (stepNumber === 3 && eq.id === 'volumetric_flask')
             ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1782add6aa7c40cc992b82016876895e?format=webp&width=800'
             : undefined,
         }
@@ -502,7 +502,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         // acid from the weighing boat is mixed into the beaker for ~7 seconds, replace the
         // beaker image with the provided mixed-beaker image, then remove the stirrer and
         // weighing boat from the workspace and complete the step.
-        if (step.id === 6) {
+        if (stepNumber === 5) {
           // Find beaker and weighing boat positions
           const beaker = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('beaker'));
           const boat = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing_boat') || ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing-boat'));
@@ -652,7 +652,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           setEquipmentPositions(prev => prev.map(pos => pos.id === nearest.id ? { ...pos, chemicals: [] } : pos));
           setWashAnimation(null);
           try {
-            if (step.id === 4) {
+            if (stepNumber === 3) {
               // remove the wash bottle used for rinsing from the workbench
               setEquipmentPositions(prev => prev.filter(pos => pos.id !== bottle.id));
               // automatically trigger the step action for step 4 (transfer to flask)
@@ -670,7 +670,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   // Auto-align beaker and wash bottle when step 4 is active and both are present
   const washAlignRef = useRef(false);
   useEffect(() => {
-    if (step.id !== 4) {
+    if (stepNumber !== 4) {
       washAlignRef.current = false;
       return;
     }
@@ -781,12 +781,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
     washAlignRef.current = true;
     try { showMessage("Click on the Rinse Beaker button to clean the beaker!", 'colorful'); } catch (e) {}
-  }, [equipmentPositions, step.id]);
+  }, [equipmentPositions, stepNumber]);
 
   // Alignment helper that forces the beaker and wash bottle into the step-4 layout.
   const alignBeakerAndWash = (force = false) => {
     try {
-      if (step.id !== 4) return;
+      if (stepNumber !== 4) return;
       const normalize = (value?: string) => (value ? value.toString().toLowerCase().replace(/\s+/g, "_").replace(/-/g, "_") : "");
       const beaker = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('beaker'));
       const wash = equipmentPositions.find(p => normalize(p.typeId ?? p.id).includes('wash') || (p.typeId ?? p.id).toString().includes('wash_bottle') || (p.typeId ?? p.id).toString().includes('wash-bottle'));
@@ -878,7 +878,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   };
 
   const getCurrentStepGuidance = () => {
-    switch (step.id) {
+    switch (stepNumber) {
       case 1:
         return "Use the calculator to determine the required mass of oxalic acid dihydrate";
       case 2:
@@ -915,7 +915,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
             <p className="text-sm text-gray-600 mt-1">
               {getCurrentStepGuidance()}
             </p>
-            {step.id === 1 && (
+            {stepNumber === 1 && (
               <p className="text-sm text-blue-700 font-medium mt-2">
                 Drag the analytical balance and weighing boat into the workbench.
               </p>
@@ -1042,7 +1042,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     onRemove={handleEquipmentRemove}
                     preparationState={preparationState}
                     onAction={handleEquipmentAction}
-                    stepId={step.id}
+                    stepId={stepNumber}
                   />
                 );
               }
@@ -1071,7 +1071,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     onRemove={handleEquipmentRemove}
                     preparationState={preparationState}
                     onAction={handleEquipmentAction}
-                    stepId={step.id}
+                    stepId={stepNumber}
                   />
                 );
               }
@@ -1092,7 +1092,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     onRemove={handleEquipmentRemove}
                     preparationState={preparationState}
                     onAction={handleEquipmentAction}
-                    stepId={step.id}
+                    stepId={stepNumber}
                   />
                 );
               }
@@ -1210,7 +1210,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 )}
 
                 {/* Additional controls for Step 3: allow user to set amount of oxalic acid to add to weighing boat */}
-                {step.id === 3 && (
+                {stepNumber === 2 && (
                   <div className="space-y-3">
                     <div className="p-3 rounded-lg border-2 border-yellow-200 bg-gradient-to-r from-yellow-50 via-white to-yellow-25 shadow-md overflow-hidden">
                       {showAcidHint && (
@@ -1344,7 +1344,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 )}
 
                 {/* Additional control for Step 7: pour into flask */}
-                {step.id === 7 && (
+                {stepNumber === 6 && (
                   <div className="space-y-2">
                     <Button
                       onClick={() => {
@@ -1360,7 +1360,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 )}
 
                 {/* default Undo/Reset when not in step 3 */}
-                {step.id !== 3 && (
+                {stepNumber !== 3 && (
                   <div className="space-y-2">
                     <Button onClick={onUndoStep} variant="outline" className="w-full bg-red-50 border-red-200 text-red-700 hover:bg-red-100" disabled={stepNumber <= 1}>
                       Undo Step {currentStepIndex}

@@ -163,20 +163,19 @@ function OxalicAcidVirtualLab({
     // is set so transfer can proceed.
     try {
       // step is available from closure; ensure it's the weighing step
-      if (step.id === 2) {
-        // mark dissolved so later steps (transfer) can proceed even if we skip explicit dissolving
+      if (stepNumber === 2) {
+        // mark dissolved so later steps (transfer) can proceed
         setPreparationState(prev => ({ ...prev, dissolved: true }));
 
-        // small delay to allow UI updates, then advance twice to skip step 3 and go to step 4
+        // small delay to allow UI updates, then advance a single step
         setTimeout(() => {
           onStepComplete();
-          setTimeout(() => onStepComplete(), 300);
         }, 300);
       }
     } catch (e) {
       // swallow errors — fallback to single-step advance handled elsewhere
     }
-  }, [measurements.targetMass, addResult, step.id, onStepComplete]);
+  }, [measurements.targetMass, addResult, stepNumber, onStepComplete]);
 
   const handleDissolving = useCallback(() => {
     setPreparationState(prev => ({
@@ -278,7 +277,7 @@ function OxalicAcidVirtualLab({
   }, [measurements.massWeighed, addResult]);
 
   const handleStepAction = useCallback((opts?: { skipAnimation?: boolean }) => {
-    switch (step.id) {
+    switch (stepNumber) {
       case 1:
         handleCalculation();
         break;
@@ -306,10 +305,10 @@ function OxalicAcidVirtualLab({
         handleFinalMixing();
         break;
     }
-  }, [step.id, handleCalculation, handleWeighing, handleDissolving, handleTransfer, handleTransferComplete, handleNearMark, handleFinalVolume, handleFinalMixing]);
+  }, [stepNumber, handleCalculation, handleWeighing, handleDissolving, handleTransfer, handleTransferComplete, handleNearMark, handleFinalVolume, handleFinalMixing]);
 
   useEffect(() => {
-    if (step.id !== 1) {
+    if (stepNumber !== 1) {
       stepOneAutoProgressedRef.current = false;
       return;
     }
@@ -343,10 +342,10 @@ function OxalicAcidVirtualLab({
     if (!allPlaced) {
       stepOneAutoProgressedRef.current = false;
     }
-  }, [equipmentPositions, step.id, onStepComplete, setMeasurements]);
+  }, [equipmentPositions, stepNumber, onStepComplete, setMeasurements]);
 
   useEffect(() => {
-    if (step.id !== 2) {
+    if (stepNumber !== 2) {
       stepTwoAlignedRef.current = false;
       return;
     }
@@ -451,10 +450,10 @@ function OxalicAcidVirtualLab({
         cancelAnimationFrame(frame);
       }
     };
-  }, [equipmentPositions, step.id, preparationState.oxalicAcidAdded, onStepComplete]);
+  }, [equipmentPositions, stepNumber, preparationState.oxalicAcidAdded, onStepComplete]);
 
   useEffect(() => {
-    if (step.id !== 2) {
+    if (stepNumber !== 2) {
       stepTwoAlignedRef.current = false;
       return;
     }
@@ -559,10 +558,10 @@ function OxalicAcidVirtualLab({
         cancelAnimationFrame(frame);
       }
     };
-  }, [equipmentPositions, step.id, preparationState.oxalicAcidAdded, onStepComplete]);
+  }, [equipmentPositions, stepNumber, preparationState.oxalicAcidAdded, onStepComplete]);
 
   useEffect(() => {
-    if (step.id !== 4) {
+    if (stepNumber !== 4) {
       stepFourAlignedRef.current = false;
       return;
     }
@@ -649,12 +648,12 @@ function OxalicAcidVirtualLab({
         cancelAnimationFrame(frame);
       }
     };
-  }, [equipmentPositions, step.id]);
+  }, [equipmentPositions, stepNumber]);
 
   // Listen for the workbench image shown events and auto-complete relevant steps
   useEffect(() => {
     const handlerForImage = () => {
-      if (step.id === 3) {
+      if (stepNumber === 3) {
         setPreparationState(prev => ({ ...prev, dissolved: true }));
         setTimeout(() => {
           try { onStepComplete(); } catch (e) {}
@@ -663,7 +662,7 @@ function OxalicAcidVirtualLab({
     };
 
     const handlerForBeaker = () => {
-      if (step.id === 5) {
+      if (stepNumber === 5) {
         // mark nearMark so step 5 can proceed and then auto-advance
         setPreparationState(prev => ({ ...prev, nearMark: true }));
         setTimeout(() => {
@@ -678,7 +677,7 @@ function OxalicAcidVirtualLab({
       window.removeEventListener('oxalic_image_shown', handlerForImage);
       window.removeEventListener('oxalic_beaker_image_shown', handlerForBeaker);
     };
-  }, [step.id, onStepComplete]);
+  }, [stepNumber, onStepComplete]);
 
 
   // Listen for a programmatic pour action specifically for step 7 (final mixing -> pour into flask)
@@ -736,17 +735,17 @@ function OxalicAcidVirtualLab({
   // Do NOT notify the parent so the equipment palette remains unchanged.
   const prevStepRef = useRef<number | null>(null);
   useEffect(() => {
-    if (prevStepRef.current === 3 && step.id === 4) {
+    if (prevStepRef.current === 3 && stepNumber === 4) {
       setEquipmentPositions(prev => prev.filter(pos => {
         const key = (pos.typeId ?? pos.id).toString().toLowerCase();
         return !key.includes("analytical_balance");
       }));
     }
-    prevStepRef.current = step.id;
-  }, [step.id]);
+    prevStepRef.current = stepNumber;
+  }, [stepNumber]);
 
   const canProceed = useCallback(() => {
-    switch (step.id) {
+    switch (stepNumber) {
       case 1:
         return measurements.targetMass > 0;
       case 2:
@@ -764,10 +763,10 @@ function OxalicAcidVirtualLab({
       default:
         return false;
     }
-  }, [step.id, measurements.targetMass, preparationState]);
+  }, [stepNumber, measurements.targetMass, preparationState]);
 
   useEffect(() => {
-    if (step.id === 1) {
+    if (stepNumber === 1) {
       return;
     }
     if (canProceed() && isActive) {
@@ -776,7 +775,7 @@ function OxalicAcidVirtualLab({
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [canProceed, isActive, onStepComplete, step.id]);
+  }, [canProceed, isActive, onStepComplete, stepNumber]);
 
   return (
     <TooltipProvider>
