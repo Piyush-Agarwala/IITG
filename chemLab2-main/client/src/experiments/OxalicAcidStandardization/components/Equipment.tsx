@@ -114,6 +114,18 @@ export const Equipment: React.FC<EquipmentProps> = ({
   useEffect(() => {
     if (stepId !== 5) setEnlargeAfterAnimation(false);
   }, [stepId]);
+
+  // Enlarge volumetric flask image after the final pour animation completes (step 7)
+  const [enlargeFlaskAfterPour, setEnlargeFlaskAfterPour] = useState(false);
+  useEffect(() => {
+    if (equipmentIdentifier !== "volumetric_flask") return;
+    const handler = () => setEnlargeFlaskAfterPour(true);
+    window.addEventListener('oxalic_flask_image_shown', handler as EventListener);
+    return () => window.removeEventListener('oxalic_flask_image_shown', handler as EventListener);
+  }, [equipmentIdentifier]);
+  useEffect(() => {
+    if (stepId !== 7) setEnlargeFlaskAfterPour(false);
+  }, [stepId]);
   const isAnalytical = equipmentIdentifier === "analytical_balance";
   const isWeighingBoat = equipmentIdentifier === "weighing_boat";
 
@@ -321,7 +333,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
               <TransparentImage
                 src={imageSrc}
                 alt={name}
-                className={position ? "mx-auto mb-2 h-40 w-auto object-contain mix-blend-multiply pointer-events-none select-none" : "mx-auto mb-2 h-24 w-auto object-contain mix-blend-multiply pointer-events-none select-none"}
+                className={position ? (enlargeFlaskAfterPour ? "mx-auto mb-2 h-56 md:h-64 w-auto object-contain mix-blend-multiply pointer-events-none select-none transition-transform duration-500 scale-105" : "mx-auto mb-2 h-40 w-auto object-contain mix-blend-multiply pointer-events-none select-none") : "mx-auto mb-2 h-24 w-auto object-contain mix-blend-multiply pointer-events-none select-none"}
                 tolerance={245}
                 colorDiff={8}
                 draggable={false}

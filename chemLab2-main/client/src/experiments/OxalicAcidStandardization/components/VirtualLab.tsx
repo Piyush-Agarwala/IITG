@@ -711,6 +711,11 @@ function OxalicAcidVirtualLab({
             return filtered;
           });
 
+          // Dispatch event so equipment instances (volumetric flask) can react and enlarge their displayed image
+          try {
+            window.dispatchEvent(new CustomEvent('oxalic_flask_image_shown', { detail: { id: flask.id } }));
+          } catch (e) {}
+
           // stop transfer animation
           setShowTransfer(false);
 
