@@ -77,6 +77,17 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
     setTimer(0);
   };
 
+  // Auto-start timer when the user navigates to this experiment route
+  useEffect(() => {
+    try {
+      if (match && experimentId === experiment.id) {
+        handleStartExperiment(true);
+      }
+    } catch (e) {
+      // guard in case params are undefined; no-op
+    }
+  }, [match, experimentId]);
+
   const handleResetTimer = () => {
     setTimer(0);
     setIsRunning(false);
