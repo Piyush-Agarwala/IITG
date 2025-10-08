@@ -1348,7 +1348,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 )}
 
                 {/* Additional control for Step 7: pour into flask */}
-                {stepNumber === 6 && (
+                {stepNumber === 7 && (
                   <div className="space-y-2">
                     <Button
                       onClick={() => {
