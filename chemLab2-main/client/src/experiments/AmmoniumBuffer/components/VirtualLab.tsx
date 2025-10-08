@@ -718,6 +718,59 @@ useEffect(() => {
             </div>
           </div>
 
+          <div className="space-y-4">
+            {/* Interpretation & Buffer Capacity */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Interpretation & Key Observations</h4>
+              {(() => {
+                const res = computeHenderson();
+                const pHcalc = res.pH !== null ? res.pH.toFixed(2) : null;
+                const ratioStr = isFinite(res.ratio) ? res.ratio.toFixed(2) : '—';
+                const molesBaseMs = res.molesBase ? (res.molesBase * 1000).toFixed(3) : '0';
+                const molesAcidMs = res.molesAcid ? (res.molesAcid * 1000).toFixed(3) : '0';
+
+                return (
+                  <div className="text-sm text-black space-y-2">
+                    <div>• Calculated buffered pH: <strong>{pHcalc ?? 'Not available'}</strong> (using pKa = {res.pKa.toFixed(2)})</div>
+                    <div>• Base : Acid ratio [base]/[acid] = <strong>{ratioStr}</strong></div>
+                    <div>• Total reagent amount (approx): <strong>{molesBaseMs} mmol base</strong>, <strong>{molesAcidMs} mmol acid</strong></div>
+                    <div>• Interpretation: A ratio close to 1 indicates an effective buffer near the conjugate pair pKa; larger ratios shift pH more basic while smaller ratios shift pH more acidic.</div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Buffer Capacity (Practical)</h4>
+              <div className="text-sm text-black space-y-2">
+                {(() => {
+                  const res = computeHenderson();
+                  const totalMoles = (res.molesBase || 0) + (res.molesAcid || 0);
+                  const capacity = totalMoles > 0 ? (totalMoles * 1000).toFixed(3) : '0';
+                  const capacityAssessment = totalMoles <= 0 ? 'No buffer formed' : totalMoles < 0.001 ? 'Low buffer capacity' : totalMoles < 0.01 ? 'Moderate buffer capacity' : 'High buffer capacity';
+                  return (
+                    <div>
+                      <div>Approximate total reagent amount: <strong>{capacity} mmol</strong></div>
+                      <div>Estimated buffer capacity: <strong>{capacityAssessment}</strong></div>
+                      <div className="mt-2">Practical note: Buffer capacity increases with the absolute amount of conjugate acid/base present. Small added volumes of strong acid/base will change pH more when total moles are low.</div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Experimental Tips & Next Steps</h4>
+              <ul className="list-disc pl-5 text-sm text-black space-y-1">
+                <li>Use calibrated pipettes or burettes for more accurate volume additions to reduce dilution errors.</li>
+                <li>When measuring pH with indicators, cross-check with pH paper or a pH meter for increased accuracy.</li>
+                <li>To test buffer limits, add small incremental volumes of strong acid or base and observe pH change; a stable pH indicates good buffering.</li>
+                <li>Record temperatures and ensure consistent mixing — pH can vary with temperature and incomplete mixing.</li>
+                <li>For further study, vary the initial NH4OH concentration while keeping NH4Cl constant to observe how buffer pH responds.</li>
+              </ul>
+            </div>
+          </div>
+
           <div className="flex justify-between mt-6">
             <Link href="/">
               <Button className="bg-gray-500 hover:bg-gray-600 text-white flex items-center space-x-2">
