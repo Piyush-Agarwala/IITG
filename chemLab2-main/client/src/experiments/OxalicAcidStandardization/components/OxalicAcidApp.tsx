@@ -271,13 +271,23 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
                 Step {currentStep + 1}: {experiment.stepDetails[currentStep].title}
               </p>
             </div>
-            <Button
-              onClick={() => handleStepChange(currentStep + 1)}
-              disabled={currentStep === experiment.stepDetails.length - 1}
-            >
-              Next Step
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+
+            {/* Show Results & analysis button when all steps are completed */}
+            {experimentStarted && currentStep === experiment.stepDetails.length - 1 ? (
+              <Link to={`/experiment/${experimentId}/results`}>
+                <Button className="bg-gradient-to-r from-pink-500 to-yellow-400 text-white hover:opacity-95">
+                  Results &amp; analysis
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                onClick={() => handleStepChange(currentStep + 1)}
+                disabled={currentStep === experiment.stepDetails.length - 1}
+              >
+                Next Step
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
