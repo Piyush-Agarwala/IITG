@@ -37,6 +37,10 @@ export default function Experiment() {
       return <TitrationQuiz />;
     }
 
+    if (isQuizRoute && experimentId === 8) {
+      return <OxalicAcidQuiz />;
+    }
+
     switch (experimentId) {
       case 1:
         return <EquilibriumShiftApp onBack={() => window.history.back()} />;
