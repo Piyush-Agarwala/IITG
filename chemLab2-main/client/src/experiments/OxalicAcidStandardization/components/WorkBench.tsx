@@ -1211,7 +1211,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 )}
 
                 {/* Additional controls for Step 3: allow user to set amount of oxalic acid to add to weighing boat */}
-                {stepNumber === 2 && (
+                {stepNumber === 3 && (
                   <div className="space-y-3">
                     <div className="p-3 rounded-lg border-2 border-yellow-200 bg-gradient-to-r from-yellow-50 via-white to-yellow-25 shadow-md overflow-hidden">
                       {showAcidHint && (
