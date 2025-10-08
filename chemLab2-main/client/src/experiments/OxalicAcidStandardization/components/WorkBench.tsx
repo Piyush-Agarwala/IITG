@@ -1249,6 +1249,22 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                               showMessage('Please enter a positive amount to add.');
                               return;
                             }
+
+                            // If user enters more than 1.6 g show a colorful trigger warning and prompt to use target mass
+                            if (parsedAmount > 1.6) {
+                              try {
+                                showMessage('enter the amount of acid within the target mass as your solution might get more concentrated.', 'colorful');
+                              } catch (e) {}
+
+                              // Prefill the input with the target mass and prompt user to enter that value
+                              try {
+                                setAcidAmount((measurements.targetMass || 0).toFixed(4));
+                                showMessage(`Please enter the target mass: ${(measurements.targetMass || 0).toFixed(4)} g`, 'colorful');
+                              } catch (e) {}
+
+                              return;
+                            }
+
                             const amountToAdd = parsedAmount;
 
                             // Add oxalic acid to the boat immediately (so the tooltip/details show)
