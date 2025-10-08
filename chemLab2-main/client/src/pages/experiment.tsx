@@ -10,6 +10,7 @@ import PHComparisonApp from "@/experiments/PHComparison/components/PHComparisonA
 import AmmoniumBufferApp from "@/experiments/AmmoniumBuffer/components/AmmoniumBufferApp";
 import BufferPHApp from "@/experiments/EthanoicBuffer/components/BufferPHApp";
 import BufferQuiz from "@/experiments/EthanoicBuffer/components/Quiz";
+import TitrationQuiz from "@/experiments/Titration1/components/Quiz";
 import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
 import { Button } from "@/components/ui/button";
