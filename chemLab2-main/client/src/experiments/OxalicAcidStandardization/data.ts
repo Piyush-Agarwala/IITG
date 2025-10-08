@@ -1,6 +1,6 @@
 import type { OxalicAcidExperiment } from "./types";
 
-// Complete Oxalic Acid Standardization experiment data
+// Restored Oxalic Acid Standardization experiment data (7 steps)
 const OxalicAcidData: OxalicAcidExperiment = {
   id: 1,
   title: "Preparation of Standard Solution of Oxalic Acid",
@@ -9,7 +9,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
   category: "Quantitative Analysis",
   difficulty: "Beginner",
   duration: 35,
-  steps: 6,
+  steps: 7,
   rating: 4.5,
   imageUrl:
     "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
@@ -35,39 +35,48 @@ const OxalicAcidData: OxalicAcidExperiment = {
     },
     {
       id: 2,
-      title: "calculate required amount of oxalic acid dihydrate",
+      title: "Weigh Oxalic Acid",
+      description:
+        "Using an analytical balance, accurately weigh the calculated amount of oxalic acid dihydrate in a weighing bottle. Record the exact mass.",
+      duration: "8 minutes",
+      safety: "Handle with care, avoid skin contact",
+      completed: false,
+    },
+    {
+      id: 3,
+      title: "Dissolve in Beaker",
       description:
         "Transfer the weighed oxalic acid to a 100 mL beaker. Add about 50 mL of distilled water and stir with a glass rod until completely dissolved.",
       duration: "5 minutes",
       completed: false,
     },
     {
-      id: 3,
+      id: 4,
       title: "Transfer to Volumetric Flask",
       description:
-        "drag the beaker, wash bottle and volumetric flask into the workspace",
+        "Drag the beaker, wash bottle and volumetric flask into the workspace and transfer the solution into the volumetric flask using a funnel.",
       duration: "7 minutes",
       completed: false,
     },
     {
-      id: 4,
-      title: "add distilled water to beaker",
+      id: 5,
+      title: "Add Water to Near Mark",
       description:
-        "add distilled water to beaker",
+        "Add distilled water to the volumetric flask until the level is about 2-3 cm below the graduation mark. Swirl gently to mix.",
       duration: "3 minutes",
       completed: false,
     },
     {
-      id: 5,
-      title: "Mixing of acid with distilled water",
+      id: 6,
+      title: "Make to Mark",
       description:
-        "drag and drop the stirrer to the workspace and click on the stirrer to mix distilled water with the acid in the weighing boat",
+        "Using a dropper, carefully add distilled water drop by drop until the bottom of the meniscus aligns with the 250 mL graduation mark.",
       duration: "5 minutes",
       completed: false,
     },
     {
-      id: 6,
-      title: "final mixing and result",
+      id: 7,
+      title: "Final Mixing and Calculation",
       description:
         "Cap the flask and invert it 20-25 times to ensure complete mixing. Calculate the exact molarity using the actual mass weighed.",
       duration: "5 minutes",
