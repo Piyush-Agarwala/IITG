@@ -116,6 +116,18 @@
     background-color: var(--lab-gray);
   }
 
+  /* Hero initiative text using Kugile font (falls back to sans-serif if not available) */
+  .hero-initiative-font {
+    font-family: 'Kugile', sans-serif;
+  }
+
+  .hero-initiative {
+    margin-top: 0.5rem;
+    color: #ffffff;
+    opacity: 0.95;
+    line-height: 1.2;
+  }
+
   /* Bottle background helpers */
   .bg-bottle-yellow {
     background-color: #fffacc;
