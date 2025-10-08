@@ -9,7 +9,7 @@ const OxalicAcidData: OxalicAcidExperiment = {
   category: "Quantitative Analysis",
   difficulty: "Beginner",
   duration: 35,
-  steps: 7,
+  steps: 6,
   rating: 4.5,
   imageUrl:
     "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400",
