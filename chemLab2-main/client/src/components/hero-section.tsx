@@ -22,6 +22,7 @@ export default function HeroSection() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white drop-shadow-lg">
             Discover Chemistry Through Virtual Experiments
           </h2>
+          <p className="hero-initiative hero-initiative-font text-base md:text-lg mt-2">An initiative by IITG</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               onClick={scrollToExperiments}
