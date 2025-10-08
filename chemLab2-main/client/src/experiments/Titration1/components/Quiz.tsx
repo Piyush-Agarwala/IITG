@@ -149,7 +149,7 @@ export default function TitrationQuiz() {
                       <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
                     </Button>
                   </Link>
-                  <Link href="/experiment/5/results">
+                  <Link href="/">
                   <Button className="bg-gray-700 text-white">Return to Experiments</Button>
                 </Link>
                 </div>
