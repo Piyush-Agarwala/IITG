@@ -31,6 +31,60 @@ export default function TitrationResultsPage() {
   const n2 = validInputs ? (n1 * v1) / meanV2 : 0;
   const strength = n2 * 40;
 
+  // Quiz state for Titration
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizSelections, setQuizSelections] = useState<Record<string, string>>({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [score, setScore] = useState(0);
+
+  const questions = [
+    {
+      question: 'What is the primary purpose of performing multiple titration trials?',
+      options: ['To increase the volume used', 'To improve accuracy and precision', 'To change the concentration', 'To speed up the experiment'],
+      answer: 'To improve accuracy and precision',
+    },
+    {
+      question: 'Which indicator is commonly used for titrating oxalic acid with NaOH?',
+      options: ['Methyl orange', 'Phenolphthalein', 'Bromothymol blue', 'Litmus'],
+      answer: 'Phenolphthalein',
+    },
+    {
+      question: 'If mean titre volume (V₂) increases, the calculated normality (N₂) will:',
+      options: ['Increase', 'Decrease', 'Remain the same', 'Become zero'],
+      answer: 'Decrease',
+    },
+    {
+      question: 'Normality (N) is related to molarity (M) by the number of equivalents. For oxalic acid (H₂C₂O₄), the factor is:',
+      options: ['1', '2', '3', '0.5'],
+      answer: '2',
+    },
+    {
+      question: 'Which of the following improves precision in titration results?',
+      options: ['Using a larger burette only', 'Performing multiple consistent trials', 'Changing the indicator every trial', 'Heating the solution'],
+      answer: 'Performing multiple consistent trials',
+    },
+  ] as const;
+
+  const handleSelect = (q: string, v: string) => {
+    setQuizSelections((s) => ({ ...s, [q]: v }));
+  };
+
+  const submitQuiz = () => {
+    let sc = 0;
+    for (let i = 0; i < questions.length; i++) {
+      const key = `q${i}`;
+      if (quizSelections[key] === questions[i].answer) sc += 1;
+    }
+    setScore(sc);
+    setQuizSubmitted(true);
+  };
+
+  const resetQuiz = () => {
+    setQuizSelections({});
+    setQuizSubmitted(false);
+    setScore(0);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
