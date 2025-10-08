@@ -309,7 +309,7 @@ function OxalicAcidVirtualLab({
         handleFinalMixing();
         break;
     }
-  }, [stepNumber, handleCalculation, handleWeighing, handleDissolving, handleTransfer, handleTransferComplete, handleNearMark, handleFinalVolume, handleFinalMixing]);
+  }, [stepNumber, handleCalculation, handleWeighing, handleDissolving, handleTransfer, handleTransferComplete, handleNearMark, handleFinalVolume, handleFinalMixing, onStepComplete]);
 
   useEffect(() => {
     if (stepNumber !== 1) {
