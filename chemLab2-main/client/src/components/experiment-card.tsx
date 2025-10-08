@@ -65,7 +65,8 @@ export default function ExperimentCard({ experiment, progress, onViewDetails }: 
           </div>
         </div>
         
-        <h4 className="text-xl font-bold text-gray-900 mb-3">{experiment.title}</h4>
+        {/* If title is a short placeholder like "Titration 1", prefer the descriptive sentence from the description for the card overlay */}
+        <h4 className="text-xl font-bold text-gray-900 mb-3">{/^Titration\s?\d+$/i.test(experiment.title) ? experiment.description : experiment.title}</h4>
         <p className="text-gray-600 mb-4 text-sm leading-relaxed">
           {experiment.description}
         </p>
