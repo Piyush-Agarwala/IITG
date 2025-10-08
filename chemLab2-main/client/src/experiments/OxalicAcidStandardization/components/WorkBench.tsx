@@ -187,7 +187,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         setWashAnimation({ x: animX, y: animY, active: true });
 
         // If current step is 5, run a longer (6s) animation and then replace beaker image
-        const isStepFive = stepNumber === 5;
+        const isStepFive = stepNumber === 4;
         const duration = isStepFive ? 6000 : 1600;
 
         // After animation completes, actually add the water to the beaker's chemicals array
@@ -346,7 +346,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
       // If oxalic acid bottle was added during quantitative analysis step, show reminder and dispatch event
       try {
-        if (payload && payload.id === 'oxalic_acid' && stepNumber === 3) {
+        if (payload && payload.id === 'oxalic_acid' && stepNumber === 2) {
           showMessage('Click the calculator once to see the amount of acid required');
           try { window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder')); } catch {}
         }
@@ -373,7 +373,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: data.id,
           name: data.name,
-          imageSrc: (stepNumber === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
+          imageSrc: (stepNumber === 3 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
             ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1782add6aa7c40cc992b82016876895e?format=webp&width=800'
             : data.imageSrc,
         }
@@ -425,7 +425,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: eq.id,
           name: eq.name,
-          imageSrc: (stepNumber === 4 && eq.id === 'volumetric_flask')
+          imageSrc: (stepNumber === 3 && eq.id === 'volumetric_flask')
             ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1782add6aa7c40cc992b82016876895e?format=webp&width=800'
             : undefined,
         }
@@ -502,7 +502,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         // acid from the weighing boat is mixed into the beaker for ~7 seconds, replace the
         // beaker image with the provided mixed-beaker image, then remove the stirrer and
         // weighing boat from the workspace and complete the step.
-        if (stepNumber === 6) {
+        if (stepNumber === 5) {
           // Find beaker and weighing boat positions
           const beaker = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('beaker'));
           const boat = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing_boat') || ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing-boat'));
@@ -652,7 +652,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           setEquipmentPositions(prev => prev.map(pos => pos.id === nearest.id ? { ...pos, chemicals: [] } : pos));
           setWashAnimation(null);
           try {
-            if (stepNumber === 4) {
+            if (stepNumber === 3) {
               // remove the wash bottle used for rinsing from the workbench
               setEquipmentPositions(prev => prev.filter(pos => pos.id !== bottle.id));
               // automatically trigger the step action for step 4 (transfer to flask)
@@ -1210,7 +1210,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 )}
 
                 {/* Additional controls for Step 3: allow user to set amount of oxalic acid to add to weighing boat */}
-                {stepNumber === 3 && (
+                {stepNumber === 2 && (
                   <div className="space-y-3">
                     <div className="p-3 rounded-lg border-2 border-yellow-200 bg-gradient-to-r from-yellow-50 via-white to-yellow-25 shadow-md overflow-hidden">
                       {showAcidHint && (
@@ -1344,7 +1344,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 )}
 
                 {/* Additional control for Step 7: pour into flask */}
-                {stepNumber === 7 && (
+                {stepNumber === 6 && (
                   <div className="space-y-2">
                     <Button
                       onClick={() => {
