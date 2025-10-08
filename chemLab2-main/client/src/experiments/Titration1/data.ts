@@ -6,7 +6,7 @@ export const titration1Data = {
   duration: 45,
   steps: 8,
   rating: 4.5,
-  imageUrl: "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Ffed6f3ac721d4974a3c7d5757bbccd27?format=webp&width=800",
+  imageUrl: "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F54f2df23dd484516927fd00a9f2b8d4f?format=webp&width=800",
   equipment: [
     "Burette (50 mL)",
     "Pipette (25 mL)", 
