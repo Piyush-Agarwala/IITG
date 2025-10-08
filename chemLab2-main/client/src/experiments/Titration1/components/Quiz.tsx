@@ -149,9 +149,9 @@ export default function TitrationQuiz() {
                       <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
                     </Button>
                   </Link>
-                  <Link href="/">
-                    <Button className="bg-gray-700 text-white">Return to Experiments</Button>
-                  </Link>
+                  <Link href="/experiment/5/results">
+                  <Button className="bg-gray-700 text-white">Return to Experiments</Button>
+                </Link>
                 </div>
                 <div className="flex items-center gap-2 ml-auto">
                   <Button onClick={submitQuiz} className="bg-blue-600 text-white">Submit</Button>
