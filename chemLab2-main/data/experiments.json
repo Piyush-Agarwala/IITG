@@ -129,12 +129,12 @@
         "completed": false
       },
       {
-        "id": 6,
-        "title": "Make to Mark",
-        "description": "Using a dropper, carefully add distilled water drop by drop until the bottom of the meniscus aligns with the 250 mL graduation mark.",
-        "duration": "5 minutes",
-        "completed": false
-      },
+      "id": 6,
+      "title": "Mix Oxalic Acid with Distilled Water",
+      "description": "Mix oxalic acid with distilled water",
+      "duration": "5 minutes",
+      "completed": false
+    },
       {
         "id": 7,
         "title": "Final Mixing and Calculation",
@@ -599,7 +599,7 @@
       { "id": 2, "title": "Measure Initial pH", "description": "Calibrate the pH meter or prepare universal indicator. Measure and record the initial pH of the ethanoic acid solution.", "duration": "3 minutes", "completed": false },
       { "id": 3, "title": "Add Sodium Ethanoate Incrementally", "description": "Add known small volumes (e.g., 0.5 mL increments) of 0.1 M sodium ethanoate solution to the acid solution. Stir and allow the solution to equilibrate after each addition.", "duration": "8 minutes", "safety": "Avoid skin contact; handle reagents with care.", "completed": false },
       { "id": 4, "title": "Record pH After Each Addition", "description": "Measure and record pH after each addition. Observe increase in pH as ethanoate ion concentration increases, showing buffer action.", "duration": "6 minutes", "completed": false },
-      { "id": 5, "title": "Analyze with Henderson–Hasselbalch", "description": "Use recorded concentrations and pH values to apply the Henderson–Hasselbalch equation and calculate pKa. Discuss how the common-ion effect stabilizes pH.", "duration": "6 minutes", "completed": false },
+      { "id": 5, "title": "Analyze with Henderson���Hasselbalch", "description": "Use recorded concentrations and pH values to apply the Henderson–Hasselbalch equation and calculate pKa. Discuss how the common-ion effect stabilizes pH.", "duration": "6 minutes", "completed": false },
       { "id": 6, "title": "Cleanup and Safety",
         "description": "Neutralize and dispose solutions according to local guidelines. Rinse glassware thoroughly and wash hands. Store reagents properly.",
         "duration": "2 minutes",
