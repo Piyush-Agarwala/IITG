@@ -180,7 +180,7 @@ export default function VirtualLab({
       stepId: 8,
       title: "Halogen Test (AgNO₃)",
       icon: <Sparkles className="w-5 h-5" />,
-      description: "After HNO₃ treatment, add AgNO��� to observe halide precipitate.",
+      description: "After HNO₃ treatment, add AgNO₃ to observe halide precipitate.",
       canRun: hasExtract && interferenceRemoved && halide == null,
       run: () => {
         const halides: Array<"Cl" | "Br" | "I"> = ["Cl", "Br", "I"];

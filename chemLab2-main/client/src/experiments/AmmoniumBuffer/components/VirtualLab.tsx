@@ -646,145 +646,128 @@ useEffect(() => {
             <DialogDescription className="text-black">Analysis of your ammonium hydroxide / ammonium chloride comparison</DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 mt-4">
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-black mb-4">Summary</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
-                  <div className="flex items-center mb-3">
-                    <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
-                    <h4 className="font-semibold text-black">Ammonium hydroxide + Indicator (basic)</h4>
-                  </div>
-                  <p className="text-sm text-black mb-2">Measured pH: {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</p>
-                  <p className="text-sm text-black">Volume: {baseSample ? `${baseSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
-                </div>
-                <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
-                  <div className="flex items-center mb-3">
-                    <span className="w-3 h-3 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
-                    <h4 className="font-semibold text-black">After NH4Cl added + Indicator (buffered)</h4>
-                  </div>
-                  {(() => {
-                    const hh = computeHenderson();
-                    const measured = hh.pH !== null ? hh.pH : ammoniumAfterPH;
-                    return (
-                      <>
-                        <p className="text-sm text-black mb-2">Measured pH: {measured != null ? (Number.isFinite(measured) ? measured.toFixed(2) : '—') : '—'}</p>
-                        <p className="text-sm text-black">Volume: {ammoniumAfterSample ? `${ammoniumAfterSample.volume.toFixed(1)} mL` : 'Not recorded'}</p>
-                      </>
-                    );
-                  })()}
-                </div>
+          <div className="space-y-6 mt-4 text-black">
+            {/* Summary styled like HClPH */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 border rounded bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+                <div className="text-sm font-medium">Ammonium hydroxide (latest)</div>
+                <div className="text-3xl font-semibold mt-2">{ammoniumInitialPH != null ? `${ammoniumInitialPH.toFixed(2)} (${ammoniumInitialPH < 7 ? 'Acidic' : ammoniumInitialPH > 7 ? 'Basic' : 'Neutral'})` : 'No measurement'}</div>
+              </div>
+
+              <div className="p-4 border rounded bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200">
+                <div className="text-sm font-medium">After NH4Cl added (buffered)</div>
+                <div className="text-lg font-semibold mt-2">{(() => { const hh = computeHenderson(); const measured = hh.pH !== null ? hh.pH : ammoniumAfterPH; return measured != null ? `${measured.toFixed(2)} (${measured < 7 ? 'Acidic' : measured > 7 ? 'Basic' : 'Neutral'})` : 'No result'; })()}</div>
               </div>
             </div>
 
-            {/* Henderson–Hasselbalch Calculation */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-black mb-4">Henderson–Hasselbalch Calculation</h3>
-              <div className="text-sm text-black space-y-3">
+            <div>
+              <h4 className="font-semibold mb-2">Henderson–Hasselbalch Calculation</h4>
+              <p className="text-sm">Below we compute the expected buffered pH using Henderson–Hasselbalch when both NH4OH and NH4Cl are present.</p>
+
+              <div className="mt-3 p-3 bg-white border rounded text-sm">
                 {(() => {
                   const res = computeHenderson();
-                  if (!res.totalVolMl || res.totalVolMl <= 0) {
-                    return <div>No solution volume recorded yet.</div>;
-                  }
-                  if (res.molesBase <= 0 && res.molesAcid <= 0) {
-                    return <div>No reagents added to compute a buffer.</div>;
-                  }
+                  if (!res.totalVolMl || res.totalVolMl <= 0) return <div>No solution volume recorded yet.</div>;
+                  if (res.molesBase <= 0 && res.molesAcid <= 0) return <div>No reagents added to compute a buffer.</div>;
 
                   if (res.molesBase > 0 && res.molesAcid > 0) {
                     return (
                       <div>
-                        <p className="mb-2">Using pH = pKa + log10([base]/[acid]) with pKa = {res.pKa.toFixed(2)}</p>
-                        <ul className="list-disc pl-5 text-xs text-black">
-                          <li>Total solution volume = {res.totalVolMl.toFixed(2)} mL ({res.totalVolL.toFixed(4)} L)</li>
-                          <li>NH4OH added (base) = {res.baseVolMl.toFixed(2)} mL → moles = {res.molesBase.toExponential(3)} mol</li>
-                          <li>NH4Cl added (acid) = {res.acidVolMl.toFixed(2)} mL → moles = {res.molesAcid.toExponential(3)} mol</li>
-                          <li>[base] = {res.baseConc.toExponential(3)} M, [acid] = {res.acidConc.toExponential(3)} M</li>
-                          <li>Ratio [base]/[acid] = {isFinite(res.ratio) ? res.ratio.toFixed(3) : '∞'}</li>
-                          <li className="mt-2 font-medium">Calculated pH = {res.pH !== null ? res.pH.toFixed(2) : '—'}</li>
-                        </ul>
+                        <div className="font-medium mb-2">Using pH = pKa + log10([base]/[acid]) with pKa = {res.pKa.toFixed(2)}</div>
+                        <div className="text-sm">
+                          <div>Total solution volume = {res.totalVolMl.toFixed(2)} mL ({res.totalVolL.toFixed(4)} L)</div>
+                          <div>NH4OH added (base) = {res.baseVolMl.toFixed(2)} mL → moles = {res.molesBase.toExponential(3)} mol</div>
+                          <div>NH4Cl added (acid) = {res.acidVolMl.toFixed(2)} mL → moles = {res.molesAcid.toExponential(3)} mol</div>
+                          <div className="mt-2 font-medium">Calculated pH = {res.pH !== null ? res.pH.toFixed(2) : '—'}</div>
+                        </div>
                       </div>
                     );
                   }
 
-                  // cases where one species is missing
-                  if (res.molesAcid <= 0 && res.molesBase > 0) {
-                    return <div>Only base present (no conjugate acid). The solution is basic (measured pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}).</div>;
-                  }
-                  if (res.molesBase <= 0 && res.molesAcid > 0) {
-                    return <div>Only acid (NH4+) present — solution will be acidic/less basic (measured pH ≈ {ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : '—'}).</div>;
-                  }
+                  if (res.molesAcid <= 0 && res.molesBase > 0) return <div>Only base present (no conjugate acid). The solution is basic (measured pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}).</div>;
+                  if (res.molesBase <= 0 && res.molesAcid > 0) return <div>Only acid (NH4+) present — solution will be acidic/less basic (measured pH ≈ {ammoniumAfterPH != null ? ammoniumAfterPH.toFixed(2) : '—'}).</div>;
                   return null;
                 })()}
               </div>
             </div>
 
-            {/* Measurement Summary: show A and B boxes (initial and after NH4Cl) */}
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              {(() => {
-                const hh = computeHenderson();
-                const baseVol = hh.baseVolMl || (baseSample ? baseSample.volume : 0);
-                const addedVol = hh.acidVolMl || (ammoniumAfterSample ? ammoniumAfterSample.volume : 0);
-                const computedPH = hh.pH !== null ? hh.pH : ammoniumAfterPH ?? ammoniumInitialPH ?? null;
-                return (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-3 border rounded-md bg-gray-50">
-                      <div className="text-sm text-black">A pH of Ammonium hydroxide</div>
-                      <div className="mt-2 text-xl font-bold">{baseVol.toFixed(1)} mL • pH ≈ {ammoniumInitialPH != null ? ammoniumInitialPH.toFixed(2) : '—'}</div>
-                    </div>
-                    <div className="p-3 border rounded-md bg-gray-50">
-                      <div className="text-sm text-black">B When NH4Cl is added</div>
-                      <div className="mt-2 text-xl font-bold">{addedVol.toFixed(1)} mL • pH ≈ {computedPH != null ? Number.isFinite(computedPH) ? computedPH.toFixed(2) : '—' : '—'}</div>
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Action Timeline</h3>
+            <div>
+              <h4 className="font-semibold mb-2">Action Timeline</h4>
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {analysisLog.map((log, index) => (
-                  <div key={log.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">{index + 1}</div>
-                    <div className="flex-1">
-                      <div className="font-medium text-black">{log.action}</div>
-                      <div className="text-sm text-black">{log.observation}</div>
-                      <div className="flex items-center space-x-4 mt-2 text-xs">
-                        <span className="flex items-center"><span className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: log.colorBefore }}></span>Before</span>
-                        <span>→</span>
-                        <span className="flex items-center"><span className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: log.colorAfter }}></span>After</span>
-                      </div>
-                    </div>
+                  <div key={log.id} className="mb-2 p-2 rounded border bg-gradient-to-r from-yellow-50 to-white text-black">
+                    <div className="font-medium">{index + 1}. {log.action}</div>
+                    <div className="text-sm mt-1">{log.observation}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold text-black mb-4">Final Experimental State</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="rounded-lg border border-blue-200 p-4 bg-blue-50/40">
-                  <div className="flex items-center mb-3">
-                    <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4OH_BASE }} />
-                    <h4 className="font-semibold text-black">Ammonium hydroxide + Indicator (≈ basic)</h4>
-                  </div>
-                  <div>
-                    <h5 className="font-medium text-black mb-2">Current Solution</h5>
-                    <p className="text-sm text-black">Contents: {baseSample ? baseSample.contents.join(', ') : 'Not recorded'}</p>
-                  </div>
+            <div>
+              <h4 className="font-semibold mb-2">Final Experimental State</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mb-2 p-2 rounded border bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+                  <div className="font-medium">Ammonium hydroxide + Indicator (≈ basic)</div>
+                  <div className="text-sm mt-1">Contents: {baseSample ? baseSample.contents.join(', ') : 'Not recorded'}</div>
                 </div>
-
-                <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40">
-                  <div className="flex items-center mb-3">
-                    <span className="w-4 h-4 rounded-full mr-2 border" style={{ backgroundColor: COLORS.NH4_BUFFERED }} />
-                    <h4 className="font-semibold text-black">NH4Cl added + Indicator (≈ buffered)</h4>
-                  </div>
-                  <div>
-                    <h5 className="font-medium text-black mb-2">Current Solution</h5>
-                    <p className="text-sm text-black">Contents: {ammoniumAfterSample ? ammoniumAfterSample.contents.join(', ') : 'Not recorded'}</p>
-                  </div>
+                <div className="mb-2 p-2 rounded border bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200">
+                  <div className="font-medium">NH4Cl added + Indicator (≈ buffered)</div>
+                  <div className="text-sm mt-1">Contents: {ammoniumAfterSample ? ammoniumAfterSample.contents.join(', ') : 'Not recorded'}</div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {/* Interpretation & Buffer Capacity */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Interpretation & Key Observations</h4>
+              {(() => {
+                const res = computeHenderson();
+                const pHcalc = res.pH !== null ? res.pH.toFixed(2) : null;
+                const ratioStr = isFinite(res.ratio) ? res.ratio.toFixed(2) : '—';
+                const molesBaseMs = res.molesBase ? (res.molesBase * 1000).toFixed(3) : '0';
+                const molesAcidMs = res.molesAcid ? (res.molesAcid * 1000).toFixed(3) : '0';
+
+                return (
+                  <div className="text-sm text-black space-y-2">
+                    <div>• Calculated buffered pH: <strong>{pHcalc ?? 'Not available'}</strong> (using pKa = {res.pKa.toFixed(2)})</div>
+                    <div>• Base : Acid ratio [base]/[acid] = <strong>{ratioStr}</strong></div>
+                    <div>• Total reagent amount (approx): <strong>{molesBaseMs} mmol base</strong>, <strong>{molesAcidMs} mmol acid</strong></div>
+                    <div>• Interpretation: A ratio close to 1 indicates an effective buffer near the conjugate pair pKa; larger ratios shift pH more basic while smaller ratios shift pH more acidic.</div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Buffer Capacity (Practical)</h4>
+              <div className="text-sm text-black space-y-2">
+                {(() => {
+                  const res = computeHenderson();
+                  const totalMoles = (res.molesBase || 0) + (res.molesAcid || 0);
+                  const capacity = totalMoles > 0 ? (totalMoles * 1000).toFixed(3) : '0';
+                  const capacityAssessment = totalMoles <= 0 ? 'No buffer formed' : totalMoles < 0.001 ? 'Low buffer capacity' : totalMoles < 0.01 ? 'Moderate buffer capacity' : 'High buffer capacity';
+                  return (
+                    <div>
+                      <div>Approximate total reagent amount: <strong>{capacity} mmol</strong></div>
+                      <div>Estimated buffer capacity: <strong>{capacityAssessment}</strong></div>
+                      <div className="mt-2">Practical note: Buffer capacity increases with the absolute amount of conjugate acid/base present. Small added volumes of strong acid/base will change pH more when total moles are low.</div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="font-semibold mb-2">Experimental Tips & Next Steps</h4>
+              <ul className="list-disc pl-5 text-sm text-black space-y-1">
+                <li>Use calibrated pipettes or burettes for more accurate volume additions to reduce dilution errors.</li>
+                <li>When measuring pH with indicators, cross-check with pH paper or a pH meter for increased accuracy.</li>
+                <li>To test buffer limits, add small incremental volumes of strong acid or base and observe pH change; a stable pH indicates good buffering.</li>
+                <li>Record temperatures and ensure consistent mixing — pH can vary with temperature and incomplete mixing.</li>
+                <li>For further study, vary the initial NH4OH concentration while keeping NH4Cl constant to observe how buffer pH responds.</li>
+              </ul>
             </div>
           </div>
 

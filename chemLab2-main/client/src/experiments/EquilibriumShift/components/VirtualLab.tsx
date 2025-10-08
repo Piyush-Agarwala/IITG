@@ -714,7 +714,7 @@ export default function VirtualLab({
                   <span style={{ color: COLORS.PINK }} className="font-bold">[Co(H₂O)₆]²⁺</span>
                   <span className="mx-1">+</span>
                   <span className="font-bold">4Cl⁻</span>
-                  <span className="mx-2 text-lg">���</span>
+                  <span className="mx-2 text-lg">⇌</span>
                   <span style={{ color: COLORS.BLUE }} className="font-bold">[CoCl₄]²⁻</span>
                   <span className="mx-1">+</span>
                   <span className="font-bold">6H₂O</span>
@@ -971,10 +971,10 @@ export default function VirtualLab({
                     <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                       <h4 className="font-semibold text-blue-800 mb-2">Chloride Complex [CoCl₄]²⁻</h4>
                       <ul className="text-sm text-blue-700 space-y-1">
-                        <li>�� Blue color</li>
+                        <li>• Blue color</li>
                         <li>• Tetrahedral geometry</li>
                         <li>• Favored by excess Cl⁻</li>
-                        <li>����� High Cl⁻ concentration</li>
+                        <li>• High Cl⁻ concentration</li>
                       </ul>
                     </div>
                   </div>
@@ -1026,7 +1026,7 @@ export default function VirtualLab({
                   <div className="bg-white rounded-lg p-4">
                     <h4 className="font-semibold text-pink-800 mb-2">Adding Water (Stress: ↓ Cl⁻ concentration)</h4>
                     <p className="text-sm text-gray-700">
-                      The system responds by shifting left to counteract the dilution, forming more [Co(H₂O)₆]²��� complex (pink color).
+                      The system responds by shifting left to counteract the dilution, forming more [Co(H₂O)₆]²⁺ complex (pink color).
                     </p>
                   </div>
                 </div>
