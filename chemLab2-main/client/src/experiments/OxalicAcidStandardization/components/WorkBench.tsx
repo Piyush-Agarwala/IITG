@@ -188,7 +188,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         setWashAnimation({ x: animX, y: animY, active: true });
 
         // If current step is 5, run a longer (6s) animation and then replace beaker image
-        const isStepFive = stepNumber === 4;
+        const isStepFive = stepNumber === 5;
         const duration = isStepFive ? 6000 : 1600;
 
         // After animation completes, actually add the water to the beaker's chemicals array
