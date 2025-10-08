@@ -164,13 +164,12 @@ function OxalicAcidVirtualLab({
     try {
       // step is available from closure; ensure it's the weighing step
       if (stepNumber === 2) {
-        // mark dissolved so later steps (transfer) can proceed even if we skip explicit dissolving
+        // mark dissolved so later steps (transfer) can proceed
         setPreparationState(prev => ({ ...prev, dissolved: true }));
 
-        // small delay to allow UI updates, then advance twice to skip step 3 and go to step 4
+        // small delay to allow UI updates, then advance a single step
         setTimeout(() => {
           onStepComplete();
-          setTimeout(() => onStepComplete(), 300);
         }, 300);
       }
     } catch (e) {
