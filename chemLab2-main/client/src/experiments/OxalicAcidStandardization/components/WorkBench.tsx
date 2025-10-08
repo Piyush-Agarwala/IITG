@@ -211,7 +211,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
               // For step 5, replace the beaker's image with the provided beaker image
               if (isStepFive) {
-                updated.imageSrc = 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F0bb739e603924a21b1dd8cbd3342cbb8?format=webp&width=800';
+                // Replace with provided colored beaker image after water addition animation
+                updated.imageSrc = 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F6fdc7538c2e9406bb8a67f4450870db4?format=webp&width=800';
               }
 
               return updated;
