@@ -144,11 +144,11 @@ export default function TitrationQuiz() {
 
               <div className="flex items-center justify-between flex-wrap gap-2 mt-2">
                 <div className="flex items-center gap-2">
-                  <Link href="/experiment/5">
-                    <Button variant="outline" className="flex items-center">
-                      <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
-                    </Button>
-                  </Link>
+                  <Link href="/experiment/5/results">
+                  <Button variant="outline" className="flex items-center">
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                  </Button>
+                </Link>
                   <Link href="/">
                   <Button className="bg-gray-700 text-white">Return to Experiments</Button>
                 </Link>
