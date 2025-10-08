@@ -714,7 +714,7 @@ export default function VirtualLab({
                   <span style={{ color: COLORS.PINK }} className="font-bold">[Co(H₂O)₆]²⁺</span>
                   <span className="mx-1">+</span>
                   <span className="font-bold">4Cl⁻</span>
-                  <span className="mx-2 text-lg">���</span>
+                  <span className="mx-2 text-lg">⇌</span>
                   <span style={{ color: COLORS.BLUE }} className="font-bold">[CoCl₄]²⁻</span>
                   <span className="mx-1">+</span>
                   <span className="font-bold">6H₂O</span>
