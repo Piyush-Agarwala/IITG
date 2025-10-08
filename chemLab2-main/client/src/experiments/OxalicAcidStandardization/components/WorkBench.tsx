@@ -931,10 +931,23 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               Calculator
             </Button>
             {!experimentStarted ? (
-              <Button onClick={onStartExperiment} size="sm">
-                <Play className="w-4 h-4 mr-2" />
-                Start Experiment
-              </Button>
+              (() => {
+                const isOxalicPreparation = experimentTitle === "Preparation of Standard Solution of Oxalic Acid";
+                if (isOxalicPreparation) {
+                  return (
+                    <Button onClick={() => onStartExperiment(false)} size="sm">
+                      <Pause className="w-4 h-4 mr-2" />
+                      Pause Experiment
+                    </Button>
+                  );
+                }
+                return (
+                  <Button onClick={() => onStartExperiment(true)} size="sm">
+                    <Play className="w-4 h-4 mr-2" />
+                    Start Experiment
+                  </Button>
+                );
+              })()
             ) : (
               <div className="flex items-center space-x-2">
                 <Button
