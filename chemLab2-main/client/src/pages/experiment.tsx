@@ -46,7 +46,7 @@ export default function Experiment() {
       case 4:
         return <HClPHApp onBack={() => window.history.back()} />;
       case 5:
-        return <Titration1App onBack={() => window.history.back()} />;
+        return <Titration1App onBack={() => navigate("/")} />;
       case 6:
         return <LassaigneApp onBack={() => window.history.back()} />;
       case 7:
