@@ -504,7 +504,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         // acid from the weighing boat is mixed into the beaker for ~7 seconds, replace the
         // beaker image with the provided mixed-beaker image, then remove the stirrer and
         // weighing boat from the workspace and complete the step.
-        if (stepNumber === 5) {
+        if (stepNumber === 5 || stepNumber === 6) {
           // Find beaker and weighing boat positions
           const beaker = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('beaker'));
           const boat = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing_boat') || ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('weighing-boat'));
