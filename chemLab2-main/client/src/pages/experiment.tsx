@@ -20,6 +20,7 @@ import { Link, useRoute, useParams, useLocation } from "wouter";
 export default function Experiment() {
   const { id } = useParams<{ id: string }>();
   const experimentId = parseInt(id || "1");
+  const [, navigate] = useLocation();
 
   // detect quiz route (e.g. /experiment/10/quiz)
   const [quizMatch, quizParams] = useRoute("/experiment/:id/quiz");
