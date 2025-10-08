@@ -291,6 +291,10 @@ function OxalicAcidVirtualLab({
         if (opts && opts.skipAnimation) {
           // directly mark transfer complete without showing transfer animation
           handleTransferComplete();
+          // advance to next step so the user can continue (small delay for UI)
+          setTimeout(() => {
+            try { onStepComplete(); } catch (e) {}
+          }, 300);
         } else {
           handleTransfer();
         }
