@@ -50,7 +50,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 ChemLab Virtual. All rights reserved.</p>
+          <p>© 2025 ChemVerse IlTG. All rights reserved.</p>
         </div>
       </div>
     </footer>
