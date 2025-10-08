@@ -444,10 +444,11 @@ export const Equipment: React.FC<EquipmentProps> = ({
                 const hasWaterNow = chemicals.some(c => (c.id || '').toString().toLowerCase().includes('distilled'));
                 // Use reasonable sizes for step 7 (smaller than before) and keep step 6 moderately large during mixing
                 const heightClass = position
-                  ? (stepId === 7 ? "h-48 md:h-56" : (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-80 md:h-96" : "h-40")))
+                  ? (stepId === 7 ? "h-48 md:h-56" : (stepId === 6 ? "h-56 md:h-72" : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? "h-40 md:h-48" : "h-40")))
                   : (stepId === 7 ? "h-32" : "h-24");
 
-                const scaleClass = stepId === 7 ? 'scale-100 md:scale-105' : (stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-110 md:scale-125' : ''));
+                // For step 5 we reduce the scale so the beaker appears smaller when water is present
+                const scaleClass = stepId === 7 ? 'scale-100 md:scale-105' : (stepId === 6 ? 'scale-105 md:scale-110' : (stepId === 5 && (hasWaterNow || enlargeAfterAnimation) ? 'scale-100' : ''));
 
                 return (
                   <TransparentImage
