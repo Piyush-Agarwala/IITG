@@ -347,7 +347,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
       // If oxalic acid bottle was added during quantitative analysis step, show reminder and dispatch event
       try {
-        if (payload && payload.id === 'oxalic_acid' && stepNumber === 2) {
+        if (payload && payload.id === 'oxalic_acid' && stepNumber === 3) {
           showMessage('Click the calculator once to see the amount of acid required');
           try { window.dispatchEvent(new CustomEvent('oxalicCalculatorReminder')); } catch {}
         }
