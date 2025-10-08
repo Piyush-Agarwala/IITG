@@ -374,8 +374,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: data.id,
           name: data.name,
-          imageSrc: (stepNumber === 3 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F1782add6aa7c40cc992b82016876895e?format=webp&width=800'
+          imageSrc: (stepNumber === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
             : data.imageSrc,
         }
       ]);
