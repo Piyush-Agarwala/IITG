@@ -151,6 +151,67 @@ export default function TitrationResultsPage() {
               <div className="text-xs text-gray-600">Strength</div>
               <div className="text-lg font-bold">{strength.toFixed(2)} g/L</div>
             </div>
+
+            {/* Show QUIZ button when there are at least 3 trials recorded */}
+            {trials.length >= 3 && (
+              <div className="pt-2">
+                <Button className="w-full bg-amber-500 text-white hover:bg-amber-600" onClick={() => setShowQuiz(true)}>
+                  QUIZ
+                </Button>
+              </div>
+            )}
+
+            {/* Quiz panel */}
+            {showQuiz && (
+              <div className="mt-4 p-4 bg-white border rounded">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-lg font-semibold">Titration Quiz</div>
+                  <div>
+                    <Button variant="outline" size="sm" onClick={() => { setShowQuiz(false); setQuizSubmitted(false); setQuizSelections({}); setScore(0); }}>
+                      Close
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {questions.map((q, idx) => (
+                    <div key={idx} className="quiz-item">
+                      <div className="text-sm font-medium">{idx + 1}. {q.question}</div>
+                      <div className="mt-2 space-y-2">
+                        {q.options.map((opt) => (
+                          <label key={opt} className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              name={`q${idx}`}
+                              value={opt}
+                              checked={quizSelections[`q${idx}`] === opt}
+                              onChange={() => handleSelect(`q${idx}`, opt)}
+                              className="form-radio"
+                            />
+                            <span className="text-sm">{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {quizSubmitted && (
+                        <div className="mt-2 text-sm">
+                          {quizSelections[`q${idx}`] === q.answer ? (
+                            <span className="text-green-600 font-semibold">Correct</span>
+                          ) : (
+                            <span className="text-red-600">Incorrect — correct: {q.answer}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  <div className="flex items-center space-x-3 mt-3">
+                    <Button onClick={submitQuiz} className="bg-blue-600 text-white">Submit Quiz</Button>
+                    <Button variant="outline" onClick={resetQuiz}>Reset</Button>
+                    {quizSubmitted && <div className="text-sm font-semibold">Score: {score} / {questions.length}</div>}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
