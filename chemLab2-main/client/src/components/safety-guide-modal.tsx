@@ -72,7 +72,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
               ) : isEquilibriumShift
               ? "Safety guidance specific to cobalt(II) chloride / hydrochloric acid equilibrium shift demonstration."
               : isTitration1
-              ? "Safety guidance specific to NaOH vs Oxalic acid titration."
+              ? "Safety guidance specific to determining the strength of an NaOH solution by titration against 0.1N oxalic acid."
               : "Essential safety guidelines for conducting virtual chemistry experiments"}
           </DialogDescription>
         </DialogHeader>
@@ -336,7 +336,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🧯 6. First Aid Measures</h3>
+                  <h3 className="text-lg font-semibold mb-3">�� 6. First Aid Measures</h3>
                   <div className="overflow-auto">
                     <table className="w-full text-sm border-collapse">
                       <thead>
@@ -547,7 +547,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">🧹 <em>6. Waste Disposal Guidelines</em></h3>
+                  <h3 className="text-lg font-semibold mb-3">�� <em>6. Waste Disposal Guidelines</em></h3>
                   <ul className="space-y-2 text-sm">
                     <li>• Neutralize used acidic solutions with a small amount of <em>dilute sodium bicarbonate solution</em> before disposal.</li>
                     <li>• Dispose of neutralized solutions in the <em>designated laboratory sink</em>.</li>
