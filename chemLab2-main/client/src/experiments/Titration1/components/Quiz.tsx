@@ -127,11 +127,16 @@ export default function TitrationQuiz() {
                     ))}
                   </div>
                   {quizSubmitted && (() => {
-                    const selected = quizSelections[q.key];
-                    return selected === q.correct ? (
-                      <div className="mt-2 text-sm text-green-700 font-medium">Correct</div>
-                    ) : (
-                      <div className="mt-2 text-sm text-red-600">Incorrect — correct: {q.correctText}</div>
+                    const selected = quizSelections[q.key] as keyof typeof q.options | undefined;
+                    const yourText = selected ? `${selected}) ${q.options[selected]}` : 'No answer selected';
+                    const correctKey = q.correct as keyof typeof q.options;
+                    const correctText = `${q.correct}) ${q.options[correctKey]}`;
+                    const isCorrect = selected === q.correct;
+                    return (
+                      <div className="mt-2 text-sm space-y-1">
+                        <div className={isCorrect ? "text-green-700 font-medium" : "text-red-600"}>Your answer: {yourText}</div>
+                        <div className="text-green-700 font-medium">Answer: {correctText}</div>
+                      </div>
                     );
                   })()}
                 </section>
