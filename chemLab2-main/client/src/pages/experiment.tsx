@@ -31,6 +31,10 @@ export default function Experiment() {
       return <BufferQuiz />;
     }
 
+    if (isQuizRoute && experimentId === 5) {
+      return <TitrationQuiz />;
+    }
+
     switch (experimentId) {
       case 1:
         return <EquilibriumShiftApp onBack={() => window.history.back()} />;
