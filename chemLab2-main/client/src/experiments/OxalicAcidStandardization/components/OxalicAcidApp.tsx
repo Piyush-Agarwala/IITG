@@ -71,9 +71,9 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
     }
   };
 
-  const handleStartExperiment = () => {
+  const handleStartExperiment = (run = true) => {
     setExperimentStarted(true);
-    setIsRunning(true);
+    setIsRunning(run);
     setTimer(0);
   };
 
@@ -137,7 +137,7 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
                   <span>{experiment.category}</span>
                   <span>•</span>
                   <span>{experiment.difficulty}</span>
-                  <span>•</span>
+                  <span>��</span>
                   <span>Duration: {experiment.duration} min</span>
                 </div>
                 <Progress value={progress} className="w-64" />
