@@ -12,6 +12,7 @@ import BufferPHApp from "@/experiments/EthanoicBuffer/components/BufferPHApp";
 import BufferQuiz from "@/experiments/EthanoicBuffer/components/Quiz";
 import TitrationQuiz from "@/experiments/Titration1/components/Quiz";
 import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
+import OxalicAcidQuiz from "@/experiments/OxalicAcidStandardization/components/Quiz";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
