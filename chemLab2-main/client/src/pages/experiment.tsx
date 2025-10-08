@@ -15,7 +15,7 @@ import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Link, useRoute, useParams } from "wouter";
+import { Link, useRoute, useParams, useLocation } from "wouter";
 
 export default function Experiment() {
   const { id } = useParams<{ id: string }>();
