@@ -41,7 +41,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
               : isEquilibriumShift
               ? "Equilibrium Shift: [Co(H₂O)₆]²⁺ ⇌ [CoCl₄]²⁻ — Safety Guidelines"
               : isTitration1
-              ? "Titration 1: NaOH vs Oxalic Acid — Safety Guide"
+              ? "Safety Guide — Determine the strength of a given solution of sodium hydroxide by titrating it against a standard solution of oxalic acid, having the strength 0.1N."
               : "Virtual Chemistry Lab Safety Guide"}
           </DialogTitle>
           <DialogDescription>
