@@ -116,9 +116,9 @@
     background-color: var(--lab-gray);
   }
 
-  /* Hero initiative text using Kugile font (falls back to sans-serif if not available) */
+  /* Hero initiative text using Playfair Display (close match to Kugile) */
   .hero-initiative-font {
-    font-family: 'Kugile', sans-serif;
+    font-family: 'Playfair Display', serif;
   }
 
   .hero-initiative {
