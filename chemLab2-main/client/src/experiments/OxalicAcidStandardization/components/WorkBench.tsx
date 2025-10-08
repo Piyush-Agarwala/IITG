@@ -19,7 +19,7 @@ import type {
 interface WorkBenchProps {
   step: ExperimentStep;
   experimentStarted: boolean;
-  onStartExperiment: () => void;
+  onStartExperiment: (run?: boolean) => void;
   isRunning: boolean;
   setIsRunning: (running: boolean) => void;
   onResetTimer: () => void;
