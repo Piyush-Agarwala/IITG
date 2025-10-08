@@ -137,17 +137,21 @@ export default function TitrationQuiz() {
                 </section>
               ))}
 
-              <div className="flex items-center flex-wrap gap-2 mt-2">
-                <Link href="/experiment/5">
-                  <Button variant="outline" className="flex items-center">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
-                  </Button>
-                </Link>
-                <Link href="/">
-                  <Button className="bg-gray-700 text-white">Return to Experiments</Button>
-                </Link>
-                <Button onClick={submitQuiz} className="bg-blue-600 text-white">Submit</Button>
-                <Button variant="outline" onClick={resetQuiz}>Reset</Button>
+              <div className="flex items-center justify-between flex-wrap gap-2 mt-2">
+                <div className="flex items-center gap-2">
+                  <Link href="/experiment/5">
+                    <Button variant="outline" className="flex items-center">
+                      <ArrowLeft className="w-4 h-4 mr-2" /> Back to Experiment
+                    </Button>
+                  </Link>
+                  <Link href="/">
+                    <Button className="bg-gray-700 text-white">Return to Experiments</Button>
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2 ml-auto">
+                  <Button onClick={submitQuiz} className="bg-blue-600 text-white">Submit</Button>
+                  <Button variant="outline" onClick={resetQuiz}>Reset</Button>
+                </div>
               </div>
             </div>
           </CardContent>
