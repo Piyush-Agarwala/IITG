@@ -31,6 +31,7 @@ export default function TitrationResultsPage() {
   const n2 = validInputs ? (n1 * v1) / meanV2 : 0;
   const strength = n2 * 40;
 
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -151,6 +152,17 @@ export default function TitrationResultsPage() {
               <div className="text-xs text-gray-600">Strength</div>
               <div className="text-lg font-bold">{strength.toFixed(2)} g/L</div>
             </div>
+
+            {/* Show QUIZ button when there are at least 3 trials recorded */}
+            {trials.length >= 3 && (
+              <div className="pt-2">
+                <Link href={`/experiment/${experimentId}/quiz`}>
+                  <Button className="w-full bg-amber-500 text-white hover:bg-amber-600">
+                    QUIZ
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

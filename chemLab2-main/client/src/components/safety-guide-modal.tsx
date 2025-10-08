@@ -21,7 +21,7 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
   const isAmmoniumBuffer = match && params?.id === "9";
   const isEthanoicBuffer = match && params?.id === "10";
   const isPHComparison = match && params?.id === "8";
-  const isTitration1 = match && params?.id === "6";
+  const isTitration1 = match && params?.id === "5";
 
   return (
     <Dialog>
@@ -723,70 +723,121 @@ export default function SafetyGuideModal({ children }: SafetyGuideModalProps) {
             ) : isTitration1 ? (
               <>
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Personal Protective Equipment (PPE)</h3>
+                  <h3 className="text-lg font-semibold mb-3">🧪 1. Objective</h3>
+                  <p className="text-sm">Determine the strength of an unknown <strong>sodium hydroxide (NaOH)</strong> solution by titrating it against a <strong>standard oxalic acid (H₂C₂O₄, 0.1 N)</strong> solution using phenolphthalein indicator.</p>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">⚠ 2. Chemical Hazards</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Chemical</th>
+                          <th className="pb-2">Hazard Type</th>
+                          <th className="pb-2">Safety Precautions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="align-top">
+                        <tr>
+                          <td className="py-2"><em>Sodium Hydroxide (NaOH)</em></td>
+                          <td className="py-2">Corrosive — causes severe skin burns and eye damage</td>
+                          <td className="py-2">Handle with gloves and goggles; if spilled, wash immediately with plenty of water</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2"><em>Oxalic Acid (H₂C₂O₄)</em></td>
+                          <td className="py-2">Toxic/irritant — harmful if swallowed or inhaled</td>
+                          <td className="py-2">Avoid contact and inhalation; use a spatula when handling solid oxalic acid</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2"><em>Phenolphthalein Indicator</em></td>
+                          <td className="py-2">Irritant — may cause skin and eye irritation</td>
+                          <td className="py-2">Use small quantities; wash hands after use</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2"><em>Distilled Water</em></td>
+                          <td className="py-2">No hazard</td>
+                          <td className="py-2">Ensure glassware is clean before use</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧤 3. Personal Protective Equipment (PPE)</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Wear lab coat, closed shoes, splash‑proof goggles, and nitrile gloves.</li>
-                    <li>• Tie back long hair; avoid loose clothing.</li>
+                    <li>• Laboratory coat (buttoned up)</li>
+                    <li>• Safety goggles</li>
+                    <li>• Gloves (preferably nitrile)</li>
+                    <li>• Closed shoes; tie back long hair and avoid loose clothing</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Chemical Hazards</h3>
+                  <h3 className="text-lg font-semibold mb-3">🧯 4. Safety Precautions</h3>
+                  <ol className="list-decimal list-inside text-sm space-y-2">
+                    <li>Perform the titration on a clean, stable bench away from the edge.</li>
+                    <li>Rinse burette and pipette with respective solutions before use.</li>
+                    <li>Do not pipette by mouth — use a pipette filler/bulb.</li>
+                    <li>Handle NaOH carefully; it can cause burns on contact.</li>
+                    <li>Wipe any spills immediately with plenty of water.</li>
+                    <li>Avoid inhaling oxalic acid dust/vapours.</li>
+                    <li>When preparing oxalic acid, stir gently until fully dissolved.</li>
+                    <li>Always add acid to water, never the reverse, when diluting.</li>
+                    <li>Take burette readings at eye level to avoid parallax error.</li>
+                    <li>Dispose chemical waste in designated neutralization container.</li>
+                  </ol>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🚿 5. First Aid Measures</h3>
+                  <div className="overflow-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="text-left">
+                          <th className="pb-2">Incident</th>
+                          <th className="pb-2">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="align-top">
+                        <tr>
+                          <td className="py-2">Skin contact with NaOH or oxalic acid</td>
+                          <td className="py-2">Wash immediately with plenty of running water; remove contaminated clothing; seek help if irritation persists.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Eye contact</td>
+                          <td className="py-2">Rinse eyes with water for at least 15 minutes; get medical assistance immediately.</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2">Inhalation of oxalic acid dust</td>
+                          <td className="py-2">Move to fresh air; seek medical help if breathing difficulty occurs.</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="py-2">Accidental ingestion</td>
+                          <td className="py-2">Do not induce vomiting; rinse mouth and seek medical attention immediately.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">🧴 6. Waste Disposal</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• Sodium hydroxide (NaOH): Corrosive; causes severe skin/eye burns.</li>
-                    <li>• Oxalic acid (0.1N): Irritant; harmful if swallowed; avoid skin/eye contact.</li>
-                    <li>• Keep all reagents clearly labeled.</li>
+                    <li>• Neutralize acid/base residues with dilute sodium bicarbonate before disposal.</li>
+                    <li>• Dispose of phenolphthalein and organic wastes in labeled waste containers.</li>
+                    <li>• Rinse all glassware thoroughly with water after completion.</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Good Lab Practices</h3>
+                  <h3 className="text-lg font-semibold mb-3">📋 7. General Laboratory Conduct</h3>
                   <ul className="space-y-2 text-sm">
-                    <li>• No mouth pipetting—use a pipette bulb/filler.</li>
-                    <li>• Rinse spills immediately; keep work area dry and uncluttered.</li>
-                    <li>• Clamp burette securely; check for leaks and air bubbles before starting.</li>
-                    <li>• Never return unused chemicals to stock bottles.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Spill Response</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Acid spill (oxalic): Cover with sodium bicarbonate, scoop into waste; wipe and rinse.</li>
-                    <li>• Base spill (NaOH): Neutralize with dilute weak acid (e.g., vinegar), then wipe and rinse.</li>
-                    <li>• For skin contact: Remove contaminated clothing, flush with water 15 minutes.</li>
-                    <li>• For eye exposure: Rinse at eyewash for 15 minutes and seek medical help.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Waste & Cleanup</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Collect titration waste in a labeled “Neutralized Acid/Base Waste” container.</li>
-                    <li>• Neutralize to ~pH 6–8 before drain disposal only if your institution allows; otherwise hand to lab staff.</li>
-                    <li>• Rinse glassware with water before returning.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Emergency Preparedness</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Know locations of eyewash, safety shower, spill kit, and first‑aid kit.</li>
-                    <li>• Report all accidents and exposures immediately.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Electrical/Equipment</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• If using a magnetic stirrer, keep cords dry and hands/gloves free of chemicals.</li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">Hygiene</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Do not eat or drink in the lab. Wash hands thoroughly after completing the experiment.</li>
+                    <li>• Do not eat, drink, or chew in the lab.</li>
+                    <li>• Record all readings neatly and accurately.</li>
+                    <li>• Wash hands thoroughly after completing the experiment.</li>
+                    <li>• Clean the workspace and return apparatus to proper places.</li>
                   </ul>
                 </section>
               </>

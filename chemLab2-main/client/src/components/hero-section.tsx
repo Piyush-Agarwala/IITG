@@ -22,7 +22,8 @@ export default function HeroSection() {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white drop-shadow-lg">
             Discover Chemistry Through Virtual Experiments
           </h2>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <p className="hero-initiative hero-initiative-font text-base md:text-lg mt-2">An initiative by IITG</p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-6 justify-center">
             <Button 
               onClick={scrollToExperiments}
               className="bg-white text-blue-600 px-8 py-3 hover:bg-gray-100 font-semibold"

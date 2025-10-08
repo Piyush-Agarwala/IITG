@@ -10,15 +10,17 @@ import PHComparisonApp from "@/experiments/PHComparison/components/PHComparisonA
 import AmmoniumBufferApp from "@/experiments/AmmoniumBuffer/components/AmmoniumBufferApp";
 import BufferPHApp from "@/experiments/EthanoicBuffer/components/BufferPHApp";
 import BufferQuiz from "@/experiments/EthanoicBuffer/components/Quiz";
+import TitrationQuiz from "@/experiments/Titration1/components/Quiz";
 import { OxalicAcidApp } from "@/experiments/OxalicAcidStandardization";
 import GenericExperimentApp from "@/experiments/Generic/components/GenericExperimentApp";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Link, useRoute, useParams } from "wouter";
+import { Link, useRoute, useParams, useLocation } from "wouter";
 
 export default function Experiment() {
   const { id } = useParams<{ id: string }>();
   const experimentId = parseInt(id || "1");
+  const [, navigate] = useLocation();
 
   // detect quiz route (e.g. /experiment/10/quiz)
   const [quizMatch, quizParams] = useRoute("/experiment/:id/quiz");
@@ -28,6 +30,10 @@ export default function Experiment() {
   const getExperimentComponent = () => {
     if (isQuizRoute && experimentId === 10) {
       return <BufferQuiz />;
+    }
+
+    if (isQuizRoute && experimentId === 5) {
+      return <TitrationQuiz />;
     }
 
     switch (experimentId) {
@@ -40,7 +46,7 @@ export default function Experiment() {
       case 4:
         return <HClPHApp onBack={() => window.history.back()} />;
       case 5:
-        return <Titration1App onBack={() => window.history.back()} />;
+        return <Titration1App onBack={() => navigate("/")} />;
       case 6:
         return <LassaigneApp onBack={() => window.history.back()} />;
       case 7:

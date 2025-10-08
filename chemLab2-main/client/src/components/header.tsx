@@ -31,7 +31,7 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2">
               <FlaskRound className="h-8 w-8 text-blue-600" />
-              <h1 className="text-xl font-bold text-gray-900">ChemLab Virtual</h1>
+              <h1 className="text-xl font-bold text-gray-900">ChemVerse IITG</h1>
             </Link>
           </div>
           

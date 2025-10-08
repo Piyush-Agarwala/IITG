@@ -116,6 +116,25 @@
     background-color: var(--lab-gray);
   }
 
+  /* Hero initiative text using Playfair Display (close match to Kugile) */
+  .hero-initiative-font {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .hero-initiative {
+    margin-top: 0.5rem;
+    color: #ffffff;
+    opacity: 0.95;
+    line-height: 1.2;
+    font-size: 1.25rem; /* ~20px on small screens */
+  }
+
+  @media (min-width: 768px) {
+    .hero-initiative {
+      font-size: 2rem; /* 32px on medium+ screens */
+    }
+  }
+
   /* Bottle background helpers */
   .bg-bottle-yellow {
     background-color: #fffacc;
