@@ -1,5 +1,5 @@
 export const titration1Data = {
-  title: "Titration 1",
+  title: "Determine the strength of a given solution of sodium hydroxide by titrating it against a standard solution of oxalic acid, having the strength 0.1N.",
   description: "Determine the strength of a given solution of sodium hydroxide by titrating it against a standard solution of oxalic acid, having the strength 0.1N. Learn precise volumetric analysis techniques and endpoint detection.",
   category: "Quantitative Analysis",
   difficulty: "Beginner",
