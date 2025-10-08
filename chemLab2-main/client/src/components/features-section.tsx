@@ -29,7 +29,7 @@ export default function FeaturesSection() {
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h3 className="text-3xl font-bold text-gray-900 mb-4">Why Choose ChemLab Virtual?</h3>
+          <h3 className="text-3xl font-bold text-gray-900 mb-4">Why Choose ChemVerse IITG?</h3>
           <p className="text-xl text-lab-gray max-w-2xl mx-auto">
             Our platform provides comprehensive virtual chemistry education with real-world applications
           </p>
