@@ -126,6 +126,13 @@
     color: #ffffff;
     opacity: 0.95;
     line-height: 1.2;
+    font-size: 1.125rem; /* ~18px, slightly larger */
+  }
+
+  @media (min-width: 768px) {
+    .hero-initiative {
+      font-size: 1.25rem; /* ~20px on medium+ screens */
+    }
   }
 
   /* Bottle background helpers */
