@@ -50,13 +50,14 @@ export default function TitrationResultsPage() {
   const n2 = validInputs ? (n1 * v1) / meanV2 : 0;
   const strength = n2 * 40;
 
-  // If experiment data indicates Oxalic Acid preparation, render a results layout similar to Equilibrium
-  const isOxalic = experiment && /oxalic/i.test(experiment.title || '');
+  // Show a summary page only for Oxalic Acid PREPARATION experiments.
+  // NaOH standardization against oxalic acid should use the live titration layout.
+  const title = experiment?.title ?? '';
+  const isOxalicPreparation = /preparation/i.test(title) && /oxalic/i.test(title);
 
-  if (isOxalic) {
-    // Sample static summary values — in a real app these would derive from recorded trials
+  if (isOxalicPreparation) {
     const summary = {
-      stepsCompleted: experiment.stepDetails?.length ?? 7,
+      stepsCompleted: experiment?.stepDetails?.length ?? 7,
       actionsPerformed: 5,
       finalVolume: '250 mL',
     };
