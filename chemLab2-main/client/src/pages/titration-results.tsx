@@ -83,7 +83,7 @@ export default function TitrationResultsPage() {
                 <div className="text-sm text-gray-600">Actions Performed</div>
                 <div className="text-xl font-bold">{summary.actionsPerformed}</div>
               </div>
-              <div className="p-4 bg-gradient-to-r from-white to紫-50 rounded-lg border">
+              <div className="p-4 bg-gradient-to-r from-white to-purple-50 rounded-lg border">
                 <div className="text-sm text-gray-600">Final Volume</div>
                 <div className="text-xl font-bold">{summary.finalVolume}</div>
               </div>
