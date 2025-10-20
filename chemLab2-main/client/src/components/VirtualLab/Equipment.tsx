@@ -12,6 +12,7 @@ interface EquipmentProps {
     id: string;
     name: string;
     icon: React.ReactNode;
+    imageSrc?: string;
     onDrag: (id: string, x: number, y: number) => void;
     position: { x: number; y: number } | null;
     chemicals?: Array<{
