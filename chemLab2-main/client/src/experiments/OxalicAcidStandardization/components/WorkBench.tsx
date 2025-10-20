@@ -427,9 +427,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: eq.id,
           name: eq.name,
-          imageSrc: (stepNumber === 4 && eq.id === 'volumetric_flask')
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
-            : undefined,
+          imageSrc: eq.id === 'beaker'
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F0b5dce09ba424aceac212f06156bd179?format=webp&width=800'
+            : (stepNumber === 4 && eq.id === 'volumetric_flask')
+              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
+              : undefined,
         }
       ]);
       setTimeout(() => alignBeakerAndWash(true), 60);
