@@ -427,9 +427,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           chemicals: [],
           typeId: eq.id,
           name: eq.name,
-          imageSrc: (stepNumber === 4 && eq.id === 'volumetric_flask')
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
-            : undefined,
+          imageSrc: eq.id === 'beaker'
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F0b5dce09ba424aceac212f06156bd179?format=webp&width=800'
+            : (stepNumber === 4 && eq.id === 'volumetric_flask')
+              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
+              : undefined,
         }
       ]);
       setTimeout(() => alignBeakerAndWash(true), 60);
@@ -1005,9 +1007,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           {/* Workbench Surface */}
           <div
             data-oxalic-workbench-surface="true"
-            className={`flex-1 relative bg-gradient-to-br from-gray-100 to-gray-200 ${
-              isDragOver ? "bg-blue-50 border-2 border-dashed border-blue-400" : ""
-            } transform -translate-y-8`}
+            className={`flex-1 relative bg-black text-white ${isDragOver ? "bg-blue-50 border-2 border-dashed border-blue-400" : ""} transform -translate-y-8`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}

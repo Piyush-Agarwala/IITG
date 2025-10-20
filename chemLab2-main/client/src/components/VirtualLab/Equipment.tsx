@@ -12,6 +12,7 @@ interface EquipmentProps {
     id: string;
     name: string;
     icon: React.ReactNode;
+    imageSrc?: string;
     onDrag: (id: string, x: number, y: number) => void;
     position: { x: number; y: number } | null;
     chemicals?: Array<{
@@ -1435,7 +1436,7 @@ export const Equipment: React.FC<EquipmentProps> = ({
         <div className="relative">
           {/* Use processed image with white background removed when possible and enlarge on workbench */}
           <TransparentImage
-            src="/assets/beaker.svg"
+            src={imageSrc ?? "/assets/beaker.svg"}
             alt="Beaker"
             className={`w-36 h-36 object-contain drop-shadow-lg transition-transform duration-200 ${isDragging ? "scale-105" : ""}`}
             tolerance={245}
