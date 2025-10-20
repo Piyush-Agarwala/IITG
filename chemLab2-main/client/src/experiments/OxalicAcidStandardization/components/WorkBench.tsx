@@ -1005,9 +1005,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           {/* Workbench Surface */}
           <div
             data-oxalic-workbench-surface="true"
-            className={`flex-1 relative bg-gradient-to-br from-gray-100 to-gray-200 ${
-              isDragOver ? "bg-blue-50 border-2 border-dashed border-blue-400" : ""
-            } transform -translate-y-8`}
+            className={`flex-1 relative bg-black text-white ${isDragOver ? "bg-blue-50 border-2 border-dashed border-blue-400" : ""} transform -translate-y-8`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
