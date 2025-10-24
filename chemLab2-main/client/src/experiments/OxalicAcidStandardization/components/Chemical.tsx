@@ -175,18 +175,18 @@ export const Chemical: React.FC<ChemicalProps> = ({
 
   return (
     <div
-      className={`chemical-card p-4 rounded-lg border-2 transition-all duration-200 ${
-        selected
-          ? "border-blue-500 bg-blue-50 shadow-md"
-          : disabled
-          ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
-          : "border-gray-300 bg-white hover:border-blue-300 hover:shadow-sm"
-      }`}
-      onClick={() => !disabled && onSelect(id)}
-      draggable={!disabled}
-      onDragStart={handleDragStart}
-      aria-disabled={disabled}
-    >
+    className={`chemical-card p-4 rounded-lg border-2 transition-all duration-200 ${
+      selected
+        ? "border-blue-500 bg-blue-50 shadow-md"
+        : disabled
+        ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
+        : "border-gray-300 bg-white hover:border-blue-300 hover:shadow-sm"
+    } ${id === 'oxalic_acid' && blink ? 'blink-until-pressed' : ''}`}
+    onClick={() => !disabled && onSelect(id)}
+    draggable={!disabled}
+    onDragStart={handleDragStart}
+    aria-disabled={disabled}
+  >
       <div className="space-y-2">
         {/* Chemical Preview */}
         <div className="chemical-preview flex items-center space-x-3">
