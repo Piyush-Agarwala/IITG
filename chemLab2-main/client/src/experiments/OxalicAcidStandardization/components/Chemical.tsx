@@ -11,6 +11,7 @@ interface ChemicalProps {
   volume?: number;
   disabled?: boolean;
   molecularWeight?: number;
+  blink?: boolean;
 }
 
 type SliderProps = {
