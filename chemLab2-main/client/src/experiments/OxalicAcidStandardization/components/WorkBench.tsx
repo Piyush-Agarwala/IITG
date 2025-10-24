@@ -376,7 +376,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           typeId: data.id,
           name: data.name,
           imageSrc: (stepNumber === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
             : data.imageSrc,
         }
       ]);
@@ -430,7 +430,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           imageSrc: eq.id === 'beaker'
             ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F03381c98835e4fe0b01246d23bc6440f?format=webp&width=800'
             : (stepNumber === 4 && eq.id === 'volumetric_flask')
-              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
+              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
               : undefined,
         }
       ]);
