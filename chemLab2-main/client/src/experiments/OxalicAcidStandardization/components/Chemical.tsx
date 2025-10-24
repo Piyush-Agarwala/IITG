@@ -195,7 +195,7 @@ export const Chemical: React.FC<ChemicalProps> = ({
             aria-hidden
           />
           <div className="flex-1 min-w-0">
-            <h3 className="chemical-name font-semibold text-gray-900 text-sm truncate">{name}</h3>
+            <h3 className={`chemical-name font-semibold text-gray-900 text-sm truncate ${id === 'oxalic_acid' && blink ? 'blink-until-pressed text-yellow-700' : ''}`}>{name}</h3>
             <p className="chemical-formula text-xs text-gray-600 font-mono">{formula}</p>
           </div>
         </div>
