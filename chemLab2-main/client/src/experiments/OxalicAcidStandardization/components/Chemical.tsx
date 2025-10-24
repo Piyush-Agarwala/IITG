@@ -127,6 +127,7 @@ export const Chemical: React.FC<ChemicalProps> = ({
   volume,
   disabled = false,
   molecularWeight,
+  blink = false,
 }) => {
   // For distilled water we restrict the allowed range to 80-120 mL
   const isWater = id === "distilled_water" || id === "distilled-water" || id === "distilledWater";
