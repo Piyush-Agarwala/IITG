@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "postinstall": "npm --prefix chemLab2-main install",
+    "postinstall": "echo \"postinstall skipped\"",
     "dev": "npm --prefix chemLab2-main run dev",
     "start": "npm --prefix chemLab2-main run dev",
     "build": "npm --prefix chemLab2-main run build",
