@@ -11,6 +11,7 @@ interface ChemicalProps {
   volume?: number;
   disabled?: boolean;
   molecularWeight?: number;
+  blink?: boolean;
 }
 
 type SliderProps = {
@@ -126,6 +127,7 @@ export const Chemical: React.FC<ChemicalProps> = ({
   volume,
   disabled = false,
   molecularWeight,
+  blink = false,
 }) => {
   // For distilled water we restrict the allowed range to 80-120 mL
   const isWater = id === "distilled_water" || id === "distilled-water" || id === "distilledWater";
@@ -173,18 +175,18 @@ export const Chemical: React.FC<ChemicalProps> = ({
 
   return (
     <div
-      className={`chemical-card p-4 rounded-lg border-2 transition-all duration-200 ${
-        selected
-          ? "border-blue-500 bg-blue-50 shadow-md"
-          : disabled
-          ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
-          : "border-gray-300 bg-white hover:border-blue-300 hover:shadow-sm"
-      }`}
-      onClick={() => !disabled && onSelect(id)}
-      draggable={!disabled}
-      onDragStart={handleDragStart}
-      aria-disabled={disabled}
-    >
+    className={`chemical-card p-4 rounded-lg border-2 transition-all duration-200 ${
+      selected
+        ? "border-blue-500 bg-blue-50 shadow-md"
+        : disabled
+        ? "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
+        : "border-gray-300 bg-white hover:border-blue-300 hover:shadow-sm"
+    } ${id === 'oxalic_acid' && blink ? 'blink-until-pressed' : ''}`}
+    onClick={() => !disabled && onSelect(id)}
+    draggable={!disabled}
+    onDragStart={handleDragStart}
+    aria-disabled={disabled}
+  >
       <div className="space-y-2">
         {/* Chemical Preview */}
         <div className="chemical-preview flex items-center space-x-3">
@@ -194,7 +196,7 @@ export const Chemical: React.FC<ChemicalProps> = ({
             aria-hidden
           />
           <div className="flex-1 min-w-0">
-            <h3 className="chemical-name font-semibold text-gray-900 text-sm truncate">{name}</h3>
+            <h3 className={`chemical-name font-semibold text-gray-900 text-sm truncate ${id === 'oxalic_acid' && blink ? 'blink-until-pressed text-yellow-700' : ''}`}>{name}</h3>
             <p className="chemical-formula text-xs text-gray-600 font-mono">{formula}</p>
           </div>
         </div>

@@ -225,6 +225,7 @@ export default function OxalicAcidApp({ onBack }: OxalicAcidAppProps) {
                     onSelect={() => {}}
                     selected={false}
                     disabled={false}
+                    blink={currentStep + 1 === 3 && !usedEquipment.includes(chemical.id)}
                   />
                 ))}
               </div>

@@ -376,7 +376,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           typeId: data.id,
           name: data.name,
           imageSrc: (stepNumber === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
             : data.imageSrc,
         }
       ]);
@@ -428,9 +428,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           typeId: eq.id,
           name: eq.name,
           imageSrc: eq.id === 'beaker'
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F0b5dce09ba424aceac212f06156bd179?format=webp&width=800'
+            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F03381c98835e4fe0b01246d23bc6440f?format=webp&width=800'
             : (stepNumber === 4 && eq.id === 'volumetric_flask')
-              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fc9e245eb37184cbf8f658b71683e712d?format=webp&width=800'
+              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
               : undefined,
         }
       ]);
@@ -1007,7 +1007,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           {/* Workbench Surface */}
           <div
             data-oxalic-workbench-surface="true"
-            className={`flex-1 relative bg-black text-white ${isDragOver ? "bg-blue-50 border-2 border-dashed border-blue-400" : ""} transform -translate-y-8`}
+            className={`flex-1 relative bg-black text-white ${isDragOver ? "border-2 border-dashed border-blue-400 ring-2 ring-blue-400" : ""} transform -translate-y-8`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -1021,7 +1021,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               // If this position corresponds to a known equipment, render normally
               if (equipmentData) {
                 // Show the provided analytical balance image when in step 1 of the Oxalic Acid preparation
-                const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F6430b7f56e744b15a955cffabccc28ab?format=webp&width=1200";
+                const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb0f15ec4f9e54d958cbbcd5dafd43773?format=webp&width=800";
                 const weighingBoatImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fe5172de4d6d44841bdba84ffd667286e?format=webp&width=800";
                 const shouldShowBalanceImage = equipmentData.id === "analytical_balance";
                 const shouldShowWeighingBoatImage = equipmentData.id === "weighing_boat";
