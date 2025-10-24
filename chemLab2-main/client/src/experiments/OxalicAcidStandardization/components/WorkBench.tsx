@@ -366,20 +366,33 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         if (enforceStepOneRestriction(data.id)) {
           return;
         }
-        setEquipmentPositions(prev => [
-        ...prev,
-        {
-          id: `${data.id}_${Date.now()}`,
-          x: x - 50,
-          y: y - 50,
-          chemicals: [],
-          typeId: data.id,
-          name: data.name,
-          imageSrc: (stepNumber === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
-            : data.imageSrc,
+        // Compute placement; special-case analytical balance to snap to a canonical spot on the workbench surface
+      {
+        const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+        let tx = x - 50;
+        let ty = y - 50;
+        if (surfaceEl && (data.id === 'analytical_balance' || (data.name || '').toLowerCase().includes('analytical balance'))) {
+          const rect = surfaceEl.getBoundingClientRect();
+          // place the balance slightly right-of-center and near the top of the bench
+          tx = Math.max(8, Math.min(rect.width - 120, Math.floor(rect.width * 0.52)));
+          ty = Math.max(8, Math.min(rect.height - 120, Math.floor(rect.height * 0.18)));
         }
-      ]);
+
+        setEquipmentPositions(prev => [
+          ...prev,
+          {
+            id: `${data.id}_${Date.now()}`,
+            x: tx,
+            y: ty,
+            chemicals: [],
+            typeId: data.id,
+            name: data.name,
+            imageSrc: (stepNumber === 4 && (data.id === 'volumetric_flask' || (data.name || '').toLowerCase().includes('volumetric flask')))
+              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
+              : data.imageSrc,
+          }
+        ]);
+      }
       setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed so it can be removed from the palette
       if (onEquipmentPlaced) onEquipmentPlaced(data.id);
@@ -418,22 +431,34 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         if (enforceStepOneRestriction(eq.id)) {
           return;
         }
-        setEquipmentPositions(prev => [
-        ...prev,
-        {
-          id: `${eq.id}_${Date.now()}`,
-          x: x - 50,
-          y: y - 50,
-          chemicals: [],
-          typeId: eq.id,
-          name: eq.name,
-          imageSrc: eq.id === 'beaker'
-            ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F03381c98835e4fe0b01246d23bc6440f?format=webp&width=800'
-            : (stepNumber === 4 && eq.id === 'volumetric_flask')
-              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
-              : undefined,
+        // Compute placement; special-case analytical balance to snap to a canonical spot on the workbench surface
+      {
+        const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+        let tx = x - 50;
+        let ty = y - 50;
+        if (surfaceEl && eq.id === 'analytical_balance') {
+          const rect = surfaceEl.getBoundingClientRect();
+          tx = Math.max(8, Math.min(rect.width - 120, Math.floor(rect.width * 0.52)));
+          ty = Math.max(8, Math.min(rect.height - 120, Math.floor(rect.height * 0.18)));
         }
-      ]);
+
+        setEquipmentPositions(prev => [
+          ...prev,
+          {
+            id: `${eq.id}_${Date.now()}`,
+            x: tx,
+            y: ty,
+            chemicals: [],
+            typeId: eq.id,
+            name: eq.name,
+            imageSrc: eq.id === 'beaker'
+              ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2F03381c98835e4fe0b01246d23bc6440f?format=webp&width=800'
+              : (stepNumber === 4 && eq.id === 'volumetric_flask')
+                ? 'https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb798dbbe782d4eefaedc7d51d5a72a53?format=webp&width=800'
+                : undefined,
+          }
+        ]);
+      }
       setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed (hide from palette)
       if (onEquipmentPlaced) onEquipmentPlaced(eq.id);
