@@ -1109,6 +1109,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
               // If this position corresponds to a known equipment, render normally
               if (equipmentData) {
+                // If this equipment is currently being animated as the boatMoveOverlay and the overlay
+                // hasn't started moving yet, don't render the static equipment so the overlay is the
+                // only visible instance (prevents showing two boats).
+                if (boatMoveOverlay && boatMoveOverlay.id === position.id && boatMoveOverlay.started === false) {
+                  return null;
+                }
+
                 // Show the provided analytical balance image when in step 1 of the Oxalic Acid preparation
                 const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb0f15ec4f9e54d958cbbcd5dafd43773?format=webp&width=800";
                 const weighingBoatImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fe5172de4d6d44841bdba84ffd667286e?format=webp&width=800";
