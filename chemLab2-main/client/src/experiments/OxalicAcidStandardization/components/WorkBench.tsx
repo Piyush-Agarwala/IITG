@@ -571,13 +571,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               if (!surfaceEl) return;
               const rect = surfaceEl.getBoundingClientRect();
 
-              // compute preferred positions similar to alignBeakerAndWash
-              const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.5 - 40));
-              const targetBeakerY = Math.max(12, Math.floor(rect.height * 0.44));
-              const targetWashX = Math.min(rect.width - 60, targetBeakerX + Math.floor(rect.width * 0.18));
-              const targetWashY = Math.max(2, targetBeakerY - Math.floor(rect.height * 0.06));
+              // compute preferred positions similar to alignBeakerAndWash (match reference layout)
+              const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.12));
+              const targetBeakerY = Math.max(12, Math.floor(rect.height * 0.70));
+              const targetWashX = Math.min(rect.width - 60, Math.floor(rect.width * 0.60));
+              const targetWashY = Math.max(2, Math.floor(rect.height * 0.20));
               const targetFlaskX = Math.max(8, Math.floor(rect.width * 0.12));
-              const targetFlaskY = Math.max(8, Math.floor(rect.height * 0.12));
+              const targetFlaskY = Math.max(8, Math.floor(rect.height * 0.18));
 
               setEquipmentPositions(prev => prev.map(pos => {
                 if (pos.id === newId) {
@@ -1027,12 +1027,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         setTimeout(() => alignBeakerAndWash(true), 80);
       }
 
-      // Preferred positions copied from the step-4 targets (adjusted to match reference image)
-      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.5 - 40));
-      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.44));
-      // place wash bottle to the right of the beaker and slightly higher
-      let targetWashX = Math.min(rect.width - 60, targetBeakerX + Math.floor(rect.width * 0.18));
-      let targetWashY = Math.max(2, targetBeakerY - Math.floor(rect.height * 0.06));
+      // Preferred positions to match the reference layout image
+      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.12));
+      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.70));
+      // place wash bottle to right-upper area of the workspace
+      let targetWashX = Math.min(rect.width - 60, Math.floor(rect.width * 0.60));
+      let targetWashY = Math.max(2, Math.floor(rect.height * 0.20));
 
       // If there are weighing boats present, avoid overlapping them by nudging beaker/wash
       const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y) && (p.x > 8 || p.y > 8));
@@ -1071,11 +1071,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
       const beakerPos = adjustIfCollision(targetBeakerX, targetBeakerY);
       const washPos = adjustIfCollision(targetWashX, targetWashY);
+      const flaskPos = { nx: Math.max(8, Math.min(rect.width - 80, Math.floor(rect.width * 0.12))), ny: Math.max(8, Math.min(rect.height - 80, Math.floor(rect.height * 0.18))) };
 
       setEquipmentPositions(prev => {
         const updated = prev.map(pos => {
           if (pos.id === beaker.id) return { ...pos, x: beakerPos.nx, y: beakerPos.ny };
           if (pos.id === wash.id) return { ...pos, x: washPos.nx, y: washPos.ny };
+          if (flask && pos.id === flask.id) return { ...pos, x: flaskPos.nx, y: flaskPos.ny };
           return pos;
         });
         // ensure beaker renders on top
