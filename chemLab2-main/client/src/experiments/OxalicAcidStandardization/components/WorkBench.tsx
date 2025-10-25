@@ -72,11 +72,29 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
   // keep this completely under user control (do not auto-sync with calculated targetMass)
   const [acidAmount, setAcidAmount] = useState<string>("");
+  // show blinking effect on the "Add to Weighing Boat" button when oxalic acid bottle is present
+  const [blinkAddButton, setBlinkAddButton] = useState<boolean>(false);
+
   // pouring animation state when adding acid into the weighing boat
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
   const [washAnimation, setWashAnimation] = useState<{ x: number; y: number; active: boolean } | null>(null);
   const [mixingAnimation, setMixingAnimation] = useState<{ x: number; y: number; width?: number; height?: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
+
+  // Enable blinking while an oxalic acid bottle exists on the workbench during the weighing step
+  useEffect(() => {
+    try {
+      const hasOxalicBottle = equipmentPositions.some(p => p.isBottle && Array.isArray(p.chemicals) && p.chemicals.some((c: any) => (c.id || '').toString().toLowerCase().includes('oxalic')));
+      if (stepNumber === 3 && hasOxalicBottle) {
+        setBlinkAddButton(true);
+      } else {
+        setBlinkAddButton(false);
+      }
+    } catch (e) {
+      // ignore
+      setBlinkAddButton(false);
+    }
+  }, [equipmentPositions, stepNumber]);
 
   // animation overlay state for moving a weighing boat to the analytical balance
   const [boatMoveOverlay, setBoatMoveOverlay] = useState<{ id: string; x: number; y: number; targetX: number; targetY: number; started: boolean } | null>(null);
@@ -1378,7 +1396,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               <div>
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Chemical Equation</h4>
                 <div className="text-xs font-mono bg-gray-50 rounded-lg p-3 border text-center leading-relaxed">
-                  <div>H₂C₂O₄·2H₂O (s) → H₂C₂O₄ (aq) + 2H₂O</div>
+                  <div>H₂C₂O₄·2H₂O (s) → H₂C₂O�� (aq) + 2H₂O</div>
                   <div className="mt-1">H₂C₂O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
                 </div>
               </div>
