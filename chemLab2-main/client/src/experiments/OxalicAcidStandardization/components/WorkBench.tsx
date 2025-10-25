@@ -418,8 +418,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                       const surfaceRect2 = surfaceEl.getBoundingClientRect();
                       const balRect = balanceEl.getBoundingClientRect();
                       // center the boat horizontally over the balance pan and vertically place it near the pan top
-                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - 44; // 44 ~ half of boat image width (88/2)
-                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.28);
+                      const BOAT_W = 88;
+                      const BOAT_H = 46;
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2);
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2);
                       toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
                       toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
                     }
@@ -530,8 +532,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     if (balanceEl) {
                       const surfaceRect2 = surfaceEl.getBoundingClientRect();
                       const balRect = balanceEl.getBoundingClientRect();
-                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - 44;
-                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.28);
+                      const BOAT_W = 88;
+                      const BOAT_H = 46;
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2);
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2);
                       toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
                       toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
                     }
