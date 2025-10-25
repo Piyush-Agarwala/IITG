@@ -1396,7 +1396,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               <div>
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Chemical Equation</h4>
                 <div className="text-xs font-mono bg-gray-50 rounded-lg p-3 border text-center leading-relaxed">
-                  <div>H₂C₂O₄·2H₂O (s) → H₂C₂O�� (aq) + 2H₂O</div>
+                  <div>H₂C₂O₄·2H₂O (s) → H₂C₂O₄ (aq) + 2H₂O</div>
                   <div className="mt-1">H₂C₂O₄ (aq) ⇌ 2H⁺ + C₂O₄²⁻</div>
                 </div>
               </div>
@@ -1431,6 +1431,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                         />
                         <Button
                           onClick={() => {
+                            // stop blinking once user pressed the button
+                            try { setBlinkAddButton(false); } catch (e) {}
+
                             // Find a weighing boat on the workbench
                             const boat = equipmentPositions.find(pos => ((pos.typeId ?? pos.id).toString().toLowerCase().includes('weighing_boat') || (pos.typeId === 'weighing_boat')) && typeof pos.x === 'number' && typeof pos.y === 'number');
                             if (!boat) {
@@ -1530,7 +1533,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                             } catch (e) {}
 
                           }}
-                          className="w-36 flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900"
+                          className={`w-36 flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 ${blinkAddButton ? 'blink-until-pressed' : ''}`}
                         >
                           Add to Weighing Boat
                         </Button>
