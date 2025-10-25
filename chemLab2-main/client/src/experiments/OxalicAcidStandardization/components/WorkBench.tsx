@@ -421,8 +421,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                       const BOAT_W = 88;
                       const BOAT_H = 46;
                       // small manual offsets to align the boat visually on the balance pan as in reference image
-                      const OFFSET_X = 6; // nudge right
-                      const OFFSET_Y = -12; // nudge slightly up
+                      const OFFSET_X = 0; // nudge right
+                      const OFFSET_Y = -6; // nudge slightly up
                       const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2) + OFFSET_X;
                       const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2) + OFFSET_Y;
                       toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
@@ -538,8 +538,8 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                       const BOAT_W = 88;
                       const BOAT_H = 46;
                       // small manual offsets to align the boat visually on the balance pan as in reference image
-                      const OFFSET_X = 6; // nudge right
-                      const OFFSET_Y = -12; // nudge slightly up
+                      const OFFSET_X = 0; // nudge right
+                      const OFFSET_Y = -6; // nudge slightly up
                       const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2) + OFFSET_X;
                       const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2) + OFFSET_Y;
                       toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
