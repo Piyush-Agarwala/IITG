@@ -321,13 +321,40 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
       if (enforceStepOneRestriction(payload?.id)) {
         return;
       }
+
       const newPosId = `${payload.id || 'bottle'}_${Date.now()}`;
+
+      // Default placement near drop point
+      let tx = x - 30;
+      let ty = y - 30;
+
+      try {
+        // If this is the oxalic acid dihydrate bottle, place it at a canonical position on the left side
+        // of the workbench so it matches the requested screenshot placement.
+        const idLower = (payload.id || '').toString().toLowerCase();
+        if (idLower.includes('oxalic')) {
+          const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+          if (surfaceEl) {
+            const rect = surfaceEl.getBoundingClientRect();
+            // Place roughly at 8% width from left and 20% height from top (adjusted to match visual)
+            tx = Math.max(8, Math.floor(rect.width * 0.08));
+            ty = Math.max(8, Math.floor(rect.height * 0.18));
+          } else {
+            // Fallback absolute coordinates if DOM not available
+            tx = 80;
+            ty = 110;
+          }
+        }
+      } catch (e) {
+        // ignore and use default drop coordinates
+      }
+
       setEquipmentPositions(prev => [
         ...prev,
         {
           id: newPosId,
-          x: x - 30,
-          y: y - 30,
+          x: tx,
+          y: ty,
           isBottle: true,
           chemicals: [
             {
