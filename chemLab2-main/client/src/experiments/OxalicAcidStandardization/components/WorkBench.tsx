@@ -440,7 +440,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                   setEquipmentPositions(prev => prev.map(pos => pos.id === newId ? { ...pos, x: toX, y: toY } : pos));
                   setBoatMoveOverlay(null);
                   if (boatMoveRef.current) { window.clearTimeout(boatMoveRef.current); boatMoveRef.current = null; }
-                }, 2000 + 60);
+                }, 2000);
               }
             } catch (e) { console.warn('boat move animation error', e); }
           }, 60);
@@ -546,7 +546,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                   setEquipmentPositions(prev => prev.map(pos => pos.id === newId ? { ...pos, x: toX, y: toY } : pos));
                   setBoatMoveOverlay(null);
                   if (boatMoveRef.current) { window.clearTimeout(boatMoveRef.current); boatMoveRef.current = null; }
-                }, 2000 + 60);
+                }, 2000);
               }
             } catch (e) { console.warn('boat move animation error', e); }
           }, 60);
@@ -1141,7 +1141,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 // If this equipment is currently being animated as the boatMoveOverlay and the overlay
                 // hasn't started moving yet, don't render the static equipment so the overlay is the
                 // only visible instance (prevents showing two boats).
-                if (boatMoveOverlay && boatMoveOverlay.id === position.id && boatMoveOverlay.started === false) {
+                if (boatMoveOverlay && boatMoveOverlay.id === position.id) {
                   return null;
                 }
 
