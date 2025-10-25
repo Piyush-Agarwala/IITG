@@ -78,6 +78,10 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   const [mixingAnimation, setMixingAnimation] = useState<{ x: number; y: number; width?: number; height?: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
 
+  // animation overlay state for moving a weighing boat to the analytical balance
+  const [boatMoveOverlay, setBoatMoveOverlay] = useState<{ id: string; x: number; y: number; targetX: number; targetY: number; started: boolean } | null>(null);
+  const boatMoveRef = useRef<number | null>(null);
+
   // messages shown on the workbench area (transient)
   const [workbenchMessage, setWorkbenchMessage] = useState<string | null>(null);
   const [workbenchMessageVariant, setWorkbenchMessageVariant] = useState<'default' | 'colorful' | null>(null);
@@ -378,10 +382,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           ty = Math.max(8, Math.min(rect.height - 120, Math.floor(rect.height * 0.18)));
         }
 
+        const newId = `${data.id}_${Date.now()}`;
         setEquipmentPositions(prev => [
           ...prev,
           {
-            id: `${data.id}_${Date.now()}`,
+            id: newId,
             x: tx,
             y: ty,
             chemicals: [],
@@ -392,6 +397,59 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               : data.imageSrc,
           }
         ]);
+
+        // if a weighing boat was just placed and an analytical balance exists on the bench, animate the boat moving onto the balance
+        if (data.id === 'weighing_boat') {
+          setTimeout(() => {
+            try {
+              const balance = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('analytical_balance') || ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('analytical-balance'));
+              const surfaceRect = surfaceEl ? surfaceEl.getBoundingClientRect() : { width: 300, height: 200 };
+              if (balance) {
+                const fromX = tx;
+                const fromY = ty;
+
+                // Compute precise target using DOM bounding rect when available so the boat lands on the balance pan
+                let toX = (typeof balance.x === 'number') ? balance.x + 20 : Math.max(8, Math.floor(surfaceRect.width * 0.52));
+                let toY = (typeof balance.y === 'number') ? balance.y + 36 : Math.max(8, Math.floor(surfaceRect.height * 0.18) + 30);
+                try {
+                  if (surfaceEl) {
+                    const balanceEl = surfaceEl.querySelector(`[data-equipment-id="${balance.id}"]`) as HTMLElement | null;
+                    if (balanceEl) {
+                      const surfaceRect2 = surfaceEl.getBoundingClientRect();
+                      const balRect = balanceEl.getBoundingClientRect();
+                      // center the boat horizontally over the balance pan and vertically place it near the pan top
+                      const BOAT_W = 88;
+                      const BOAT_H = 46;
+                      // small manual offsets to align the boat visually on the balance pan as in reference image
+                      const OFFSET_X = 0; // nudge right
+                      const OFFSET_Y = -6; // nudge slightly up
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2) + OFFSET_X;
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2) + OFFSET_Y;
+                      toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
+                      toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
+                    }
+                  }
+                } catch (e) {}
+
+                // Create overlay at initial position
+                setBoatMoveOverlay({ id: newId, x: fromX, y: fromY, targetX: toX, targetY: toY, started: false });
+
+                // Trigger transition to target in next tick
+                setTimeout(() => {
+                  setBoatMoveOverlay(prev => prev ? { ...prev, x: toX, y: toY, started: true } : prev);
+                }, 40);
+
+                // After animation completes (2s), finalize by moving the actual equipment position and clearing overlay
+                if (boatMoveRef.current) { window.clearTimeout(boatMoveRef.current); boatMoveRef.current = null; }
+                boatMoveRef.current = window.setTimeout(() => {
+                  setEquipmentPositions(prev => prev.map(pos => pos.id === newId ? { ...pos, x: toX, y: toY } : pos));
+                  setBoatMoveOverlay(null);
+                  if (boatMoveRef.current) { window.clearTimeout(boatMoveRef.current); boatMoveRef.current = null; }
+                }, 2000);
+              }
+            } catch (e) { console.warn('boat move animation error', e); }
+          }, 60);
+        }
       }
       setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed so it can be removed from the palette
@@ -442,10 +500,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           ty = Math.max(8, Math.min(rect.height - 120, Math.floor(rect.height * 0.18)));
         }
 
+        const newId = `${eq.id}_${Date.now()}`;
         setEquipmentPositions(prev => [
           ...prev,
           {
-            id: `${eq.id}_${Date.now()}`,
+            id: newId,
             x: tx,
             y: ty,
             chemicals: [],
@@ -458,6 +517,50 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                 : undefined,
           }
         ]);
+
+        // If it's a weighing boat, animate it onto the analytical balance if available
+        if (eq.id === 'weighing_boat') {
+          setTimeout(() => {
+            try {
+              const balance = equipmentPositions.find(p => ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('analytical_balance') || ((p.typeId ?? p.id) + '').toString().toLowerCase().includes('analytical-balance'));
+              const surfaceRect = surfaceEl ? surfaceEl.getBoundingClientRect() : { width: 300, height: 200 };
+              if (balance) {
+                const fromX = tx;
+                const fromY = ty;
+                let toX = (typeof balance.x === 'number') ? balance.x + 20 : Math.max(8, Math.floor(surfaceRect.width * 0.52));
+                let toY = (typeof balance.y === 'number') ? balance.y + 36 : Math.max(8, Math.floor(surfaceRect.height * 0.18) + 30);
+                try {
+                  if (surfaceEl) {
+                    const balanceEl = surfaceEl.querySelector(`[data-equipment-id="${balance.id}"]`) as HTMLElement | null;
+                    if (balanceEl) {
+                      const surfaceRect2 = surfaceEl.getBoundingClientRect();
+                      const balRect = balanceEl.getBoundingClientRect();
+                      const BOAT_W = 88;
+                      const BOAT_H = 46;
+                      // small manual offsets to align the boat visually on the balance pan as in reference image
+                      const OFFSET_X = 0; // nudge right
+                      const OFFSET_Y = -6; // nudge slightly up
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2) + OFFSET_X;
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2) + OFFSET_Y;
+                      toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
+                      toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
+                    }
+                  }
+                } catch (e) {}
+
+                setBoatMoveOverlay({ id: newId, x: fromX, y: fromY, targetX: toX, targetY: toY, started: false });
+                setTimeout(() => setBoatMoveOverlay(prev => prev ? { ...prev, x: toX, y: toY, started: true } : prev), 40);
+
+                if (boatMoveRef.current) { window.clearTimeout(boatMoveRef.current); boatMoveRef.current = null; }
+                boatMoveRef.current = window.setTimeout(() => {
+                  setEquipmentPositions(prev => prev.map(pos => pos.id === newId ? { ...pos, x: toX, y: toY } : pos));
+                  setBoatMoveOverlay(null);
+                  if (boatMoveRef.current) { window.clearTimeout(boatMoveRef.current); boatMoveRef.current = null; }
+                }, 2000);
+              }
+            } catch (e) { console.warn('boat move animation error', e); }
+          }, 60);
+        }
       }
       setTimeout(() => alignBeakerAndWash(true), 60);
       // Notify parent that this equipment was placed (hide from palette)
@@ -1045,6 +1148,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
               // If this position corresponds to a known equipment, render normally
               if (equipmentData) {
+                // If this equipment is currently being animated as the boatMoveOverlay and the overlay
+                // hasn't started moving yet, don't render the static equipment so the overlay is the
+                // only visible instance (prevents showing two boats).
+                if (boatMoveOverlay && boatMoveOverlay.id === position.id) {
+                  return null;
+                }
+
                 // Show the provided analytical balance image when in step 1 of the Oxalic Acid preparation
                 const balanceImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fb0f15ec4f9e54d958cbbcd5dafd43773?format=webp&width=800";
                 const weighingBoatImageUrl = "https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fe5172de4d6d44841bdba84ffd667286e?format=webp&width=800";
@@ -1168,6 +1278,21 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                     solutionColor="#87ceeb"
                   />
                 </div>
+              </div>
+            )}
+
+            {/* Boat move animation overlay */}
+            {boatMoveOverlay && (
+              <div
+                aria-hidden
+                className="boat-move-overlay"
+                style={{ left: boatMoveOverlay.x, top: boatMoveOverlay.y, position: 'absolute', zIndex: 95, transition: 'left 2s ease-in-out, top 2s ease-in-out' }}
+              >
+                <img
+                  src={"https://cdn.builder.io/api/v1/image/assets%2F3c8edf2c5e3b436684f709f440180093%2Fe5172de4d6d44841bdba84ffd667286e?format=webp&width=800"}
+                  alt="weighing boat"
+                  style={{ width: 88, height: 'auto', display: 'block', pointerEvents: 'none' }}
+                />
               </div>
             )}
 
