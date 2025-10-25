@@ -407,8 +407,24 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               if (balance) {
                 const fromX = tx;
                 const fromY = ty;
-                const toX = (typeof balance.x === 'number') ? balance.x + 20 : Math.max(8, Math.floor(surfaceRect.width * 0.52));
-                const toY = (typeof balance.y === 'number') ? balance.y + 36 : Math.max(8, Math.floor(surfaceRect.height * 0.18) + 30);
+
+                // Compute precise target using DOM bounding rect when available so the boat lands on the balance pan
+                let toX = (typeof balance.x === 'number') ? balance.x + 20 : Math.max(8, Math.floor(surfaceRect.width * 0.52));
+                let toY = (typeof balance.y === 'number') ? balance.y + 36 : Math.max(8, Math.floor(surfaceRect.height * 0.18) + 30);
+                try {
+                  if (surfaceEl) {
+                    const balanceEl = surfaceEl.querySelector(`[data-equipment-id="${balance.id}"]`) as HTMLElement | null;
+                    if (balanceEl) {
+                      const surfaceRect2 = surfaceEl.getBoundingClientRect();
+                      const balRect = balanceEl.getBoundingClientRect();
+                      // center the boat horizontally over the balance pan and vertically place it near the pan top
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - 44; // 44 ~ half of boat image width (88/2)
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.28);
+                      toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
+                      toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
+                    }
+                  }
+                } catch (e) {}
 
                 // Create overlay at initial position
                 setBoatMoveOverlay({ id: newId, x: fromX, y: fromY, targetX: toX, targetY: toY, started: false });
@@ -506,8 +522,21 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
               if (balance) {
                 const fromX = tx;
                 const fromY = ty;
-                const toX = (typeof balance.x === 'number') ? balance.x + 20 : Math.max(8, Math.floor(surfaceRect.width * 0.52));
-                const toY = (typeof balance.y === 'number') ? balance.y + 36 : Math.max(8, Math.floor(surfaceRect.height * 0.18) + 30);
+                let toX = (typeof balance.x === 'number') ? balance.x + 20 : Math.max(8, Math.floor(surfaceRect.width * 0.52));
+                let toY = (typeof balance.y === 'number') ? balance.y + 36 : Math.max(8, Math.floor(surfaceRect.height * 0.18) + 30);
+                try {
+                  if (surfaceEl) {
+                    const balanceEl = surfaceEl.querySelector(`[data-equipment-id="${balance.id}"]`) as HTMLElement | null;
+                    if (balanceEl) {
+                      const surfaceRect2 = surfaceEl.getBoundingClientRect();
+                      const balRect = balanceEl.getBoundingClientRect();
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - 44;
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.28);
+                      toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
+                      toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
+                    }
+                  }
+                } catch (e) {}
 
                 setBoatMoveOverlay({ id: newId, x: fromX, y: fromY, targetX: toX, targetY: toY, started: false });
                 setTimeout(() => setBoatMoveOverlay(prev => prev ? { ...prev, x: toX, y: toY, started: true } : prev), 40);
