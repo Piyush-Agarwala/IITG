@@ -563,6 +563,37 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           }
         ]);
 
+        // If adding core step-4 equipment, auto-place them into the target layout for step 4
+        if (stepNumber === 4 && ['beaker', 'volumetric_flask', 'wash_bottle', 'wash-bottle', 'wash'].includes(eq.id)) {
+          setTimeout(() => {
+            try {
+              const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+              if (!surfaceEl) return;
+              const rect = surfaceEl.getBoundingClientRect();
+
+              // compute preferred positions similar to alignBeakerAndWash
+              const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.5 - 40));
+              const targetBeakerY = Math.max(12, Math.floor(rect.height * 0.44));
+              const targetWashX = Math.min(rect.width - 60, targetBeakerX + Math.floor(rect.width * 0.18));
+              const targetWashY = Math.max(2, targetBeakerY - Math.floor(rect.height * 0.06));
+              const targetFlaskX = Math.max(8, Math.floor(rect.width * 0.12));
+              const targetFlaskY = Math.max(8, Math.floor(rect.height * 0.12));
+
+              setEquipmentPositions(prev => prev.map(pos => {
+                if (pos.id === newId) {
+                  if (eq.id === 'beaker') return { ...pos, x: targetBeakerX, y: targetBeakerY };
+                  if (eq.id === 'volumetric_flask') return { ...pos, x: targetFlaskX, y: targetFlaskY };
+                  if (eq.id === 'wash_bottle' || eq.id === 'wash-bottle' || eq.id === 'wash') return { ...pos, x: targetWashX, y: targetWashY };
+                }
+                return pos;
+              }));
+
+              // ensure final alignment with other items
+              setTimeout(() => alignBeakerAndWash(true), 60);
+            } catch (e) { console.warn('auto-align error', e); }
+          }, 40);
+        }
+
         // If it's a weighing boat, animate it onto the analytical balance if available
         if (eq.id === 'weighing_boat') {
           setTimeout(() => {
