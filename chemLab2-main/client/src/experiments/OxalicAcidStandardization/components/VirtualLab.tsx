@@ -158,14 +158,75 @@ function OxalicAcidVirtualLab({
 
     setShowWeighing(false);
 
-    // If currently on the weighing step (step 2), auto-advance to step 4
-    // after the weighing animation completes and ensure "dissolved" state
-    // is set so transfer can proceed.
+    // Align the weighing boat on the workbench immediately after weighing animation completes
+    // This will position the weighing boat relative to the analytical balance pan on the workbench.
+    const alignBoatToBalance = () => {
+      let frame: number | null = null;
+      let attempts = 0;
+      const maxAttempts = 60; // ~1 second worth of frames
+
+      const attempt = () => {
+        attempts += 1;
+        const surface = document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement | null;
+        const balanceEl = surface?.querySelector('[data-equipment-type="analytical_balance"]') as HTMLElement | null;
+        const boatEl = surface?.querySelector('[data-equipment-type="weighing_boat"]') as HTMLElement | null;
+
+        if (!surface || !balanceEl || !boatEl) {
+          if (attempts < maxAttempts) {
+            frame = window.requestAnimationFrame(attempt);
+          }
+          return;
+        }
+
+        const surfaceRect = surface.getBoundingClientRect();
+        const balanceRect = balanceEl.getBoundingClientRect();
+        const boatRect = boatEl.getBoundingClientRect();
+
+        const targetBalanceX = Math.max(0, (surfaceRect.width - balanceRect.width) / 2);
+        const targetBalanceY = Math.max(0, surfaceRect.height * 0.12);
+        const targetBoatX = targetBalanceX + (balanceRect.width - boatRect.width) / 2;
+        const panCenterY = targetBalanceY + balanceRect.height * 0.55;
+        const targetBoatY = panCenterY - boatRect.height / 2;
+
+        setEquipmentPositions(prev => {
+          let changed = false;
+          const next = prev.map(pos => {
+            const key = (pos.typeId ?? pos.id).toString().toLowerCase();
+            if (key.includes("analytical_balance")) {
+              if (Math.abs(pos.x - targetBalanceX) > 1 || Math.abs(pos.y - targetBalanceY) > 1) {
+                changed = true;
+                return { ...pos, x: targetBalanceX, y: targetBalanceY };
+              }
+              return pos;
+            }
+            if (key.includes("weighing_boat")) {
+              if (Math.abs(pos.x - targetBoatX) > 1 || Math.abs(pos.y - targetBoatY) > 1) {
+                changed = true;
+                return { ...pos, x: targetBoatX, y: targetBoatY };
+              }
+              return pos;
+            }
+            return pos;
+          });
+          return changed ? next : prev;
+        });
+
+        if (frame !== null) {
+          cancelAnimationFrame(frame);
+        }
+      };
+
+      frame = window.requestAnimationFrame(attempt);
+    };
+
     try {
       // step is available from closure; ensure it's the weighing step
       if (stepNumber === 2) {
         // mark dissolved so later steps (transfer) can proceed
         setPreparationState(prev => ({ ...prev, dissolved: true }));
+
+        // Align the weighing boat now so it appears dropped in the correct position on the workbench
+        alignBoatToBalance();
 
         // small delay to allow UI updates, then advance a single step
         setTimeout(() => {
@@ -175,7 +236,7 @@ function OxalicAcidVirtualLab({
     } catch (e) {
       // swallow errors — fallback to single-step advance handled elsewhere
     }
-  }, [measurements.targetMass, addResult, stepNumber, onStepComplete]);
+  }, [measurements.targetMass, addResult, stepNumber, onStepComplete, setEquipmentPositions]);
 
   const handleDissolving = useCallback(() => {
     setPreparationState(prev => ({
