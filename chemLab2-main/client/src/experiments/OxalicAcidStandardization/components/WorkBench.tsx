@@ -72,11 +72,29 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
   // amount of oxalic acid (g) the user wants to add into the weighing boat during step 3
   // keep this completely under user control (do not auto-sync with calculated targetMass)
   const [acidAmount, setAcidAmount] = useState<string>("");
+  // show blinking effect on the "Add to Weighing Boat" button when oxalic acid bottle is present
+  const [blinkAddButton, setBlinkAddButton] = useState<boolean>(false);
+
   // pouring animation state when adding acid into the weighing boat
   const [pouring, setPouring] = useState<{ boatId: string; x: number; y: number; active: boolean } | null>(null);
   const [washAnimation, setWashAnimation] = useState<{ x: number; y: number; active: boolean } | null>(null);
   const [mixingAnimation, setMixingAnimation] = useState<{ x: number; y: number; width?: number; height?: number; active: boolean } | null>(null);
   const pourTimeoutRef = useRef<number | null>(null);
+
+  // Enable blinking while an oxalic acid bottle exists on the workbench during the weighing step
+  useEffect(() => {
+    try {
+      const hasOxalicBottle = equipmentPositions.some(p => p.isBottle && Array.isArray(p.chemicals) && p.chemicals.some((c: any) => (c.id || '').toString().toLowerCase().includes('oxalic')));
+      if (stepNumber === 3 && hasOxalicBottle) {
+        setBlinkAddButton(true);
+      } else {
+        setBlinkAddButton(false);
+      }
+    } catch (e) {
+      // ignore
+      setBlinkAddButton(false);
+    }
+  }, [equipmentPositions, stepNumber]);
 
   // animation overlay state for moving a weighing boat to the analytical balance
   const [boatMoveOverlay, setBoatMoveOverlay] = useState<{ id: string; x: number; y: number; targetX: number; targetY: number; started: boolean } | null>(null);
@@ -545,6 +563,37 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
           }
         ]);
 
+        // If adding core step-4 equipment, auto-place them into the target layout for step 4
+        if (stepNumber === 4 && ['beaker', 'volumetric_flask', 'wash_bottle', 'wash-bottle', 'wash'].includes(eq.id)) {
+          setTimeout(() => {
+            try {
+              const surfaceEl = (document.querySelector('[data-oxalic-workbench-surface="true"]') as HTMLElement) || null;
+              if (!surfaceEl) return;
+              const rect = surfaceEl.getBoundingClientRect();
+
+              // compute preferred positions similar to alignBeakerAndWash (match reference layout)
+              const targetBeakerX = Math.max(16, Math.floor(rect.width * 0.12));
+              const targetBeakerY = Math.max(12, Math.floor(rect.height * 0.70));
+              const targetWashX = Math.min(rect.width - 60, Math.floor(rect.width * 0.60));
+              const targetWashY = Math.max(2, Math.floor(rect.height * 0.20));
+              const targetFlaskX = Math.max(8, Math.floor(rect.width * 0.12));
+              const targetFlaskY = Math.max(8, Math.floor(rect.height * 0.18));
+
+              setEquipmentPositions(prev => prev.map(pos => {
+                if (pos.id === newId) {
+                  if (eq.id === 'beaker') return { ...pos, x: targetBeakerX, y: targetBeakerY };
+                  if (eq.id === 'volumetric_flask') return { ...pos, x: targetFlaskX, y: targetFlaskY };
+                  if (eq.id === 'wash_bottle' || eq.id === 'wash-bottle' || eq.id === 'wash') return { ...pos, x: targetWashX, y: targetWashY };
+                }
+                return pos;
+              }));
+
+              // ensure final alignment with other items
+              setTimeout(() => alignBeakerAndWash(true), 60);
+            } catch (e) { console.warn('auto-align error', e); }
+          }, 40);
+        }
+
         // If it's a weighing boat, animate it onto the analytical balance if available
         if (eq.id === 'weighing_boat') {
           setTimeout(() => {
@@ -978,12 +1027,12 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
         setTimeout(() => alignBeakerAndWash(true), 80);
       }
 
-      // Preferred positions copied from the step-4 targets (adjusted to match reference image)
-      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.5 - 40));
-      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.44));
-      // place wash bottle to the right of the beaker and slightly higher
-      let targetWashX = Math.min(rect.width - 60, targetBeakerX + Math.floor(rect.width * 0.18));
-      let targetWashY = Math.max(2, targetBeakerY - Math.floor(rect.height * 0.06));
+      // Preferred positions to match the reference layout image
+      let targetBeakerX = Math.max(16, Math.floor(rect.width * 0.12));
+      let targetBeakerY = Math.max(12, Math.floor(rect.height * 0.70));
+      // place wash bottle to right-upper area of the workspace
+      let targetWashX = Math.min(rect.width - 60, Math.floor(rect.width * 0.60));
+      let targetWashY = Math.max(2, Math.floor(rect.height * 0.20));
 
       // If there are weighing boats present, avoid overlapping them by nudging beaker/wash
       const boats = equipmentPositions.filter(p => (normalize(p.typeId ?? p.id).includes('weighing_boat') || (p.typeId ?? p.id).toString().toLowerCase().includes('weighing_boat')) && typeof p.x === 'number' && typeof p.y === 'number' && isFinite(p.x) && isFinite(p.y) && (p.x > 8 || p.y > 8));
@@ -1022,11 +1071,13 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
 
       const beakerPos = adjustIfCollision(targetBeakerX, targetBeakerY);
       const washPos = adjustIfCollision(targetWashX, targetWashY);
+      const flaskPos = { nx: Math.max(8, Math.min(rect.width - 80, Math.floor(rect.width * 0.12))), ny: Math.max(8, Math.min(rect.height - 80, Math.floor(rect.height * 0.18))) };
 
       setEquipmentPositions(prev => {
         const updated = prev.map(pos => {
           if (pos.id === beaker.id) return { ...pos, x: beakerPos.nx, y: beakerPos.ny };
           if (pos.id === wash.id) return { ...pos, x: washPos.nx, y: washPos.ny };
+          if (flask && pos.id === flask.id) return { ...pos, x: flaskPos.nx, y: flaskPos.ny };
           return pos;
         });
         // ensure beaker renders on top
@@ -1413,6 +1464,9 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                         />
                         <Button
                           onClick={() => {
+                            // stop blinking once user pressed the button
+                            try { setBlinkAddButton(false); } catch (e) {}
+
                             // Find a weighing boat on the workbench
                             const boat = equipmentPositions.find(pos => ((pos.typeId ?? pos.id).toString().toLowerCase().includes('weighing_boat') || (pos.typeId === 'weighing_boat')) && typeof pos.x === 'number' && typeof pos.y === 'number');
                             if (!boat) {
@@ -1512,7 +1566,7 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                             } catch (e) {}
 
                           }}
-                          className="w-36 flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900"
+                          className={`w-36 flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 ${blinkAddButton ? 'blink-until-pressed' : ''}`}
                         >
                           Add to Weighing Boat
                         </Button>
