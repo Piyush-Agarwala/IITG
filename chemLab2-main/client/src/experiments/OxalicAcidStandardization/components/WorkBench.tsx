@@ -420,8 +420,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                       // center the boat horizontally over the balance pan and vertically place it near the pan top
                       const BOAT_W = 88;
                       const BOAT_H = 46;
-                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2);
-                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2);
+                      // small manual offsets to align the boat visually on the balance pan as in reference image
+                      const OFFSET_X = 6; // nudge right
+                      const OFFSET_Y = -12; // nudge slightly up
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2) + OFFSET_X;
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2) + OFFSET_Y;
                       toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
                       toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
                     }
@@ -534,8 +537,11 @@ export const WorkBench: React.FC<WorkBenchProps> = ({
                       const balRect = balanceEl.getBoundingClientRect();
                       const BOAT_W = 88;
                       const BOAT_H = 46;
-                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2);
-                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2);
+                      // small manual offsets to align the boat visually on the balance pan as in reference image
+                      const OFFSET_X = 6; // nudge right
+                      const OFFSET_Y = -12; // nudge slightly up
+                      const panCenterX = balRect.left - surfaceRect2.left + Math.floor(balRect.width * 0.5) - Math.floor(BOAT_W / 2) + OFFSET_X;
+                      const panCenterY = balRect.top - surfaceRect2.top + Math.floor(balRect.height * 0.62) - Math.floor(BOAT_H / 2) + OFFSET_Y;
                       toX = Math.max(8, Math.min(surfaceRect2.width - 80, Math.round(panCenterX)));
                       toY = Math.max(8, Math.min(surfaceRect2.height - 80, Math.round(panCenterY)));
                     }
